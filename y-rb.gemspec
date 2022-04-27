@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "lib/y"
-require_relative "lib/y/version"
+require_relative 'lib/y/rb'
 
 Gem::Specification.new do |spec|
   spec.name = "y-rb"
