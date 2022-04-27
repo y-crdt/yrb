@@ -1,0 +1,16 @@
+[package]
+name = "y-rb"
+version = "0.1.0"
+authors = ["Hannes Moser <box@hannesmoser.at>"]
+edition = "2021"
+homepage = "https://github.com/y-crdt/yrb"
+repository = "https://github.com/y-crdt/yrb"
+
+[dependencies]
+lazy_static = "1.4.0"
+rutie = "0.8.4"
+yrs = "0.7.0"
+
+[lib]
+name = "y_rb"
+crate-type = ["cdylib"]

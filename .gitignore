@@ -9,3 +9,9 @@
 
 # rspec failure tracking
 .rspec_status
+
+
+# Added by cargo
+
+/target
+Cargo.lock

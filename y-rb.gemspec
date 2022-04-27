@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
-require_relative "lib/y/rb/version"
+require_relative "lib/y"
+require_relative "lib/y/version"
 
 Gem::Specification.new do |spec|
   spec.name = "y-rb"
-  spec.version = Y::Rb::VERSION
+  spec.version = Y::VERSION
   spec.authors = ["Hannes Moser"]
   spec.email = ["box@hannesmoser.at"]
 
