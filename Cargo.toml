@@ -2,7 +2,7 @@
 name = "y-rb"
 version = "0.1.0"
 authors = ["Hannes Moser <box@hannesmoser.at>"]
-edition = "2018"
+edition = "2021"
 homepage = "https://github.com/y-crdt/yrb"
 repository = "https://github.com/y-crdt/yrb"
 

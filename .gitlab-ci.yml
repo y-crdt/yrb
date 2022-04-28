@@ -1,7 +1,6 @@
 image: ruby:3.0.3
 
 before_script:
-  - apt-get update -qq && apt-get install -y -qq cargo
   - gem install bundler -v 2.2.32
   - ./bin/setup
 
@@ -14,15 +13,16 @@ cache:
   paths:
     - vendor/ruby
 
-build:
-  stage: build
-  script:
-    cargo build --release
-
 rubocop:
   stage: lint
   script:
     - rubocop
+
+build:
+  stage: build
+  image: rust:latest
+  script:
+    cargo build --release
 
 rspec:
   stage: test
