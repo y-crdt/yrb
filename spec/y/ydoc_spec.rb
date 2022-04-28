@@ -1,35 +1,23 @@
 # frozen_string_literal: true
 
-RSpec.describe Y::YDoc do
-  it "creates document" do
-    doc = Y::YDoc.new
+RSpec.describe Y::Doc do
+  it "sync changes of a local document to a remote doc" do
+    local_doc = Y::Doc.new
+    local_transaction = local_doc.transact
+    local_text = local_transaction.get_text("name")
+    local_text.push(local_transaction, "hello ")
 
-    expect(doc).to_not be_nil
-  end
+    remote_doc = Y::Doc.new
+    remote_transaction = remote_doc.transact
+    remote_text = remote_transaction.get_text("name")
 
-  it "adds a text type to document" do
-    doc = Y::YDoc.new
-    text = doc.get_text("my text")
+    state_vector_remote = remote_doc.state_vector
+    update_remote = local_doc.encode_diff_v1(state_vector_remote)
 
-    expect(text).to_not be_nil
-  end
+    remote_transaction.apply_update(update_remote)
 
-  it "syncs local document with diff from remote" do
-    d1 = Y::YDoc.new
-    t1 = d1.transact
-    text = d1.get_text("name")
-    text.push(t1, "hello ")
+    puts remote_text.to_s
 
-    d2 = Y::YDoc.new
-    t2 = d2.transact
-    remote = d2.get_text("name")
-    remote.push(t2, "world!")
-
-    state_vector = d2.state_vector(t2, remote.length)
-    update = d1.encode_delta(t1, state_vector)
-
-    d2.apply(t2, update)
-
-    puts t2.to_s
+    expect(remote_text.to_s).to eq(local_text.to_s)
   end
 end

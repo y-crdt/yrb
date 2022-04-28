@@ -1,5 +1,5 @@
 use yrs::{Text};
-use rutie::{NilClass, Object, RString, VM};
+use rutie::{NilClass, Fixnum, Object, RString, VM};
 use crate::ytransaction::{YTransaction, TRANSACTION_WRAPPER};
 
 wrappable_struct!(Text, TextWrapper, TEXT_WRAPPER);
@@ -23,6 +23,29 @@ methods!(
 
     let text = rtself.get_data_mut(&*TEXT_WRAPPER);
     text.push(t, &value_str);
+
+    NilClass::new()
+  }
+
+  fn ytext_insert(transaction: YTransaction, index: Fixnum, chunk: RString) -> NilClass {
+    let mut txn = transaction
+      .map_err(|e| VM::raise_ex(e) )
+      .unwrap();
+
+    let i = index
+      .map_err(|e| VM::raise_ex(e) )
+      .unwrap();
+
+    let c = chunk
+      .map_err(|e| VM::raise_ex(e) )
+      .unwrap()
+      .to_string();
+
+    let tx = txn.get_data_mut(&*TRANSACTION_WRAPPER);
+
+    let text: &Text = rtself.get_data_mut(&*TEXT_WRAPPER);
+
+    text.insert(tx, i.to_u32(), &c);
 
     NilClass::new()
   }
