@@ -1,9 +1,30 @@
 image: ruby:3.0.3
 
 before_script:
+  - apt-get update -qq && apt-get install -y -qq cargo
   - gem install bundler -v 2.2.32
-  - bundle install
+  - ./bin/setup
 
-example_job:
+stages:
+  - lint
+  - build
+  - test
+
+cache:
+  paths:
+    - vendor/ruby
+
+build:
+  stage: build
   script:
-    - bundle exec rake
+    cargo build --release
+
+rubocop:
+  stage: lint
+  script:
+    - rubocop
+
+rspec:
+  stage: test
+  script:
+    - rake spec

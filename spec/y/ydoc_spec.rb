@@ -16,8 +16,6 @@ RSpec.describe Y::Doc do
 
     remote_transaction.apply_update(update_remote)
 
-    puts remote_text.to_s
-
     expect(remote_text.to_s).to eq(local_text.to_s)
   end
 end
