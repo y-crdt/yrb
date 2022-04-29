@@ -71,8 +71,6 @@ run `bundle exec rake release`, which will create a git tag for the version,
 push git commits and the created tag, and push the `.gem` file to
 [rubygems.org](https://rubygems.org).
 
-You can run tests with `bundle exec rspec`.
-
 ## License
 
 The gem is available as open source under the terms of the
