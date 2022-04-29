@@ -16,6 +16,8 @@ pub extern "C" fn Init_yrb() {
     Module::new("Y").define(|module| {
         module.define_nested_class("Text", None).define(|klass| {
             klass.def("insert", ytext::ytext_insert);
+            klass.def("insert_embed", ytext::ytext_insert_embed);
+            klass.def("insert_embed_with_attrs", ytext::ytext_insert_embed_with_attributes);
             klass.def("insert_with_attrs", ytext::ytext_insert_with_attributes);
             klass.def("length", ytext::ytext_length);
             klass.def("push", ytext::ytext_push);

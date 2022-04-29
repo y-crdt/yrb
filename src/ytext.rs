@@ -1,9 +1,9 @@
 use crate::ytransaction::{YTransaction, TRANSACTION_WRAPPER};
-use rutie::{Fixnum, Hash, NilClass, Object, RString, VM};
+use rutie::{AnyObject, Fixnum, Hash, NilClass, Object, RString, VM};
 use std::rc::Rc;
 use yrs::types::Attrs;
 use yrs::{Text};
-use crate::util::map_hash_to_rust;
+use crate::util::{map_hash_to_rust, map_ruby_type_to_rust};
 
 wrappable_struct!(Text, TextWrapper, TEXT_WRAPPER);
 class!(YText);
@@ -26,6 +26,51 @@ methods!(
 
         NilClass::new()
     },
+    fn ytext_insert_embed(
+        transaction: YTransaction,
+        index: Fixnum,
+        content: AnyObject) -> NilClass {
+        let mut txn = transaction.map_err(|e| VM::raise_ex(e)).unwrap();
+        let i = index.map_err(|e| VM::raise_ex(e)).unwrap();
+
+        let c = content.map_err(|e| VM::raise_ex(e)).unwrap();
+        let v = map_ruby_type_to_rust(c).map_err(|e| VM::raise_ex(e)).unwrap();
+
+        let tx = txn.get_data_mut(&*TRANSACTION_WRAPPER);
+
+        let text: &Text = rtself.get_data_mut(&*TEXT_WRAPPER);
+
+        text.insert_embed(tx, i.to_u32(), v);
+
+        NilClass::new()
+    }
+    fn ytext_insert_embed_with_attributes(
+        transaction: YTransaction,
+        index: Fixnum,
+        embed: AnyObject,
+        attrs: Hash) -> NilClass {
+        let mut txn = transaction.map_err(|e| VM::raise_ex(e)).unwrap();
+        let i = index.map_err(|e| VM::raise_ex(e)).unwrap();
+
+        let c = embed.map_err(|e| VM::raise_ex(e)).unwrap();
+        let v = map_ruby_type_to_rust(c).map_err(|e| VM::raise_ex(e)).unwrap();
+
+        let a = attrs.map_err(|e| VM::raise_ex(e)).unwrap();
+
+        let map = map_hash_to_rust(a);
+        let mut mapped_attrs = Attrs::with_capacity(map.len());
+        for (k, v) in map {
+            mapped_attrs.insert(Rc::from(k), v);
+        }
+
+        let tx = txn.get_data_mut(&*TRANSACTION_WRAPPER);
+
+        let text: &Text = rtself.get_data_mut(&*TEXT_WRAPPER);
+
+        text.insert_embed_with_attributes(tx, i.to_u32(), v, mapped_attrs);
+
+        NilClass::new()
+    }
     fn ytext_insert_with_attributes(
         transaction: YTransaction,
         index: Fixnum,

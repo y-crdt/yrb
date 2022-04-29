@@ -24,7 +24,7 @@ RSpec.describe Y::Text do
   end
 
   context "when manipulating text" do
-    it "pushes text to the end" do
+    it "pushes to the end" do
       doc = Y::Doc.new
       transaction = doc.transact
       text = transaction.get_text("name")
@@ -34,7 +34,7 @@ RSpec.describe Y::Text do
       expect(text.to_s).to eq("helloworld")
     end
 
-    it "inserts text at position" do
+    it "insert at position" do
       doc = Y::Doc.new
       transaction = doc.transact
       text = transaction.get_text("name")
@@ -44,7 +44,30 @@ RSpec.describe Y::Text do
       expect(text.to_s).to eq("abcd")
     end
 
-    it "inserts text with attributes" do
+    it "insert embed" do
+      doc = Y::Doc.new
+      transaction = doc.transact
+      text = transaction.get_text("name")
+
+      content = 123
+      text.insert_embed(transaction, 2, content)
+
+      expect(text.to_s).to eq("")
+    end
+
+    it "insert embed with attributes" do
+      doc = Y::Doc.new
+      transaction = doc.transact
+      text = transaction.get_text("name")
+
+      content = 123
+      attrs = { format: "bold" }
+      text.insert_embed_with_attrs(transaction, 2, content, attrs)
+
+      expect(text.to_s).to eq("")
+    end
+
+    it "insert with attributes" do
       doc = Y::Doc.new
       transaction = doc.transact
       text = transaction.get_text("name")
