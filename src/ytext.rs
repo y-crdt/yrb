@@ -52,6 +52,11 @@ methods!(
 
         NilClass::new()
     },
+    fn ytext_length() -> Fixnum {
+        let text = rtself.get_data(&*TEXT_WRAPPER);
+
+        Fixnum::new(i64::from(text.len()))
+    }
     fn ytext_push(transaction: YTransaction, value: RString) -> NilClass {
         let value_str = value.map_err(|e| VM::raise_ex(e)).unwrap().to_string();
 

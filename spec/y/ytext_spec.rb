@@ -12,6 +12,17 @@ RSpec.describe Y::Text do
     end
   end
 
+  context "when introspecting text" do
+    it "returns length of text" do
+      doc = Y::Doc.new
+      transaction = doc.transact
+      text = transaction.get_text("name")
+      text.push(transaction, "hello")
+
+      expect(text.length).to eq("hello".length)
+    end
+  end
+
   context "when manipulating text" do
     it "pushes text to the end" do
       doc = Y::Doc.new
