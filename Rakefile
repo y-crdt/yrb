@@ -11,20 +11,20 @@ RuboCop::RakeTask.new
 
 task default: %i[spec rubocop]
 
-desc "Compile the ruffle crate"
+desc "Compile the y-rb crate"
 task :compile do
   cargo_builder_gem = [
     "ruby",
-    "-I#{ENV["RUBYGEMS_PATH"]}/lib",
-    "#{ENV["RUBYGEMS_PATH"]}/bin/gem"
+    "-I#{ENV.fetch("RUBYGEMS_PATH", nil)}/lib",
+    "#{ENV.fetch("RUBYGEMS_PATH", nil)}/bin/gem"
   ]
-  gemspec = File.expand_path("ruffle.gemspec")
-  output = File.expand_path("ruffle.gem")
+  gemspec = File.expand_path("y-rb.gemspec")
+  output = File.expand_path("y-rb.gem")
 
-  `gem list -i "^ruffle$"`
+  `gem list -i "^y-rb$"`
   gem_installed = Process.last_status.success?
 
-  system(*cargo_builder_gem, "uninstall", "ruffle") if gem_installed
+  system(*cargo_builder_gem, "uninstall", "y-rb") if gem_installed
   system(*cargo_builder_gem, "build", gemspec, "–output", output)
   system(*cargo_builder_gem, "install", output)
 end

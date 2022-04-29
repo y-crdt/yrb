@@ -27,24 +27,64 @@ Or install it yourself as:
 ## Usage
 
 ```ruby
-local_doc = Y::Doc.new
-local_transaction = local_doc.transact
-local_text = local_transaction.get_text("name")
-local_text.push(local_transaction, "hello ")
+# creates a new document and text structure
+local_doc = Y::Doc.newlocal_transaction = local_doc.transact  
+local_text = local_transaction.get_text("my text")  
+# add some data to the text structure
+local_text.push(local_transaction, "hello ")  
+  
+# create a remote doccument sharing the same text structure
+remote_doc = Y::Doc.newremote_transaction = remote_doc.transact  
+remote_text = remote_transaction.get_text("my text")  
 
-remote_doc = Y::Doc.new
-remote_transaction = remote_doc.transact
-remote_text = remote_transaction.get_text("name")
+# retrieve the current state of the remote document
+state_vector_remote = remote_doc.state_vector  
 
-state_vector_remote = remote_doc.state_vector
-update_remote = local_doc.encode_diff_v1(state_vector_remote)
+# create an update for the remote document based on the current
+# state of the remote document
+update_remote = local_doc.encode_diff_v1(state_vector_remote)  
+  
+# apply update to remote document
+remote_transaction.apply_update(update_remote)  
 
-remote_transaction.apply_update(update_remote)
+puts remote_text.to_s == local_text.to_s # true  
+```  
 
-puts remote_text.to_s == local_text.to_s # true
+## API
+
+### `Y::Doc`
+
+#### `new`
+
+Creates a new document.
+
+```ruby
+doc = YDoc::new
 ```
 
+#### `transact`
+
+Creates a new transaction for the document.
+
+```ruby
+doc = YDoc::new
+transaction = doc.transact
+```
+
+### `Y::Transaction`
+
+Every operation on a document structure must be wrapped into a transaction.
+When calculating diffs, the transaction is applied as a whole, instead of
+applying the individual operations.
+
 ## Development
+
+Make sure you have `cargo` available (2021 edition). The gem needs the lib to
+be built every time when there is a change.
+
+```bash
+cargo build --release
+```
 
 After checking out the repo, run `bin/setup` to install dependencies. Then,
 run `rake spec` to run the tests. You can also run `bin/console` for an

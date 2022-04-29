@@ -1,4 +1,5 @@
 AllCops:
+  NewCops: enable
   TargetRubyVersion: 2.6
 
 Style/Documentation:
@@ -13,4 +14,6 @@ Style/StringLiteralsInInterpolation:
   EnforcedStyle: double_quotes
 
 Layout/LineLength:
-  Max: 120
+  Max: 80
+  Exclude:
+    - y-rb.gemspec

@@ -17,6 +17,7 @@ pub extern "C" fn Init_yrb() {
         module.define_nested_class("Text", None).define(|klass| {
             klass.def("push", ytext::ytext_push);
             klass.def("insert", ytext::ytext_insert);
+            klass.def("insert_with_attrs", ytext::ytext_insert_with_attributes);
             klass.def("to_s", ytext::ytext_to_string);
         });
 
@@ -31,7 +32,6 @@ pub extern "C" fn Init_yrb() {
         module.define_nested_class("Doc", None).define(|klass| {
             klass.def_self("new", ydoc::ydoc_new);
             klass.def("transact", ydoc::ydoc_transact);
-            klass.def("begin_transaction", ydoc::ydoc_begin_transaction);
             klass.def("state_vector", ydoc::ydoc_state_vector);
             klass.def("encode_diff_v1", ydoc::ydoc_encode_diff_v1);
         });

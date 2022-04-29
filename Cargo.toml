@@ -10,6 +10,7 @@ repository = "https://github.com/y-crdt/yrb"
 lazy_static = "1.4.0"
 rutie = "0.8.4"
 yrs = "0.7.0"
+lib0 = "0.7.0"
 
 [lib]
 name = "y_rb"

@@ -1,6 +1,6 @@
 use crate::util::{convert_array_to_vecu8, convert_vecu8_to_array};
 use crate::ytransaction::TRANSACTION_WRAPPER;
-use rutie::{AnyObject, Array, Module, NilClass, Object, VM};
+use rutie::{AnyObject, Array, Module, Object};
 use yrs::updates::decoder::Decode;
 use yrs::updates::encoder::Encode;
 use yrs::{Doc, StateVector, Transaction};
@@ -24,18 +24,6 @@ methods!(
         Module::from_existing("Y")
             .get_nested_class("Transaction")
             .wrap_data(transaction, &*TRANSACTION_WRAPPER)
-    },
-    fn ydoc_begin_transaction() -> NilClass {
-        let doc = rtself.get_data(&*DOC_WRAPPER);
-        let mut transaction: Transaction = doc.transact();
-
-        let object: AnyObject = Module::from_existing("Y")
-            .get_nested_class("Transaction")
-            .wrap_data(transaction, &*TRANSACTION_WRAPPER);
-
-        VM::yield_object(object);
-
-        NilClass::new()
     },
     fn ydoc_state_vector() -> Array {
         let doc = rtself.get_data(&*DOC_WRAPPER);

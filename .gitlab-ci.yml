@@ -23,6 +23,9 @@ build:
   image: rust:latest
   script:
     cargo build --release
+  artifacts:
+    paths:
+      - target/release
 
 rspec:
   stage: test
