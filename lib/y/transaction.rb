@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Y
+  # rubocop:disable Lint/EmptyClass
   class Transaction
     # @!method get_array(name)
     #   Returns or creates an array by name
@@ -14,4 +15,5 @@ module Y
     #   @param [String] name Name of the text structure to retrieve or create
     #   @return [Y::Text] Text structure
   end
+  # rubocop:enable Lint/EmptyClass
 end

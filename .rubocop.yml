@@ -2,6 +2,10 @@ AllCops:
   NewCops: enable
   TargetRubyVersion: 2.6
 
+Metrics/BlockLength:
+  Exclude:
+    - spec/y/*_spec.rb
+
 Style/Documentation:
   Enabled: false
 

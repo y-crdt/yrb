@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Y
+  # rubocop:disable Lint/EmptyClass
   class Array
     # @!method length
     #   Returns length of array
@@ -34,4 +35,5 @@ module Y
     #
     #   @return [Array]
   end
+  # rubocop:enable Lint/EmptyClass
 end
