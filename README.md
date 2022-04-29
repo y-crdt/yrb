@@ -28,13 +28,15 @@ Or install it yourself as:
 
 ```ruby
 # creates a new document and text structure
-local_doc = Y::Doc.newlocal_transaction = local_doc.transact  
+local_doc = Y::Doc.new
+local_transaction = local_doc.transact  
 local_text = local_transaction.get_text("my text")  
 # add some data to the text structure
-local_text.push(local_transaction, "hello ")  
+local_text.push(local_transaction, "hello")  
   
 # create a remote doccument sharing the same text structure
-remote_doc = Y::Doc.newremote_transaction = remote_doc.transact  
+remote_doc = Y::Doc.new
+remote_transaction = remote_doc.transact  
 remote_text = remote_transaction.get_text("my text")  
 
 # retrieve the current state of the remote document
@@ -49,33 +51,6 @@ remote_transaction.apply_update(update_remote)
 
 puts remote_text.to_s == local_text.to_s # true  
 ```  
-
-## API
-
-### `Y::Doc`
-
-#### `new`
-
-Creates a new document.
-
-```ruby
-doc = YDoc::new
-```
-
-#### `transact`
-
-Creates a new transaction for the document.
-
-```ruby
-doc = YDoc::new
-transaction = doc.transact
-```
-
-### `Y::Transaction`
-
-Every operation on a document structure must be wrapped into a transaction.
-When calculating diffs, the transaction is applied as a whole, instead of
-applying the individual operations.
 
 ## Development
 
@@ -95,6 +70,8 @@ To release a new version, update the version number in `version.rb`, and then
 run `bundle exec rake release`, which will create a git tag for the version,
 push git commits and the created tag, and push the `.gem` file to
 [rubygems.org](https://rubygems.org).
+
+You can run tests with `bundle exec rspec`.
 
 ## License
 

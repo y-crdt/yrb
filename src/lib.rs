@@ -2,6 +2,7 @@ mod util;
 mod ydoc;
 mod ytext;
 mod ytransaction;
+mod yarray;
 
 #[macro_use]
 extern crate rutie;
@@ -14,6 +15,14 @@ module!(Y);
 #[no_mangle]
 pub extern "C" fn Init_yrb() {
     Module::new("Y").define(|module| {
+        module.define_nested_class("Array", None).define(|klass| {
+            klass.def("length", yarray::yarray_length);
+            klass.def("insert", yarray::yarray_insert);
+            klass.def("remove", yarray::yarray_remove);
+            klass.def("remove_range", yarray::yarray_remove_range);
+            klass.def("to_arr", yarray::yarray_to_arr);
+        });
+
         module.define_nested_class("Text", None).define(|klass| {
             klass.def("insert", ytext::ytext_insert);
             klass.def("insert_embed", ytext::ytext_insert_embed);
@@ -28,6 +37,7 @@ pub extern "C" fn Init_yrb() {
             .define_nested_class("Transaction", None)
             .define(|klass| {
                 klass.def("commit", ytransaction::ytransaction_commit);
+                klass.def("get_array", ytransaction::ytransaction_get_array);
                 klass.def("get_text", ytransaction::ytransaction_get_text);
                 klass.def("apply_update", ytransaction::ytransaction_apply_update);
             });

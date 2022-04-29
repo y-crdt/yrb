@@ -1,5 +1,6 @@
 use crate::util::convert_array_to_vecu8;
 use crate::ytext::TEXT_WRAPPER;
+use crate::yarray::ARRAY_WRAPPER;
 use rutie::{AnyObject, Array, Module, NilClass, Object, RString, VerifiedObject, VM};
 use yrs::updates::decoder::Decode;
 use yrs::{Transaction, Update};
@@ -20,6 +21,16 @@ impl VerifiedObject for YTransaction {
 methods!(
     YTransaction,
     rtself,
+    fn ytransaction_get_array(name: RString) -> AnyObject {
+        let name_str = name.map_err(|e| VM::raise_ex(e)).unwrap().to_string();
+
+        let transaction = rtself.get_data_mut(&*TRANSACTION_WRAPPER);
+        let arr = transaction.get_array(&name_str);
+
+        Module::from_existing("Y")
+            .get_nested_class("Array")
+            .wrap_data(arr, &*ARRAY_WRAPPER)
+    },
     fn ytransaction_get_text(name: RString) -> AnyObject {
         let name_str = name.map_err(|e| VM::raise_ex(e)).unwrap().to_string();
 
