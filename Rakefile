@@ -13,18 +13,14 @@ task default: %i[spec rubocop]
 
 desc "Compile the y-rb crate"
 task :compile do
-  cargo_builder_gem = [
-    "ruby",
-    "-I#{ENV.fetch("RUBYGEMS_PATH", nil)}/lib",
-    "#{ENV.fetch("RUBYGEMS_PATH", nil)}/bin/gem"
-  ]
-  gemspec = File.expand_path("y-rb.gemspec")
-  output = File.expand_path("y-rb.gem")
+  # MacOS: ARM + x64
+  `cargo build --release --target=aarch64-apple-darwin`
+  `cargo build --release --target=x86_64-apple-darwin`
 
-  `gem list -i "^y-rb$"`
-  gem_installed = Process.last_status.success?
+  # Copy to target folder
+  `cp target/aarch64-apple-darwin/release/liby_rb.dylib target/release/`
+end
 
-  system(*cargo_builder_gem, "uninstall", "y-rb") if gem_installed
-  system(*cargo_builder_gem, "build", gemspec, "–output", output)
-  system(*cargo_builder_gem, "install", output)
+task :clean do
+  `cargo clean`
 end
