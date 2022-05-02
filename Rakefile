@@ -24,3 +24,5 @@ end
 task :clean do
   `cargo clean`
 end
+
+task test: :spec

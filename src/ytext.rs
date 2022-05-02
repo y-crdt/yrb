@@ -1,8 +1,6 @@
-use crate::util::{map_hash_to_rust, map_ruby_type_to_rust};
+use crate::util::{map_hash_to_attrs, map_ruby_type_to_rust};
 use crate::ytransaction::{YTransaction, TRANSACTION_WRAPPER};
 use rutie::{AnyObject, Fixnum, Hash, NilClass, Object, RString, VM};
-use std::rc::Rc;
-use yrs::types::Attrs;
 use yrs::Text;
 
 wrappable_struct!(Text, TextWrapper, TEXT_WRAPPER);
@@ -20,7 +18,6 @@ methods!(
         let c = chunk.map_err(|e| VM::raise_ex(e)).unwrap().to_string();
 
         let tx = txn.get_data_mut(&*TRANSACTION_WRAPPER);
-
         let text: &Text = rtself.get_data_mut(&*TEXT_WRAPPER);
 
         text.insert(tx, i.to_u32(), &c);
@@ -38,7 +35,6 @@ methods!(
         let v = map_ruby_type_to_rust(c).map_err(|e| VM::raise_ex(e)).unwrap();
 
         let tx = txn.get_data_mut(&*TRANSACTION_WRAPPER);
-
         let text: &Text = rtself.get_data_mut(&*TEXT_WRAPPER);
 
         text.insert_embed(tx, i.to_u32(), v);
@@ -57,15 +53,9 @@ methods!(
         let v = map_ruby_type_to_rust(c).map_err(|e| VM::raise_ex(e)).unwrap();
 
         let a = attrs.map_err(|e| VM::raise_ex(e)).unwrap();
-
-        let map = map_hash_to_rust(a);
-        let mut mapped_attrs = Attrs::with_capacity(map.len());
-        for (k, v) in map {
-            mapped_attrs.insert(Rc::from(k), v);
-        }
+        let mapped_attrs = map_hash_to_attrs(a);
 
         let tx = txn.get_data_mut(&*TRANSACTION_WRAPPER);
-
         let text: &Text = rtself.get_data_mut(&*TEXT_WRAPPER);
 
         text.insert_embed_with_attributes(tx, i.to_u32(), v, mapped_attrs);
@@ -83,17 +73,11 @@ methods!(
         let c = chunk.map_err(|e| VM::raise_ex(e)).unwrap().to_string();
 
         let a = attrs.map_err(|e| VM::raise_ex(e)).unwrap();
-
-        let map = map_hash_to_rust(a);
-        let mut mapped_attrs = Attrs::with_capacity(map.len());
-        for (k, v) in map {
-            mapped_attrs.insert(Rc::from(k), v);
-        }
+        let mapped_attrs = map_hash_to_attrs(a);
 
         let tx = txn.get_data_mut(&*TRANSACTION_WRAPPER);
-
         let text: &Text = rtself.get_data_mut(&*TEXT_WRAPPER);
-
+        
         text.insert_with_attributes(tx, i.to_u32(), &c, mapped_attrs);
 
         NilClass::new()
@@ -109,8 +93,8 @@ methods!(
         let mut txn = transaction.map_err(|e| VM::raise_ex(e)).unwrap();
 
         let t = txn.get_data_mut(&*TRANSACTION_WRAPPER);
-
         let text = rtself.get_data_mut(&*TEXT_WRAPPER);
+        
         text.push(t, &value_str);
 
         NilClass::new()
@@ -133,12 +117,7 @@ methods!(
         let l = length.map_err(|e| VM::raise_ex(e)).unwrap();
 
         let a = attrs.map_err(|e| VM::raise_ex(e)).unwrap();
-
-        let map = map_hash_to_rust(a);
-        let mut mapped_attrs = Attrs::with_capacity(map.len());
-        for (k, v) in map {
-            mapped_attrs.insert(Rc::from(k), v);
-        }
+        let mapped_attrs = map_hash_to_attrs(a);
 
         let tx = txn.get_data_mut(&*TRANSACTION_WRAPPER);
         let text = rtself.get_data_mut(&*TEXT_WRAPPER);

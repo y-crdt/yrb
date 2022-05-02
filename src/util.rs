@@ -7,7 +7,8 @@ use rutie::{
 use std::borrow::Borrow;
 use std::collections::HashMap;
 use std::convert::TryFrom;
-use yrs::types::Value;
+use std::rc::Rc;
+use yrs::types::{Attrs, Value};
 
 pub(crate) fn convert_vecu8_to_array(vec: Vec<u8>) -> Array {
     let mut array = Array::new();
@@ -113,4 +114,13 @@ pub(crate) fn map_hash_to_rust(input: Hash) -> HashMap<String, Any> {
         }
     });
     m
+}
+
+pub(crate) fn map_hash_to_attrs(input: Hash) -> Attrs {
+    let attributes = map_hash_to_rust(input);
+    let mut attrs = Attrs::with_capacity(attributes.len());
+    for (k, v) in attributes {
+        attrs.insert(Rc::from(k), v);
+    }
+    attrs
 }
