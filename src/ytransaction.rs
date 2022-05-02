@@ -1,7 +1,9 @@
 use crate::util::convert_array_to_vecu8;
-use crate::ytext::TEXT_WRAPPER;
 use crate::yarray::ARRAY_WRAPPER;
-use rutie::{AnyObject, Array, Module, NilClass, Object, RString, VerifiedObject, VM};
+use crate::ytext::TEXT_WRAPPER;
+use rutie::{
+    AnyObject, Array, Module, NilClass, Object, RString, VerifiedObject, VM,
+};
 use yrs::updates::decoder::Decode;
 use yrs::{Transaction, Update};
 
@@ -10,7 +12,8 @@ class!(YTransaction);
 
 impl VerifiedObject for YTransaction {
     fn is_correct_type<T: Object>(object: &T) -> bool {
-        object.class() == Module::from_existing("Y").get_nested_class("Transaction")
+        object.class()
+            == Module::from_existing("Y").get_nested_class("Transaction")
     }
 
     fn error_message() -> &'static str {

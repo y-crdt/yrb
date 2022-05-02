@@ -1,10 +1,13 @@
+use crate::ytext::TEXT_WRAPPER;
+use lib0::any::Any;
+use rutie::{
+    AnyException, AnyObject, Array, Boolean, Exception, Fixnum, Float, Hash,
+    Integer, Module, NilClass, Object, RString, Symbol,
+};
 use std::borrow::Borrow;
 use std::collections::HashMap;
-use rutie::{AnyException, AnyObject, Array, Boolean, Exception, Fixnum, Float, Hash, Integer, Module, NilClass, Object, RString, Symbol};
 use std::convert::TryFrom;
-use lib0::any::Any;
 use yrs::types::Value;
-use crate::ytext::TEXT_WRAPPER;
 
 pub(crate) fn convert_vecu8_to_array(vec: Vec<u8>) -> Array {
     let mut array = Array::new();
@@ -34,47 +37,40 @@ pub(crate) fn map_any_type_to_ruby(input: &Any) -> AnyObject {
         // TODO convert buffer into an array of Fixnum
         Any::Buffer(_b) => Array::new().to_any_object(),
         Any::Array(a) => {
-            let values = a
-                .iter()
-                .map(|n| map_any_type_to_ruby(n));
+            let values = a.iter().map(|n| map_any_type_to_ruby(n));
             Array::from_iter(values).to_any_object()
         }
         Any::Map(m) => {
-            let mut h= Hash::new();
-            m
-                .iter()
-                .for_each(|(k, v)| {
-                    let key = Symbol::new(k.as_ref());
-                    let val = map_any_type_to_ruby(v);
-                    h.store(key, val);
-                    ()
-                });
+            let mut h = Hash::new();
+            m.iter().for_each(|(k, v)| {
+                let key = Symbol::new(k.as_ref());
+                let val = map_any_type_to_ruby(v);
+                h.store(key, val);
+                ()
+            });
             h.to_any_object()
         }
     }
 }
 
 // This function gets reported as unused.
-#[allow(dead_code)]
 pub(crate) fn map_yrs_value_to_ruby(value: Value) -> AnyObject {
     match value {
         Value::Any(v) => map_any_type_to_ruby(v.borrow()),
         Value::YArray(a) => {
-            let values = a
-                .iter()
-                .map(|n| map_yrs_value_to_ruby(n));
+            let values = a.iter().map(|n| map_yrs_value_to_ruby(n));
             Array::from_iter(values).to_any_object()
-        },
-        Value::YText(t) => {
-            Module::from_existing("Y")
-                .get_nested_class("Text")
-                .wrap_data(t, &*TEXT_WRAPPER)
         }
-        _ => panic!("not supported yet")
+        Value::YText(t) => Module::from_existing("Y")
+            .get_nested_class("Text")
+            .wrap_data(t, &*TEXT_WRAPPER),
+        _ => panic!("not supported yet"),
     }
 }
 
-pub(crate) fn map_ruby_type_to_rust(input: AnyObject) -> Result<Any, AnyException> {
+pub(crate) fn map_ruby_type_to_rust(
+    input: AnyObject,
+) -> Result<Any, AnyException> {
     if let Ok(_v) = input.try_convert_to::<NilClass>() {
         return Ok(Any::Null);
     } else if let Ok(v) = input.try_convert_to::<Boolean>() {
@@ -105,7 +101,6 @@ pub(crate) fn map_ruby_type_to_rust(input: AnyObject) -> Result<Any, AnyExceptio
 }
 
 // This function gets reported as unused.
-#[allow(dead_code)]
 pub(crate) fn map_hash_to_rust(input: Hash) -> HashMap<String, Any> {
     let mut m = HashMap::with_capacity(input.length());
     input.each(|key, value| {
@@ -119,4 +114,3 @@ pub(crate) fn map_hash_to_rust(input: Hash) -> HashMap<String, Any> {
     });
     m
 }
-

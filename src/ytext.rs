@@ -1,13 +1,14 @@
+use crate::util::{map_hash_to_rust, map_ruby_type_to_rust};
 use crate::ytransaction::{YTransaction, TRANSACTION_WRAPPER};
 use rutie::{AnyObject, Fixnum, Hash, NilClass, Object, RString, VM};
 use std::rc::Rc;
 use yrs::types::Attrs;
-use yrs::{Text};
-use crate::util::{map_hash_to_rust, map_ruby_type_to_rust};
+use yrs::Text;
 
 wrappable_struct!(Text, TextWrapper, TEXT_WRAPPER);
 class!(YText);
 
+#[rustfmt::skip]
 methods!(
     YText,
     rtself,
