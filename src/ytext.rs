@@ -111,7 +111,7 @@ methods!(
 
         NilClass::new()
     },
-    fn format(transaction: YTransaction, index: Fixnum, length: Fixnum, attrs: Hash) -> NilClass {
+    fn ytext_format(transaction: YTransaction, index: Fixnum, length: Fixnum, attrs: Hash) -> NilClass {
         let mut txn = transaction.map_err(|e| VM::raise_ex(e)).unwrap();
         let i = index.map_err(|e| VM::raise_ex(e)).unwrap();
         let l = length.map_err(|e| VM::raise_ex(e)).unwrap();
