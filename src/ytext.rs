@@ -114,6 +114,38 @@ methods!(
 
         NilClass::new()
     },
+    fn ytext_remove_range(transaction: YTransaction, index: Fixnum, length: Fixnum) -> NilClass {
+        let mut txn = transaction.map_err(|e| VM::raise_ex(e)).unwrap();
+        let i = index.map_err(|e| VM::raise_ex(e)).unwrap();
+        let l = length.map_err(|e| VM::raise_ex(e)).unwrap();
+
+        let tx = txn.get_data_mut(&*TRANSACTION_WRAPPER);
+        let text = rtself.get_data_mut(&*TEXT_WRAPPER);
+
+        text.remove_range(tx, i.to_u32(), l.to_u32());
+
+        NilClass::new()
+    },
+    fn format(transaction: YTransaction, index: Fixnum, length: Fixnum, attrs: Hash) -> NilClass {
+        let mut txn = transaction.map_err(|e| VM::raise_ex(e)).unwrap();
+        let i = index.map_err(|e| VM::raise_ex(e)).unwrap();
+        let l = length.map_err(|e| VM::raise_ex(e)).unwrap();
+
+        let a = attrs.map_err(|e| VM::raise_ex(e)).unwrap();
+
+        let map = map_hash_to_rust(a);
+        let mut mapped_attrs = Attrs::with_capacity(map.len());
+        for (k, v) in map {
+            mapped_attrs.insert(Rc::from(k), v);
+        }
+
+        let tx = txn.get_data_mut(&*TRANSACTION_WRAPPER);
+        let text = rtself.get_data_mut(&*TEXT_WRAPPER);
+
+       text.format(tx, i.to_u32(), l.to_u32(), mapped_attrs);
+
+        NilClass::new()
+    }
     fn ytext_to_string() -> RString {
         let text = rtself.get_data(&*TEXT_WRAPPER);
 

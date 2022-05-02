@@ -23,7 +23,7 @@ RSpec.describe Y::Text do
     end
   end
 
-  context "when manipulating text" do
+  context "when updating text" do
     it "pushes to the end" do
       doc = Y::Doc.new
       transaction = doc.transact
@@ -76,6 +76,31 @@ RSpec.describe Y::Text do
       text.insert_with_attrs(transaction, 2, "hello", attrs)
 
       expect(text.to_s).to eq("hello")
+    end
+
+    it "formats with attributes" do
+      doc = Y::Doc.new
+      transaction = doc.transact
+      text = transaction.get_text("name")
+      text.push(transaction, "hello")
+
+      attrs = { format: "bold" }
+      text.format(transaction, 2, 2, attrs)
+
+      expect(text.to_s).to eq("hello")
+    end
+  end
+
+  context "when removing text" do
+    it "removes range starting at position" do
+      doc = Y::Doc.new
+      transaction = doc.transact
+      text = transaction.get_text("name")
+      text.push(transaction, "hello")
+      text.push(transaction, "world")
+      text.remove_range(transaction, 5, 4)
+
+      expect(text.to_s).to eq("hellod")
     end
   end
 end

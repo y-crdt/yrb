@@ -28,6 +28,8 @@ pub extern "C" fn Init_yrb() {
             klass.def("insert_embed", ytext::ytext_insert_embed);
             klass.def("insert_embed_with_attrs", ytext::ytext_insert_embed_with_attributes);
             klass.def("insert_with_attrs", ytext::ytext_insert_with_attributes);
+            klass.def("remove_range", ytext::ytext_remove_range);
+            klass.def("format", ytext::format);
             klass.def("length", ytext::ytext_length);
             klass.def("push", ytext::ytext_push);
             klass.def("to_s", ytext::ytext_to_string);
