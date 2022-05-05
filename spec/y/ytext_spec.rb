@@ -103,4 +103,32 @@ RSpec.describe Y::Text do
       expect(text.to_s).to eq("hellod")
     end
   end
+
+  context "when introspecting changes" do
+    it "returns changes" do
+      local_doc = Y::Doc.new
+      local_txn1 = local_doc.transact
+      local_text = local_txn1.get_text("name")
+
+      remote_doc = Y::Doc.new
+
+      remote_txn1 = remote_doc.transact
+      remote_text = remote_txn1.get_text("name")
+      remote_text.insert_with_attrs(remote_txn1, 0, "Hello", { format: "bold" })
+
+      local_state_vector = local_doc.state_vector
+      update = remote_doc.encode_diff_v1(local_state_vector)
+      pp local_text.changes(local_txn1, update)
+
+      remote_txn2 = remote_doc.transact
+      remote_text = remote_txn2.get_text("name")
+      remote_text.insert(remote_txn2, 5, ", World!", {})
+
+      local_txn2 = local_doc.transact
+      local_state_vector = local_doc.state_vector
+      update = remote_doc.encode_diff_v1(local_state_vector)
+
+      pp local_text.changes(local_txn2, update)
+    end
+  end
 end

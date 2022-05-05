@@ -35,6 +35,7 @@ pub extern "C" fn Init_yrb() {
             klass.def("format", ytext::ytext_format);
             klass.def("length", ytext::ytext_length);
             klass.def("push", ytext::ytext_push);
+            klass.def("changes", ytext::ytext_changes);
             klass.def("to_s", ytext::ytext_to_string);
         });
 

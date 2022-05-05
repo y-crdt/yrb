@@ -124,3 +124,15 @@ pub(crate) fn map_hash_to_attrs(input: Hash) -> Attrs {
     }
     attrs
 }
+
+pub(crate) fn map_attrs_to_hash(attrs: Attrs) -> Hash {
+    let mut h = Hash::new();
+
+    for (key, val) in attrs {
+        let key = Symbol::new(key.as_ref());
+        let value = map_any_type_to_ruby(val.borrow());
+        h.store(key, value);
+    }
+
+    h
+}

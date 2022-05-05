@@ -1,7 +1,16 @@
-use crate::util::{map_hash_to_attrs, map_ruby_type_to_rust};
+use crate::util::{
+    convert_array_to_vecu8, map_attrs_to_hash, map_hash_to_attrs,
+    map_ruby_type_to_rust, map_yrs_value_to_ruby,
+};
 use crate::ytransaction::{YTransaction, TRANSACTION_WRAPPER};
-use rutie::{AnyObject, Fixnum, Hash, NilClass, Object, RString, VM};
-use yrs::Text;
+use rutie::{
+    AnyObject, Array, Fixnum, Hash, NilClass, Object, RString, Symbol, VM,
+};
+use std::cell::RefCell;
+use std::rc::Rc;
+use yrs::types::Delta;
+use yrs::updates::decoder::Decode;
+use yrs::{Text, Update};
 
 wrappable_struct!(Text, TextWrapper, TEXT_WRAPPER);
 class!(YText);
@@ -77,7 +86,7 @@ methods!(
 
         let tx = txn.get_data_mut(&*TRANSACTION_WRAPPER);
         let text: &Text = rtself.get_data_mut(&*TEXT_WRAPPER);
-        
+
         text.insert_with_attributes(tx, i.to_u32(), &c, mapped_attrs);
 
         NilClass::new()
@@ -94,7 +103,7 @@ methods!(
 
         let t = txn.get_data_mut(&*TRANSACTION_WRAPPER);
         let text = rtself.get_data_mut(&*TEXT_WRAPPER);
-        
+
         text.push(t, &value_str);
 
         NilClass::new()
@@ -120,12 +129,73 @@ methods!(
         let mapped_attrs = map_hash_to_attrs(a);
 
         let tx = txn.get_data_mut(&*TRANSACTION_WRAPPER);
-        let text = rtself.get_data_mut(&*TEXT_WRAPPER);
+        let text: &Text = rtself.get_data_mut(&*TEXT_WRAPPER);
 
-       text.format(tx, i.to_u32(), l.to_u32(), mapped_attrs);
+        text.format(tx, i.to_u32(), l.to_u32(), mapped_attrs);
 
         NilClass::new()
-    }
+    },
+    fn ytext_changes(transaction: YTransaction, update: Array) -> Array {
+        let mut txn = transaction.map_err(|e| VM::raise_ex(e)).unwrap();
+        let tx = txn.get_data_mut(&*TRANSACTION_WRAPPER);
+
+        let raw_update = convert_array_to_vecu8(update.map_err(|e| VM::raise_ex(e)).unwrap());
+        let decoded_update = Update::decode_v1(raw_update.as_slice());
+
+        let mut text = rtself.get_data_mut(&*TEXT_WRAPPER);
+
+        let changes: Rc<RefCell<Vec<Delta>>> = Rc::new(RefCell::new(Vec::with_capacity(1)));
+        let changes_to_borrow = changes.clone();
+
+        let _sub = text.observe(move |txn, text_event| {
+            let mut delta = text_event.delta(txn).to_vec();
+            (*changes_to_borrow).borrow_mut().append(&mut delta);
+        });
+
+        tx.apply_update(decoded_update);
+        tx.commit();
+
+        let mut arr = Array::with_capacity((*changes).borrow().len());
+
+        for change in (*changes).to_owned().into_inner() {
+            match change {
+                Delta::Inserted(v, attrs) => {
+                    let a = attrs.unwrap_or_default();
+                    let attrs = map_attrs_to_hash(*a);
+
+                    let mut payload = Hash::new();
+                    payload.store(Symbol::new("value"), map_yrs_value_to_ruby(v));
+                    payload.store(Symbol::new("attrs"), attrs);
+
+                    let mut h = Hash::new();
+                    h.store(Symbol::new("insert"), payload);
+
+                    arr.push(h);
+                },
+                Delta::Retain(position, attrs) => {
+                    let a = attrs.unwrap_or_default();
+                    let attrs = map_attrs_to_hash(*a);
+
+                    let mut payload = Hash::new();
+                    payload.store(Symbol::new("position"), Fixnum::new(i64::from(position)));
+                    payload.store(Symbol::new("attrs"), attrs);
+
+                    let mut h = Hash::new();
+                    h.store(Symbol::new("retain"), payload);
+
+                    arr.push(h);
+                },
+                Delta::Deleted(position) => {
+                    let mut h = Hash::new();
+                    h.store(Symbol::new("deleted"), Fixnum::new(i64::from(position)));
+
+                    arr.push(h);
+                }
+            }
+        }
+
+        arr
+    },
     fn ytext_to_string() -> RString {
         let text = rtself.get_data(&*TEXT_WRAPPER);
 

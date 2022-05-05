@@ -1,5 +1,3 @@
-#![allow(unused_variables)]
-
 use crate::util::{convert_array_to_vecu8, convert_vecu8_to_array};
 use crate::ytransaction::TRANSACTION_WRAPPER;
 use rutie::{AnyObject, Array, Module, Object};
