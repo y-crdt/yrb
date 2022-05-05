@@ -2,6 +2,7 @@ use crate::util::convert_array_to_vecu8;
 use crate::yarray::ARRAY_WRAPPER;
 use crate::ymap::MAP_WRAPPER;
 use crate::ytext::TEXT_WRAPPER;
+use crate::yxml::{XML_ELEMENT_WRAPPER, XML_TEXT_WRAPPER};
 use rutie::{
     AnyObject, Array, Module, NilClass, Object, RString, VerifiedObject, VM,
 };
@@ -25,6 +26,20 @@ impl VerifiedObject for YTransaction {
 methods!(
     YTransaction,
     rtself,
+    fn ytransaction_apply_update(update: Array) -> NilClass {
+        let u = convert_array_to_vecu8(update.unwrap());
+
+        let transaction = rtself.get_data_mut(&*TRANSACTION_WRAPPER);
+        transaction.apply_update(Update::decode_v1(u.as_slice()));
+
+        NilClass::new()
+    },
+    fn ytransaction_commit() -> NilClass {
+        let transaction = rtself.get_data_mut(&*TRANSACTION_WRAPPER);
+        transaction.commit();
+
+        NilClass::new()
+    },
     fn ytransaction_get_array(name: RString) -> AnyObject {
         let name_str = name.map_err(|e| VM::raise_ex(e)).unwrap().to_string();
 
@@ -55,18 +70,24 @@ methods!(
             .get_nested_class("Text")
             .wrap_data(text, &*TEXT_WRAPPER)
     },
-    fn ytransaction_commit() -> NilClass {
-        let transaction = rtself.get_data_mut(&*TRANSACTION_WRAPPER);
-        transaction.commit();
+    fn ytransaction_get_xml_element(name: RString) -> AnyObject {
+        let name_str = name.map_err(|e| VM::raise_ex(e)).unwrap().to_string();
 
-        NilClass::new()
+        let transaction = rtself.get_data_mut(&*TRANSACTION_WRAPPER);
+        let xml_element = transaction.get_xml_element(&name_str);
+
+        Module::from_existing("Y")
+            .get_nested_class("XMLElement")
+            .wrap_data(xml_element, &*XML_ELEMENT_WRAPPER)
     },
-    fn ytransaction_apply_update(update: Array) -> NilClass {
-        let u = convert_array_to_vecu8(update.unwrap());
+    fn ytransaction_get_xml_text(name: RString) -> AnyObject {
+        let name_str = name.map_err(|e| VM::raise_ex(e)).unwrap().to_string();
 
         let transaction = rtself.get_data_mut(&*TRANSACTION_WRAPPER);
-        transaction.apply_update(Update::decode_v1(u.as_slice()));
+        let xml_text = transaction.get_xml_text(&name_str);
 
-        NilClass::new()
+        Module::from_existing("Y")
+            .get_nested_class("XMLText")
+            .wrap_data(xml_text, &*XML_TEXT_WRAPPER)
     }
 );

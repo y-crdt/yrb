@@ -7,6 +7,7 @@ require_relative "map"
 require_relative "text"
 require_relative "transaction"
 require_relative "version"
+require_relative "xml"
 
 module Y
   Rutie.new(:y_rb).init(

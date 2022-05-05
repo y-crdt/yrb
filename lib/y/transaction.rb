@@ -20,6 +20,13 @@ module Y
     #
     #   @param [String] name Name of the text structure to retrieve or create
     #   @return [Y::Text] Text structure
+
+    # @!method get_xml_element(name)
+    #   Returns or creates a XML structure by name
+    #
+    #   @param [String] name Name of the XML element structure to retrieve or
+    #     create
+    #   @return [Y::XMLElement] XMLElement structure
   end
   # rubocop:enable Lint/EmptyClass
 end
