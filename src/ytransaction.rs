@@ -1,5 +1,6 @@
 use crate::util::convert_array_to_vecu8;
 use crate::yarray::ARRAY_WRAPPER;
+use crate::ymap::MAP_WRAPPER;
 use crate::ytext::TEXT_WRAPPER;
 use rutie::{
     AnyObject, Array, Module, NilClass, Object, RString, VerifiedObject, VM,
@@ -33,6 +34,16 @@ methods!(
         Module::from_existing("Y")
             .get_nested_class("Array")
             .wrap_data(arr, &*ARRAY_WRAPPER)
+    },
+    fn ytransaction_get_map(name: RString) -> AnyObject {
+        let name_str = name.map_err(|e| VM::raise_ex(e)).unwrap().to_string();
+
+        let transaction = rtself.get_data_mut(&*TRANSACTION_WRAPPER);
+        let map = transaction.get_map(&name_str);
+
+        Module::from_existing("Y")
+            .get_nested_class("Map")
+            .wrap_data(map, &*MAP_WRAPPER)
     },
     fn ytransaction_get_text(name: RString) -> AnyObject {
         let name_str = name.map_err(|e| VM::raise_ex(e)).unwrap().to_string();

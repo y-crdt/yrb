@@ -3,6 +3,7 @@
 require "rutie"
 require_relative "array"
 require_relative "doc"
+require_relative "map"
 require_relative "text"
 require_relative "transaction"
 require_relative "version"

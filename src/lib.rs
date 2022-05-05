@@ -1,6 +1,7 @@
 mod util;
 mod yarray;
 mod ydoc;
+mod ymap;
 mod ytext;
 mod ytransaction;
 
@@ -21,6 +22,16 @@ pub extern "C" fn Init_yrb() {
             klass.def("remove", yarray::yarray_remove);
             klass.def("remove_range", yarray::yarray_remove_range);
             klass.def("to_arr", yarray::yarray_to_arr);
+        });
+
+        module.define_nested_class("Map", None).define(|klass| {
+            klass.def("insert", ymap::ymap_insert);
+            klass.def("clear", ymap::ymap_clear);
+            klass.def("contains", ymap::ymap_contains);
+            klass.def("get", ymap::ymap_get);
+            klass.def("remove", ymap::ymap_remove);
+            klass.def("size", ymap::ymap_size);
+            klass.def("to_h", ymap::ymap_to_hash);
         });
 
         module.define_nested_class("Text", None).define(|klass| {
@@ -44,6 +55,7 @@ pub extern "C" fn Init_yrb() {
             .define(|klass| {
                 klass.def("commit", ytransaction::ytransaction_commit);
                 klass.def("get_array", ytransaction::ytransaction_get_array);
+                klass.def("get_map", ytransaction::ytransaction_get_map);
                 klass.def("get_text", ytransaction::ytransaction_get_text);
                 klass.def(
                     "apply_update",

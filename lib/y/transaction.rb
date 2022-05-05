@@ -9,6 +9,12 @@ module Y
     #   @param [String] name Name of the array structure to retrieve or create
     #   @return [Y::Array] Array structure
 
+    # @!method get_map(name)
+    #   Returns or creates a map structure by name
+    #
+    #   @param [String] name Name of the map structure to retrieve or create
+    #   @return [Y::Map] Map structure
+
     # @!method get_text(name)
     #   Returns or creates a text structure by name
     #
