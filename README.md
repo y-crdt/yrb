@@ -71,6 +71,12 @@ run `bundle exec rake release`, which will create a git tag for the version,
 push git commits and the created tag, and push the `.gem` file to
 [rubygems.org](https://rubygems.org).
 
+## Decision log
+
+For this `gem`, we maintain a [decision log](./decisions.md). Please consult it
+in case there is some ambiguity in terms of why certain implementation details
+look as they are. 
+
 ## License
 
 The gem is available as open source under the terms of the

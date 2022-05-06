@@ -1,6 +1,39 @@
 # frozen_string_literal: true
 
 RSpec.describe Y::Map do
+  context "when using public API" do
+    it "create map with name" do
+      skip "this is just to test the public API"
+      doc = Y::Doc.new
+      map = doc.get_map("my map")
+
+      map[:hello] = "world"
+      expect(map[:hello]).to eq("world")
+
+      map.each do |key, val|
+        expect(key).to eq("hello")
+        expect(val).to eq("world")
+      end
+
+      map.delete(:hello)
+      expect(map.size).to eq(0)
+
+      map.delete(:hello) { |key| expect(key).to eq(:hello) }
+
+      map[:hello] = "world"
+      m = map.clear
+      expect(m).to eq(map)
+      expect(m.size).to eq(0)
+
+      d2 = Y::Doc.new
+      diff = doc.diff(d2.state)
+      d2.sync(diff)
+
+      m = d2.get_map("my map")
+      pp m.to_h
+    end
+  end
+
   context "when creating map type" do
     it "create map with name" do
       doc = Y::Doc.new
@@ -50,11 +83,10 @@ RSpec.describe Y::Map do
   context "when manipulating entries" do
     it "clears map" do
       doc = Y::Doc.new
-      transaction = doc.transact
-      map = transaction.get_map("name")
+      map = doc.get_map("name")
 
-      map.insert(transaction, :hello, "world")
-      map.clear(transaction)
+      map[:hello] = "world"
+      map.clear
 
       expect(map.size).to eq(0)
     end

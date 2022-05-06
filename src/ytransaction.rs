@@ -1,4 +1,4 @@
-use crate::util::convert_array_to_vecu8;
+use crate::util::{convert_array_to_vecu8, convert_vecu8_to_array};
 use crate::yarray::ARRAY_WRAPPER;
 use crate::ymap::MAP_WRAPPER;
 use crate::ytext::TEXT_WRAPPER;
@@ -7,6 +7,7 @@ use rutie::{
     AnyObject, Array, Module, NilClass, Object, RString, VerifiedObject, VM,
 };
 use yrs::updates::decoder::Decode;
+use yrs::updates::encoder::Encode;
 use yrs::{Transaction, Update};
 
 wrappable_struct!(Transaction, TransactionWrapper, TRANSACTION_WRAPPER);
@@ -89,5 +90,12 @@ methods!(
         Module::from_existing("Y")
             .get_nested_class("XMLText")
             .wrap_data(xml_text, &*XML_TEXT_WRAPPER)
+    },
+    fn ytransaction_state_vector() -> Array {
+        let transaction = rtself.get_data_mut(&*TRANSACTION_WRAPPER);
+        let sv = transaction.state_vector();
+        let payload = sv.encode_v1();
+
+        convert_vecu8_to_array(payload)
     }
 );

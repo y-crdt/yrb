@@ -34,8 +34,9 @@ pub extern "C" fn Init_yrb() {
 
         module.define_nested_class("Map", None).define(|klass| {
             klass.def("insert", ymap::ymap_insert);
-            klass.def("clear", ymap::ymap_clear);
+            klass.def_private("ymap_clear", ymap::ymap_clear);
             klass.def("contains", ymap::ymap_contains);
+            klass.def_private("ymap_each", ymap::ymap_each);
             klass.def("get", ymap::ymap_get);
             klass.def("remove", ymap::ymap_remove);
             klass.def("size", ymap::ymap_size);
@@ -76,6 +77,10 @@ pub extern "C" fn Init_yrb() {
                 klass.def(
                     "get_xml_text",
                     ytransaction::ytransaction_get_xml_text,
+                );
+                klass.def(
+                    "state_vector",
+                    ytransaction::ytransaction_state_vector,
                 );
             });
 
