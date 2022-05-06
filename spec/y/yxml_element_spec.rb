@@ -33,8 +33,9 @@ RSpec.describe Y::XMLElement do
       transaction = doc.transact
       xml_element = transaction.get_xml_element("my xml")
       new_text = xml_element.push_text_back(transaction, "text")
+      new_text.insert(transaction, 0, "Hello")
 
-      pp new_text
+      expect(xml_element.to_s).to eq("<UNDEFINED>Hello</UNDEFINED>")
     end
 
     it "adds XMLText at the front" do
@@ -42,8 +43,9 @@ RSpec.describe Y::XMLElement do
       transaction = doc.transact
       xml_element = transaction.get_xml_element("my xml")
       new_text = xml_element.push_text_front(transaction, "text")
+      new_text.insert(transaction, 0, "Hello")
 
-      pp new_text
+      expect(xml_element.to_s).to eq("<UNDEFINED>Hello</UNDEFINED>")
     end
 
     it "creates nested XMLElement" do
@@ -60,8 +62,9 @@ RSpec.describe Y::XMLElement do
       transaction = doc.transact
       xml_element = transaction.get_xml_element("my xml")
       new_text = xml_element.insert_text(transaction, 0, "mytext")
+      new_text.insert(transaction, 0, "Hello")
 
-      pp new_text
+      expect(xml_element.to_s).to eq("<UNDEFINED>Hello</UNDEFINED>")
     end
   end
 
@@ -119,6 +122,46 @@ RSpec.describe Y::XMLElement do
 
       expect(expected.tag).to eq(actual.tag)
     end
+
+    it "returns parent" do
+      doc = Y::Doc.new
+      transaction = doc.transact
+      xml_element = transaction.get_xml_element("my xml")
+      first_level = xml_element.insert_element(transaction, 0, "A")
+      second_level = first_level.insert_element(transaction, 0, "B")
+
+      expect(second_level.parent.tag).to eq(first_level.tag)
+    end
+
+    it "returns first child" do
+      doc = Y::Doc.new
+      transaction = doc.transact
+      xml_element = transaction.get_xml_element("my xml")
+      first_child = xml_element.insert_element(transaction, 0, "A")
+      xml_element.insert_element(transaction, 1, "B")
+
+      expect(xml_element.first_child.tag).to eq(first_child.tag)
+    end
+
+    it "returns next sibling" do
+      doc = Y::Doc.new
+      transaction = doc.transact
+      xml_element = transaction.get_xml_element("my xml")
+      first_child = xml_element.insert_element(transaction, 0, "A")
+      second_child = xml_element.insert_element(transaction, 1, "B")
+
+      expect(first_child.next_sibling.tag).to eq(second_child.tag)
+    end
+
+    it "returns previous sibling" do
+      doc = Y::Doc.new
+      transaction = doc.transact
+      xml_element = transaction.get_xml_element("my xml")
+      first_child = xml_element.insert_element(transaction, 0, "A")
+      second_child = xml_element.insert_element(transaction, 1, "B")
+
+      expect(second_child.prev_sibling.tag).to eq(first_child.tag)
+    end
   end
 
   context "when introspecting XMLElement type" do
@@ -128,6 +171,15 @@ RSpec.describe Y::XMLElement do
       xml_element = transaction.get_xml_element("my xml")
 
       expect(xml_element.tag).to eq("UNDEFINED")
+    end
+
+    it "returns string representation of current element" do
+      doc = Y::Doc.new
+      transaction = doc.transact
+      xml_element = transaction.get_xml_element("my xml")
+      xml_element.insert_element(transaction, 0, "A")
+
+      expect(xml_element.to_s).to eq("<UNDEFINED><A></A></UNDEFINED>")
     end
   end
 end

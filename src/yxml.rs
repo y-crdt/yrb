@@ -1,5 +1,8 @@
+use crate::util::{map_hash_to_attrs, map_ruby_type_to_rust};
 use crate::ytransaction::{YTransaction, TRANSACTION_WRAPPER};
-use rutie::{AnyObject, Array, Fixnum, Module, NilClass, Object, RString, VM};
+use rutie::{
+    AnyObject, Array, Fixnum, Hash, Module, NilClass, Object, RString, VM,
+};
 use yrs::types::xml::Attributes;
 use yrs::{Xml, XmlElement, XmlText};
 
@@ -25,6 +28,22 @@ methods!(
         }
 
         arr
+    },
+    fn yxml_element_first_child() -> AnyObject {
+       let index = 0;
+
+        let xml_element = rtself.get_data(&*XML_ELEMENT_WRAPPER);
+        let node = xml_element.get(index);
+
+        match node {
+            Some(Xml::Element(v)) => Module::from_existing("Y")
+                .get_nested_class("XMLElement")
+                .wrap_data(v, &*XML_ELEMENT_WRAPPER),
+            Some(Xml::Text(v)) => Module::from_existing("Y")
+                .get_nested_class("XMLText")
+                .wrap_data(v, &*XML_TEXT_WRAPPER),
+            None => NilClass::new().to_any_object()
+        }
     },
     fn yxml_element_get(index: Fixnum) -> AnyObject {
         let i = index.map_err(|e| VM::raise_ex(e)).unwrap();
@@ -94,7 +113,46 @@ methods!(
         Module::from_existing("Y")
             .get_nested_class("XMLText")
             .wrap_data(new_text, &*XML_TEXT_WRAPPER)
-    }
+    },
+    fn yxml_element_next_sibling() -> AnyObject {
+        let xml_element = rtself.get_data(&*XML_ELEMENT_WRAPPER);
+        let node = xml_element.next_sibling();
+
+        match node {
+            Some(Xml::Element(v)) => Module::from_existing("Y")
+                .get_nested_class("XMLElement")
+                .wrap_data(v, &*XML_ELEMENT_WRAPPER),
+            Some(Xml::Text(v)) => Module::from_existing("Y")
+                .get_nested_class("XMLText")
+                .wrap_data(v, &*XML_TEXT_WRAPPER),
+            None => NilClass::new().to_any_object()
+        }
+    },
+    fn yxml_element_parent() -> AnyObject {
+        let xml_element = rtself.get_data(&*XML_ELEMENT_WRAPPER);
+        let node = xml_element.parent();
+
+        match node {
+            Some(v) => Module::from_existing("Y")
+                .get_nested_class("XMLElement")
+                .wrap_data(v, &*XML_ELEMENT_WRAPPER),
+            None => NilClass::new().to_any_object()
+        }
+    },
+    fn yxml_element_prev_sibling() -> AnyObject {
+        let xml_element = rtself.get_data(&*XML_ELEMENT_WRAPPER);
+        let node = xml_element.prev_sibling();
+
+        match node {
+            Some(Xml::Element(v)) => Module::from_existing("Y")
+                .get_nested_class("XMLElement")
+                .wrap_data(v, &*XML_ELEMENT_WRAPPER),
+            Some(Xml::Text(v)) => Module::from_existing("Y")
+                .get_nested_class("XMLText")
+                .wrap_data(v, &*XML_TEXT_WRAPPER),
+            None => NilClass::new().to_any_object()
+        }
+    },
     fn yxml_element_push_elem_back(transaction: YTransaction, name: RString) -> AnyObject {
         let mut t = transaction.map_err(|e| VM::raise_ex(e)).unwrap();
         let n = name.map_err(|e| VM::raise_ex(e)).unwrap();
@@ -178,6 +236,11 @@ methods!(
         let xml_element = rtself.get_data(&*XML_ELEMENT_WRAPPER);
 
         RString::new_utf8(xml_element.tag())
+    },
+    fn yxml_element_to_string() -> RString {
+        let xml_element = rtself.get_data(&*XML_ELEMENT_WRAPPER);
+
+        RString::new_utf8(&xml_element.to_string())
     }
 );
 
@@ -188,5 +251,193 @@ class!(YXmlText);
 methods!(
     YXmlText,
     rtself,
+    fn yxml_text_attributes() -> Array {
+        let xml_element = rtself.get_data(&*XML_TEXT_WRAPPER);
 
+        let mut arr = Array::new();
+
+        let attrs: Attributes = xml_element.attributes();
+        for (key, val) in attrs {
+            let mut pair = Array::with_capacity(2);
+            pair.push(RString::new_utf8(key));
+            pair.push(RString::new_utf8(&val));
+
+            arr.push(pair);
+        }
+
+        arr
+    },
+    fn yxml_text_format(transaction: YTransaction, index: Fixnum, length: Fixnum, attrs: Hash) -> NilClass {
+        let mut t = transaction.map_err(|e| VM::raise_ex(e)).unwrap();
+        let tx = t.get_data_mut(&*TRANSACTION_WRAPPER);
+
+        let i = index.map_err(|e| VM::raise_ex(e)).unwrap();
+        let l = length.map_err(|e| VM::raise_ex(e)).unwrap();
+        let a = attrs.map_err(|e| VM::raise_ex(e)).unwrap();
+        let mapped_attrs = map_hash_to_attrs(a);
+
+        let xml_text = rtself.get_data(&*XML_TEXT_WRAPPER);
+        xml_text.format(tx, i.to_u32(), l.to_u32(), mapped_attrs);
+
+        NilClass::new()
+    },
+    fn yxml_text_get_attribute(name: RString) -> AnyObject {
+        let n = name.map_err(|e| VM::raise_ex(e)).unwrap();
+
+        let xml_text = rtself.get_data(&*XML_TEXT_WRAPPER);
+        let attr = xml_text.get_attribute(&n.to_string());
+
+        match attr {
+            Some(v) => RString::new_utf8(&v).to_any_object(),
+            None => NilClass::new().to_any_object()
+        }
+    },
+    fn yxml_text_insert(transaction: YTransaction, index: Fixnum, content: RString) -> NilClass {
+        let mut t = transaction.map_err(|e| VM::raise_ex(e)).unwrap();
+        let tx = t.get_data_mut(&*TRANSACTION_WRAPPER);
+
+        let i = index.map_err(|e| VM::raise_ex(e)).unwrap();
+        let c = content.map_err(|e| VM::raise_ex(e)).unwrap();
+
+        let xml_text = rtself.get_data(&*XML_TEXT_WRAPPER);
+        xml_text.insert(tx, i.to_u32(),&c.to_string());
+
+        NilClass::new()
+    },
+    fn yxml_text_insert_attribute(transaction: YTransaction, name: RString, value: RString) -> NilClass {
+        let mut t = transaction.map_err(|e| VM::raise_ex(e)).unwrap();
+        let tx = t.get_data_mut(&*TRANSACTION_WRAPPER);
+
+        let n = name.map_err(|e| VM::raise_ex(e)).unwrap();
+        let v = value.map_err(|e| VM::raise_ex(e)).unwrap();
+
+        let xml_text = rtself.get_data(&*XML_TEXT_WRAPPER);
+        xml_text.insert_attribute(tx, n.to_string(), v.to_string());
+
+        NilClass::new()
+    },
+    fn yxml_text_insert_embed(transaction: YTransaction, index: Fixnum, content: AnyObject) -> NilClass {
+        let mut t = transaction.map_err(|e| VM::raise_ex(e)).unwrap();
+        let tx = t.get_data_mut(&*TRANSACTION_WRAPPER);
+
+        let i = index.map_err(|e| VM::raise_ex(e)).unwrap();
+        let c = content.map_err(|e| VM::raise_ex(e)).unwrap();
+        let mapped_content = map_ruby_type_to_rust(c).map_err(|e| VM::raise_ex(e)).unwrap();
+
+        let xml_text = rtself.get_data(&*XML_TEXT_WRAPPER);
+        xml_text.insert_embed(tx, i.to_u32(), mapped_content);
+
+        NilClass::new()
+    },
+    fn yxml_text_insert_embed_with_attributes(transaction: YTransaction, index: Fixnum, content: AnyObject, attrs: Hash) -> NilClass {
+        let mut t = transaction.map_err(|e| VM::raise_ex(e)).unwrap();
+        let tx = t.get_data_mut(&*TRANSACTION_WRAPPER);
+
+        let i = index.map_err(|e| VM::raise_ex(e)).unwrap();
+        let c = content.map_err(|e| VM::raise_ex(e)).unwrap();
+        let mapped_content = map_ruby_type_to_rust(c).map_err(|e| VM::raise_ex(e)).unwrap();
+        let a = attrs.map_err(|e| VM::raise_ex(e)).unwrap();
+        let mapped_attrs = map_hash_to_attrs(a);
+
+        let xml_text = rtself.get_data(&*XML_TEXT_WRAPPER);
+        xml_text.insert_embed_with_attributes(tx, i.to_u32(), mapped_content, mapped_attrs);
+
+        NilClass::new()
+    },
+    fn yxml_text_insert_with_attributes(transaction: YTransaction, index: Fixnum, content: RString, attrs: Hash) -> NilClass {
+        let mut t = transaction.map_err(|e| VM::raise_ex(e)).unwrap();
+        let tx = t.get_data_mut(&*TRANSACTION_WRAPPER);
+
+        let i = index.map_err(|e| VM::raise_ex(e)).unwrap();
+        let c = content.map_err(|e| VM::raise_ex(e)).unwrap();
+        let a = attrs.map_err(|e| VM::raise_ex(e)).unwrap();
+
+        let mapped_attrs = map_hash_to_attrs(a);
+
+        let xml_text = rtself.get_data(&*XML_TEXT_WRAPPER);
+        xml_text.insert_with_attributes(tx, i.to_u32(), &c.to_string(), mapped_attrs);
+
+        NilClass::new()
+    },
+    fn yxml_text_length() -> Fixnum {
+        let xml_text = rtself.get_data(&*XML_TEXT_WRAPPER);
+        Fixnum::new(i64::from(xml_text.len()))
+    },
+    fn yxml_text_next_sibling() -> AnyObject {
+        let xml_text = rtself.get_data(&*XML_TEXT_WRAPPER);
+        let xml = xml_text.next_sibling();
+
+        match xml {
+            Some(Xml::Element(v)) => Module::from_existing("Y")
+                .get_nested_class("XMLElement")
+                .wrap_data(v, &*XML_ELEMENT_WRAPPER),
+            Some(Xml::Text(v)) => Module::from_existing("Y")
+                .get_nested_class("XMLText")
+                .wrap_data(v, &*XML_TEXT_WRAPPER),
+            None => NilClass::new().to_any_object()
+        }
+    },
+    fn yxml_text_parent() -> AnyObject {
+        let xml_text = rtself.get_data(&*XML_TEXT_WRAPPER);
+        let xml_element = xml_text.parent();
+
+        match xml_element {
+            Some(v) => Module::from_existing("Y")
+                .get_nested_class("XMLElement")
+                .wrap_data(v, &*XML_ELEMENT_WRAPPER),
+            None => NilClass::new().to_any_object()
+        }
+    },
+    fn yxml_text_prev_sibling() -> AnyObject {
+        let xml_text = rtself.get_data(&*XML_TEXT_WRAPPER);
+        let xml = xml_text.prev_sibling();
+
+        match xml {
+            Some(Xml::Element(v)) => Module::from_existing("Y")
+                .get_nested_class("XMLElement")
+                .wrap_data(v, &*XML_ELEMENT_WRAPPER),
+            Some(Xml::Text(v)) => Module::from_existing("Y")
+                .get_nested_class("XMLText")
+                .wrap_data(v, &*XML_TEXT_WRAPPER),
+            None => NilClass::new().to_any_object()
+        }
+    },
+    fn yxml_text_push(transaction: YTransaction, content: RString) -> NilClass {
+        let mut t = transaction.map_err(|e| VM::raise_ex(e)).unwrap();
+        let tx = t.get_data_mut(&*TRANSACTION_WRAPPER);
+
+        let c = content.map_err(|e| VM::raise_ex(e)).unwrap();
+
+        let xml_text = rtself.get_data(&*XML_TEXT_WRAPPER);
+        xml_text.push(tx, &c.to_string());
+
+        NilClass::new()
+    },
+    fn yxml_text_remove_attribute(transaction: YTransaction, name: RString) -> NilClass {
+        let mut t = transaction.map_err(|e| VM::raise_ex(e)).unwrap();
+        let tx = t.get_data_mut(&*TRANSACTION_WRAPPER);
+
+        let n = name.map_err(|e| VM::raise_ex(e)).unwrap();
+
+        let xml_text = rtself.get_data(&*XML_TEXT_WRAPPER);
+        xml_text.remove_attribute(tx, &n.to_string());
+
+        NilClass::new()
+    },
+    fn yxml_text_remove_range(transaction: YTransaction, index: Fixnum, length: Fixnum) -> NilClass {
+        let mut t = transaction.map_err(|e| VM::raise_ex(e)).unwrap();
+        let tx = t.get_data_mut(&*TRANSACTION_WRAPPER);
+
+        let i = index.map_err(|e| VM::raise_ex(e)).unwrap();
+        let l = length.map_err(|e| VM::raise_ex(e)).unwrap();
+
+        let xml_text = rtself.get_data(&*XML_TEXT_WRAPPER);
+        xml_text.remove_range(tx, i.to_u32(), l.to_u32());
+
+        NilClass::new()
+    },
+    fn yxml_text_to_string() -> RString {
+        let xml_text = rtself.get_data(&*XML_TEXT_WRAPPER);
+        RString::new_utf8(&xml_text.to_string())
+    }
 );

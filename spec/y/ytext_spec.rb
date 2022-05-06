@@ -106,6 +106,7 @@ RSpec.describe Y::Text do
 
   context "when introspecting changes" do
     it "returns changes" do
+      skip "this is kept around for demo purposes"
       local_doc = Y::Doc.new
       local_txn1 = local_doc.transact
       local_text = local_txn1.get_text("name")
