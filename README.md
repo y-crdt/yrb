@@ -73,6 +73,15 @@ run `bundle exec rake release`, which will create a git tag for the version,
 push git commits and the created tag, and push the `.gem` file to
 [rubygems.org](https://rubygems.org).
 
+## Docs
+
+You can run `yard` locally and check the docs with:
+
+```bash
+yard server 
+open "http://0.0.0.0:8808/"
+```
+
 ## Decision log
 
 For this `gem`, we maintain a [decision log](./decisions.md). Please consult it
