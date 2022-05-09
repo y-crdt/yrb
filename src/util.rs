@@ -89,7 +89,7 @@ pub(crate) fn map_ruby_type_to_rust(
             .into_iter()
             .map(|value| map_ruby_type_to_rust(value).unwrap())
             .collect();
-        return Ok(Any::Array(Box::from(arr)));
+        return Ok(Any::Array(arr.into_boxed_slice()));
     } else if let Ok(v) = input.try_convert_to::<Hash>() {
         let m = map_hash_to_rust(v);
         return Ok(Any::Map(Box::from(m)));

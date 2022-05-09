@@ -18,11 +18,21 @@ module!(Y);
 pub extern "C" fn Init_yrb() {
     Module::new("Y").define(|module| {
         module.define_nested_class("Array", None).define(|klass| {
-            klass.def("length", yarray::yarray_length);
-            klass.def("insert", yarray::yarray_insert);
-            klass.def("remove", yarray::yarray_remove);
-            klass.def("remove_range", yarray::yarray_remove_range);
-            klass.def("to_arr", yarray::yarray_to_arr);
+            klass.def_private("yarray_get", yarray::yarray_get);
+            klass.def_private("yarray_insert", yarray::yarray_insert);
+            klass.def_private(
+                "yarray_insert_range",
+                yarray::yarray_insert_range,
+            );
+            klass.def_private("yarray_length", yarray::yarray_length);
+            klass.def_private("yarray_push_back", yarray::yarray_push_back);
+            klass.def_private("yarray_push_front", yarray::yarray_push_front);
+            klass.def_private("yarray_remove", yarray::yarray_remove);
+            klass.def_private(
+                "yarray_remove_range",
+                yarray::yarray_remove_range,
+            );
+            klass.def_private("yarray_to_a", yarray::yarray_to_a);
         });
 
         module.define_nested_class("Doc", None).define(|klass| {

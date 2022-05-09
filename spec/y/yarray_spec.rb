@@ -1,57 +1,185 @@
 # frozen_string_literal: true
 
 RSpec.describe Y::Array do
-  context "when creating array type" do
-    it "create array with name" do
-      doc = Y::Doc.new
-      transaction = doc.transact
-      arr = transaction.get_array("my array")
+  it "creates a new array" do
+    doc = Y::Doc.new
+    arr = doc.get_array("my array")
 
-      expect(arr.to_arr.size).to eq(0)
-    end
+    expect(arr).to be_empty
   end
 
-  context "when manipulating array" do
-    it "returns size=1 when insert a single item" do
-      doc = Y::Doc.new
-      transaction = doc.transact
-      arr = transaction.get_array("my array")
-      arr.insert(transaction, 0, 1)
+  it "adds element to the end" do
+    doc = Y::Doc.new
+    arr = doc.get_array("my array")
 
-      expect(arr.length).to eq(1)
-    end
+    arr << 1
 
-    it "removes single element" do
-      doc = Y::Doc.new
-      transaction = doc.transact
-      arr = transaction.get_array("my array")
-      arr.insert(transaction, 0, 1)
-      arr.insert(transaction, 1, 2)
-      arr.remove(transaction, 0)
+    expect(arr.to_a).to eq([1])
+  end
 
-      expect(arr.length).to eq(1)
-    end
+  it "adds element to the end with push alias" do
+    doc = Y::Doc.new
+    arr = doc.get_array("my array")
 
-    it "removes multiple elements" do
-      doc = Y::Doc.new
-      transaction = doc.transact
-      arr = transaction.get_array("my array")
-      arr.insert(transaction, 0, 1)
-      arr.insert(transaction, 1, 2)
-      arr.remove_range(transaction, 0, 2)
+    arr.push(1)
 
-      expect(arr.length).to eq(0)
-    end
+    expect(arr.to_a).to eq([1])
+  end
 
-    it "supports adding multiple types" do
-      doc = Y::Doc.new
-      transaction = doc.transact
-      arr = transaction.get_array("my array")
-      arr.insert(transaction, 0, 1)
-      arr.insert(transaction, 1, "hello")
-      arr.insert(transaction, 2, [1, 2, 3])
+  it "appends all elements from array" do
+    doc = Y::Doc.new
+    arr = doc.get_array("my array")
 
-      expect(arr.to_arr).to eq([1, "hello", [1, 2, 3]])
-    end
+    arr.concat([1, 2, 3])
+
+    expect(arr.to_a).to eq([1, 2, 3])
+  end
+
+  it "insert different types" do
+    doc = Y::Doc.new
+    arr = doc.get_array("my array")
+
+    arr << 42
+    arr << 1.2
+    arr << true
+    arr << false
+    arr << [1, 2, 3]
+    arr << { format: "bold" }
+
+    expect(arr.to_a).to eq([42, 1.2, true, false, [1, 2, 3],
+                            { format: "bold" }])
+  end
+
+  it "retrieves element at position" do
+    doc = Y::Doc.new
+    arr = doc.get_array("my array")
+
+    arr << 1
+
+    expect(arr[0]).to eq(1)
+  end
+
+  it "removes element at position" do
+    doc = Y::Doc.new
+    arr = doc.get_array("my array")
+
+    arr << 1
+    arr.slice!(0)
+
+    expect(arr.empty?).to be_truthy
+  end
+
+  it "removes multiple elements" do
+    doc = Y::Doc.new
+    arr = doc.get_array("my array")
+
+    arr << 1
+    arr << 2
+    arr.slice!(0..1)
+
+    expect(arr.empty?).to be_truthy
+  end
+
+  it "removes multiple elements" do
+    doc = Y::Doc.new
+    arr = doc.get_array("my array")
+
+    arr << 1
+    arr << 2
+    arr.slice!(0...1)
+
+    expect(arr.to_a).to eq([2])
+  end
+
+  it "removes number of elements from position" do
+    doc = Y::Doc.new
+    arr = doc.get_array("my array")
+
+    arr << 1
+    arr << 2
+    arr.slice!(0, 2)
+
+    expect(arr).to be_empty
+  end
+
+  it "returns first element" do
+    doc = Y::Doc.new
+    arr = doc.get_array("my array")
+
+    arr << 1
+    arr << 2
+    arr << 3
+
+    expect(arr.first).to eq(1)
+  end
+
+  it "returns last element" do
+    doc = Y::Doc.new
+    arr = doc.get_array("my array")
+
+    arr << 1
+    arr << 2
+    arr << 3
+
+    expect(arr.last).to eq(3)
+  end
+
+  it "adds element at the beginning" do
+    doc = Y::Doc.new
+    arr = doc.get_array("my array")
+
+    arr << 1
+    arr.unshift(2)
+
+    expect(arr.first).to eq(2)
+  end
+
+  it "uses prepend as an alias for unshift" do
+    doc = Y::Doc.new
+    arr = doc.get_array("my array")
+
+    arr << 1
+    arr.prepend(2)
+
+    expect(arr.first).to eq(2)
+  end
+
+  it "removes element from the end" do
+    doc = Y::Doc.new
+    arr = doc.get_array("my array")
+
+    arr << 1
+    arr.pop
+
+    expect(arr).to be_empty
+  end
+
+  it "removes multiple elements from the end" do
+    doc = Y::Doc.new
+    arr = doc.get_array("my array")
+
+    arr << 1
+    arr << 2
+    arr.pop(2)
+
+    expect(arr).to be_empty
+  end
+
+  it "returns size of array" do
+    doc = Y::Doc.new
+    arr = doc.get_array("my array")
+
+    arr << 1
+
+    expect(arr.size).to eq(1)
+  end
+
+  it "uses length as an alias of size" do
+    doc = Y::Doc.new
+    arr = doc.get_array("my array")
+
+    arr << 1
+
+    expect(arr.length).to eq(1)
   end
 end

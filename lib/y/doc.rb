@@ -32,9 +32,19 @@ module Y
       encode_diff_v1(state)
     end
 
-    def get_array(name)
+    # Gets or creates a new array by name
+    #
+    # If the optional values array is present, fills the array up with elements
+    # from the provided array. If the array already exists and isn't
+    # empty, elements are pushed to the end of the array.
+    #
+    # @param [String] name The name of the structure
+    # @param [::Array] values Optional initial values
+    # @return [Y::Array]
+    def get_array(name, values = nil)
       array = current_transaction.get_array(name)
       array.document = self
+      array.concat(values) unless values.nil?
       array
     end
 
