@@ -52,6 +52,8 @@ module Y
       length.zero?
     end
 
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+
     # Insert a value at position and with optional attributes. This method is
     # similar to [String#insert](https://ruby-doc.org/core-3.1.2/String.html),
     # except for the optional third `attrs` argument.
@@ -99,6 +101,8 @@ module Y
             "Can't insert value. `#{value.class.name}` isn't supported."
     end
 
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+
     # Applies formatting to text
     #
     # @example Add formatting to first word
@@ -124,6 +128,8 @@ module Y
     end
 
     alias size length
+
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
 
     # Removes a part from text
     #
@@ -205,6 +211,8 @@ module Y
 
       raise ArgumentError, "Please check your arguments, can't slice."
     end
+
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
 
     # Returns string representation of text
     #

@@ -40,19 +40,21 @@ module Y
       self
     end
 
+    # rubocop:disable Layout/LineLength
+
     # Deletes the entry for the given key and returns its associated value.
     #
-    # @example If a block is given and key is found, ignores the block, deletes the entry, and returns the associated value:
+    # @example Deletes the entry and return associated value
     #
     #   m = doc.get_map("my map")
     #   m[:bar] = 1
     #   m.delete(:bar) # => 1
     #   m # => {}
     #
-    # @example If a block is given and key is not found, calls the block and returns the block's return value:
+    # @example Unknown key is handled in block
     #
     #   m = doc.get_map("my map")
-    #   m.delete(:nosuch) { |key| "Key #{key} not found" } # => "Key nosuch not found"
+    #   m.delete(:nosuch) { |key| "Key #{key} not found" }# => "Key nosuch not found"
     #   m # => {}
     #
     # @param [String, Symbol] key
@@ -65,6 +67,8 @@ module Y
         value
       end
     end
+
+    # rubocop:enable Layout/LineLength
 
     # @return [void]
     def each(&block)
