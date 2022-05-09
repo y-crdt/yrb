@@ -18,6 +18,11 @@ module Y
   #   map[:hello] = "world"
   #   puts map[:hello]
   class Map
+    # @!attribute [r] document
+    #
+    # @return [Y::Doc] The document this map belongs to
+    attr_accessor :document
+
     # Create a new map instance
     #
     # @param [Y::Doc] doc
@@ -98,11 +103,6 @@ module Y
     # @return [Hash] Hash representation of Map
 
     private
-
-    # @!attribute [r] document
-    #
-    # @return [Y::Doc] The document this map belongs to
-    attr_accessor :document
 
     # @!method ymap_clear()
     #   Removes all key-value pairs from Map

@@ -123,7 +123,7 @@ RSpec.describe Y::Map do
     expect(expected).to eq(actual)
   end
 
-  context "syncing documents" do
+  context "when syncing documents" do
     it "updates remote map from local map" do
       local = Y::Doc.new
 

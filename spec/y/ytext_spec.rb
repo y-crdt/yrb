@@ -1,135 +1,151 @@
 # frozen_string_literal: true
 
 RSpec.describe Y::Text do
-  context "when creating text type" do
-    it "create text with name" do
-      doc = Y::Doc.new
-      transaction = doc.transact
-      text = transaction.get_text("name")
-      text.push(transaction, "name")
+  it "appends string to text" do
+    doc = Y::Doc.new
+    text = doc.get_text("my text")
+    text << "Hello, World!"
 
-      expect(text.to_s).to eq("name")
-    end
+    expect(text.to_s).to eq("Hello, World!")
   end
 
-  context "when introspecting text" do
-    it "returns length of text" do
-      doc = Y::Doc.new
-      transaction = doc.transact
-      text = transaction.get_text("name")
-      text.push(transaction, "hello")
+  it "formats text" do
+    doc = Y::Doc.new
+    text = doc.get_text("my text")
+    text << "Hello, World!"
 
-      expect(text.length).to eq("hello".length)
-    end
+    attrs = { format: "bold" }
+    text.format(0, 5, attrs)
+
+    expect(text.to_s).to eq("Hello, World!")
   end
 
-  context "when updating text" do
-    it "pushes to the end" do
-      doc = Y::Doc.new
-      transaction = doc.transact
-      text = transaction.get_text("name")
-      text.push(transaction, "hello")
-      text.push(transaction, "world")
+  it "inserts string at position" do
+    doc = Y::Doc.new
+    text = doc.get_text("my text")
+    text.insert(0, "Hello, World!")
 
-      expect(text.to_s).to eq("helloworld")
-    end
-
-    it "insert at position" do
-      doc = Y::Doc.new
-      transaction = doc.transact
-      text = transaction.get_text("name")
-      text.push(transaction, "abd")
-      text.insert(transaction, 2, "c")
-
-      expect(text.to_s).to eq("abcd")
-    end
-
-    it "insert embed" do
-      doc = Y::Doc.new
-      transaction = doc.transact
-      text = transaction.get_text("name")
-
-      content = 123
-      text.insert_embed(transaction, 2, content)
-
-      expect(text.to_s).to eq("")
-    end
-
-    it "insert embed with attributes" do
-      doc = Y::Doc.new
-      transaction = doc.transact
-      text = transaction.get_text("name")
-
-      content = 123
-      attrs = { format: "bold" }
-      text.insert_embed_with_attrs(transaction, 2, content, attrs)
-
-      expect(text.to_s).to eq("")
-    end
-
-    it "insert with attributes" do
-      doc = Y::Doc.new
-      transaction = doc.transact
-      text = transaction.get_text("name")
-
-      attrs = { format: "bold" }
-      text.insert_with_attrs(transaction, 2, "hello", attrs)
-
-      expect(text.to_s).to eq("hello")
-    end
-
-    it "formats with attributes" do
-      doc = Y::Doc.new
-      transaction = doc.transact
-      text = transaction.get_text("name")
-      text.push(transaction, "hello")
-
-      attrs = { format: "bold" }
-      text.format(transaction, 2, 2, attrs)
-
-      expect(text.to_s).to eq("hello")
-    end
+    expect(text.to_s).to eq("Hello, World!")
   end
 
-  context "when removing text" do
-    it "removes range starting at position" do
-      doc = Y::Doc.new
-      transaction = doc.transact
-      text = transaction.get_text("name")
-      text.push(transaction, "hello")
-      text.push(transaction, "world")
-      text.remove_range(transaction, 5, 4)
+  it "inserts string with attributes at position" do
+    doc = Y::Doc.new
+    text = doc.get_text("my text")
 
-      expect(text.to_s).to eq("hellod")
-    end
+    attrs = { format: "bold" }
+    text.insert(0, "Hello, World!", attrs)
+
+    expect(text.to_s).to eq("Hello, World!")
   end
 
-  context "when introspecting changes" do
-    it "returns changes" do
-      skip "this is kept around for demo purposes"
-      local_doc = Y::Doc.new
-      local_txn1 = local_doc.transact
-      local_text = local_txn1.get_text("name")
+  it "inserts Boolean at position" do
+    doc = Y::Doc.new
+    text = doc.get_text("my text")
+    text.insert(0, true)
 
-      remote_doc = Y::Doc.new
+    expect(text.to_s).to eq("")
+  end
 
-      remote_txn1 = remote_doc.transact
-      remote_text = remote_txn1.get_text("name")
-      remote_text.insert_with_attrs(remote_txn1, 0, "Hello", { format: "bold" })
+  it "inserts Integer at position" do
+    doc = Y::Doc.new
+    text = doc.get_text("my text")
+    text.insert(0, 42)
 
-      local_state_vector = local_doc.state_vector
-      update = remote_doc.encode_diff_v1(local_state_vector)
-      pp local_text.changes(local_txn1, update)
+    expect(text.to_s).to eq("")
+  end
 
-      remote_txn2 = remote_doc.transact
-      remote_text = remote_txn2.get_text("name")
-      remote_text.insert(remote_txn2, 5, ", World!", {})
+  it "inserts Float at position" do
+    doc = Y::Doc.new
+    text = doc.get_text("my text")
+    text.insert(0, 1.2)
 
-      local_txn2 = local_doc.transact
-      local_state_vector = local_doc.state_vector
-      update = remote_doc.encode_diff_v1(local_state_vector)
+    expect(text.to_s).to eq("")
+  end
 
-      pp local_text.changes(local_txn2, update)
+  it "inserts Array at position" do
+    doc = Y::Doc.new
+    text = doc.get_text("my text")
+    text.insert(0, [1, 2, 3])
+
+    expect(text.to_s).to eq("")
+  end
+
+  it "inserts Hash at position" do
+    doc = Y::Doc.new
+    text = doc.get_text("my text")
+    text.insert(0, { hello: "World" })
+
+    expect(text.to_s).to eq("")
+  end
+
+  it "inserts embed at position with attributes" do
+    doc = Y::Doc.new
+    text = doc.get_text("my text")
+
+    attrs = { format: "bold" }
+    text.insert(0, { hello: "World" }, attrs)
+
+    expect(text.to_s).to eq("")
+  end
+
+  it "removes string from text at position" do
+    doc = Y::Doc.new
+    text = doc.get_text("my text")
+    text << "Hello, World!"
+
+    text.slice!(0)
+
+    expect(text.to_s).to eq("ello, World!")
+  end
+
+  it "removes string from text staring at position and given length" do
+    doc = Y::Doc.new
+    text = doc.get_text("my text")
+    text << "Hello, World!"
+
+    text.slice!(0, 3)
+
+    expect(text.to_s).to eq("lo, World!")
+  end
+
+  it "returns length of text" do
+    doc = Y::Doc.new
+    text = doc.get_text("my text")
+    text << "123"
+
+    expect(text.length).to eq(3)
+  end
+
+  it "returns size of text" do
+    doc = Y::Doc.new
+    text = doc.get_text("my text")
+    text << "123"
+
+    expect(text.size).to eq(3)
+  end
+
+  it "returns string representation of text" do
+    doc = Y::Doc.new
+    text = doc.get_text("my text")
+    text << "Hello, World!"
+
+    expect(text.to_s).to eq("Hello, World!")
+  end
+
+  context "when syncing documents" do
+    it "updates remote text from local text" do
+      local = Y::Doc.new
+
+      local_text = local.get_text("my text")
+      local_text << "Hello, World!"
+
+      remote = Y::Doc.new
+      diff = local.diff(remote.state)
+      remote.sync(diff)
+
+      remote_text = remote.get_text("my text")
+
+      expect(remote_text.to_s).to eq("Hello, World!")
     end
   end
 end

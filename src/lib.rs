@@ -44,19 +44,22 @@ pub extern "C" fn Init_yrb() {
         });
 
         module.define_nested_class("Text", None).define(|klass| {
-            klass.def("insert", ytext::ytext_insert);
-            klass.def("insert_embed", ytext::ytext_insert_embed);
-            klass.def(
-                "insert_embed_with_attrs",
+            klass.def_private("ytext_insert", ytext::ytext_insert);
+            klass.def_private("ytext_insert_embed", ytext::ytext_insert_embed);
+            klass.def_private(
+                "ytext_insert_embed_with_attrs",
                 ytext::ytext_insert_embed_with_attributes,
             );
-            klass.def("insert_with_attrs", ytext::ytext_insert_with_attributes);
-            klass.def("remove_range", ytext::ytext_remove_range);
-            klass.def("format", ytext::ytext_format);
-            klass.def("length", ytext::ytext_length);
-            klass.def("push", ytext::ytext_push);
-            klass.def("changes", ytext::ytext_changes);
-            klass.def("to_s", ytext::ytext_to_string);
+            klass.def_private(
+                "ytext_insert_with_attrs",
+                ytext::ytext_insert_with_attributes,
+            );
+            klass.def_private("ytext_remove_range", ytext::ytext_remove_range);
+            klass.def_private("ytext_format", ytext::ytext_format);
+            klass.def_private("ytext_length", ytext::ytext_length);
+            klass.def_private("ytext_push", ytext::ytext_push);
+            klass.def_private("ytext_changes", ytext::ytext_changes);
+            klass.def_private("ytext_to_s", ytext::ytext_to_string);
         });
 
         module
