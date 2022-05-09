@@ -33,12 +33,12 @@ pub extern "C" fn Init_yrb() {
         });
 
         module.define_nested_class("Map", None).define(|klass| {
-            klass.def("insert", ymap::ymap_insert);
             klass.def_private("ymap_clear", ymap::ymap_clear);
-            klass.def("contains", ymap::ymap_contains);
+            klass.def_private("ymap_contains", ymap::ymap_contains);
             klass.def_private("ymap_each", ymap::ymap_each);
-            klass.def("get", ymap::ymap_get);
-            klass.def("remove", ymap::ymap_remove);
+            klass.def_private("ymap_get", ymap::ymap_get);
+            klass.def_private("ymap_insert", ymap::ymap_insert);
+            klass.def_private("ymap_remove", ymap::ymap_remove);
             klass.def("size", ymap::ymap_size);
             klass.def("to_h", ymap::ymap_to_hash);
         });

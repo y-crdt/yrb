@@ -45,6 +45,9 @@ GEM
     ruby-progressbar (1.11.0)
     rutie (0.0.4)
     unicode-display_width (2.1.0)
+    webrick (1.7.0)
+    yard (0.9.27)
+      webrick (~> 1.7.0)
 
 PLATFORMS
   arm64-darwin-21
@@ -55,6 +58,7 @@ DEPENDENCIES
   rubocop (~> 1.21)
   rubocop-rspec (~> 2.10.0)
   y-rb!
+  yard
 
 BUNDLED WITH
    2.2.32

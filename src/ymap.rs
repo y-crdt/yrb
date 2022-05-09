@@ -2,8 +2,8 @@ use crate::util::{map_ruby_type_to_rust, map_yrs_value_to_ruby};
 use crate::ytransaction::{YTransaction, TRANSACTION_WRAPPER};
 use lib0::any::Any;
 use rutie::{
-    AnyObject, Array, Boolean, Class, Fixnum, Hash, NilClass, Object, Proc,
-    RString, Symbol, VM,
+    AnyObject, Boolean, Class, Fixnum, Hash, NilClass, Object, Proc, RString,
+    Symbol, VM,
 };
 use std::rc::Rc;
 use yrs::Map;

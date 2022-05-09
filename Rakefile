@@ -2,10 +2,10 @@
 
 require "bundler/gem_tasks"
 require "rspec/core/rake_task"
+require "yard"
+require "rubocop/rake_task"
 
 RSpec::Core::RakeTask.new(:spec)
-
-require "rubocop/rake_task"
 
 RuboCop::RakeTask.new
 
@@ -26,3 +26,11 @@ task :clean do
 end
 
 task test: :spec
+
+task :docs do
+  `yard server --reload`
+end
+
+RuboCop::RakeTask.new
+
+YARD::Rake::YardocTask.new

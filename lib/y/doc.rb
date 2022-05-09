@@ -92,6 +92,6 @@ module Y
     #     doc = Y::Doc.new
     #     tx = doc.transact
     #
-    #   @return [Y::Transaction] The transaction object
+    # @return [Y::Transaction] The transaction object
   end
 end
