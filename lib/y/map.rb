@@ -42,23 +42,21 @@ module Y
 
     # Deletes the entry for the given key and returns its associated value.
     #
-    # @example If a block is given and key is found, ignores the block,
-    #   deletes the entry, and returns the associated value:
+    # @example If a block is given and key is found, ignores the block, deletes the entry, and returns the associated value:
     #
     #   m = doc.get_map("my map")
     #   m[:bar] = 1
     #   m.delete(:bar) # => 1
     #   m # => {}
     #
-    # @example If a block is given and key is not found, calls the block and
-    #   returns the block's return value:
+    # @example If a block is given and key is not found, calls the block and returns the block's return value:
     #
     #   m = doc.get_map("my map")
     #   m.delete(:nosuch) { |key| "Key #{key} not found" } # => "Key nosuch not found"
     #   m # => {}
     #
     # @param [String, Symbol] key
-    # @return
+    # @return [void]
     def delete(key)
       value = ymap_remove(transaction, key)
       if block_given? && key?(key)
@@ -68,39 +66,48 @@ module Y
       end
     end
 
+    # @return [void]
     def each(&block)
       ymap_each(block)
     end
 
+    # @return [true|false]
     def key?(key)
       ymap_contains(key)
     end
 
     alias has_key? key?
 
+    # @return [Object]
     def [](key)
       ymap_get(key)
     end
 
+    # @return [void]
     def []=(key, val)
       ymap_insert(transaction, key, val)
     end
 
-    # Returns JSON representation of map
+    # Returns size of map
+    #
+    # @return [Integer]
+    def size
+      ymap_size
+    end
+
+    # Returns a Hash representation of this map
+    #
+    # @return [Hash]
+    def to_h
+      ymap_to_h
+    end
+
+    # Returns a JSON representation of map
+    #
     # @return [String] JSON string
     def to_json(*_args)
       to_h.to_json
     end
-
-    # @!method size()
-    #   Returns number of key-value pairs stored in map
-    #
-    # @return [Integer] Number of key-value pairs
-
-    # @!method to_h()
-    #   Returns a Hash representation of the Map
-    #
-    # @return [Hash] Hash representation of Map
 
     private
 
@@ -138,6 +145,16 @@ module Y
     #
     # @param [Y::Transaction] transaction
     # @param [String|Symbol] key
+
+    # @!method ymap_size()
+    #   Returns number of key-value pairs stored in map
+    #
+    # @return [Integer] Number of key-value pairs
+
+    # @!method ymap_to_h()
+    #   Returns a Hash representation of the Map
+    #
+    # @return [Hash] Hash representation of Map
 
     # A reference to the current active transaction of the document this map
     # belongs to.

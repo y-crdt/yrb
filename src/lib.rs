@@ -39,8 +39,8 @@ pub extern "C" fn Init_yrb() {
             klass.def_private("ymap_get", ymap::ymap_get);
             klass.def_private("ymap_insert", ymap::ymap_insert);
             klass.def_private("ymap_remove", ymap::ymap_remove);
-            klass.def("size", ymap::ymap_size);
-            klass.def("to_h", ymap::ymap_to_hash);
+            klass.def_private("ymap_size", ymap::ymap_size);
+            klass.def_private("ymap_to_h", ymap::ymap_to_hash);
         });
 
         module.define_nested_class("Text", None).define(|klass| {

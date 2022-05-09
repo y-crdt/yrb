@@ -1,6 +1,22 @@
 # frozen_string_literal: true
 
 module Y
+  # A text can be used insert and remove string fragments. It also supports
+  # formatting and the concept of embeds, which are supported data types that
+  # added as metadata.
+  #
+  # The text is the replicated counterpart to a String. It supports a subset
+  # of String operations, like appending, insert at position and slicing.
+  #
+  # Someone should not instantiate a text directly, but use {Y::Doc#get_text}
+  # instead.
+  #
+  # @example
+  #   doc = Y::Doc.new
+  #   text = doc.get_text("my text")
+  #
+  #   text << "Hello, World!"
+  #   puts text.to_s
   class Text
     # @!attribute [r] document
     #
