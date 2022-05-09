@@ -28,26 +28,25 @@ Or install it yourself as:
 
 ```ruby
 # creates a new document and text structure
-local_doc = Y::Doc.new
-local_transaction = local_doc.transact  
-local_text = local_transaction.get_text("my text")  
+local = Y::Doc.new 
+local_text = local.get_text("my text")
+
 # add some data to the text structure
-local_text.push(local_transaction, "hello")  
+local_text.push("hello")  
   
 # create a remote doccument sharing the same text structure
-remote_doc = Y::Doc.new
-remote_transaction = remote_doc.transact  
-remote_text = remote_transaction.get_text("my text")  
+remote = Y::Doc.new 
+remote_text = remote.get_text("my text")  
 
 # retrieve the current state of the remote document
-state_vector_remote = remote_doc.state_vector  
+remote_state = remote.state  
 
 # create an update for the remote document based on the current
 # state of the remote document
-update_remote = local_doc.encode_diff_v1(state_vector_remote)  
+update = local.diff(remote_state)  
   
 # apply update to remote document
-remote_transaction.apply_update(update_remote)  
+remote.sync(update)  
 
 puts remote_text.to_s == local_text.to_s # true  
 ```  
