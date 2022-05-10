@@ -114,7 +114,7 @@ module Y
     def push_text(str = nil)
       text = yxml_element_push_text_back(transaction)
       text.document = document
-      text << args.first unless str.nil?
+      text << str unless str.nil?
       text
     end
 
@@ -312,7 +312,7 @@ module Y
     #
     # @return [String]
 
-    # A reference to the current active transaction of the document this map
+    # A reference to the current active transaction of the document this element
     # belongs to.
     #
     # @return [Y::Transaction] A transaction object
@@ -321,6 +321,22 @@ module Y
     end
   end
 
+  # rubocop:disable Metrics/ClassLength
+
+  # A XMLText
+  #
+  # Someone should not instantiate a text directly, but use
+  # {Y::Doc#get_text_element}, {Y::XMLElement#insert_text},
+  # {Y::XMLElement#push_text}, {Y::XMLElement#unshift_text} instead.
+  #
+  # The XMLText API is similar to {Y::Text}, but adds a few methods to make it
+  # easier to work in structured XML documents.
+  #
+  # @example
+  #   doc = Y::Doc.new
+  #   xml_text = doc.get_xml_text("my xml text")
+  #
+  #   puts xml_text.to_s
   class XMLText
     # @!attribute [r] document
     #
@@ -335,5 +351,361 @@ module Y
 
       super()
     end
+
+    # Push a string to the end of the text node
+    #
+    # @param [String] str
+    # @return {void}
+    def <<(str)
+      yxml_text_push(transaction, str)
+    end
+
+    alias push <<
+
+    # Return text attributes
+    #
+    # @return [Hash]
+    def attrs
+      yxml_text_attributes
+    end
+
+    # Format text
+    #
+    # @param [Integer] index
+    # @param [Integer] length
+    # @param [Hash] attrs
+    # @return [void]
+    def format(index, length, attrs)
+      yxml_text_format(transaction, index, length, attrs)
+    end
+
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+
+    # Insert a value at position and with optional attributes. This method is
+    # similar to [String#insert](https://ruby-doc.org/core-3.1.2/String.html),
+    # except for the optional third `attrs` argument.
+    #
+    # @example Insert a string at position
+    #   doc = Y::Doc.new
+    #   text = doc.get_text("my text")
+    #   text << "Hello, "
+    #
+    #   text.insert(7, "World!")
+    #
+    #   puts text.to_s == "Hello, World!" # true
+    #
+    # The value can be any of the supported types:
+    # - Boolean
+    # - String
+    # - Numeric
+    # - Array (where element types must be supported)
+    # - Hash (where the the types of key and values must be supported)
+    #
+    # @param [Integer] index
+    # @param [String, Float, Array, Hash] value
+    # @param [Hash|nil] attrs
+    # @return [void]
+    def insert(index, value, attrs = nil)
+      if value.is_a?(String)
+        yxml_text_insert(transaction, index, value) if attrs.nil?
+        unless attrs.nil?
+          yxml_text_insert_with_attrs(transaction, index, value,
+                                      attrs)
+        end
+        return nil
+      end
+
+      if can_insert?(value)
+        yxml_text_insert_embed(transaction, index, value) if attrs.nil?
+        unless attrs.nil?
+          yxml_text_insert_embed_with_attrs(transaction, index, value,
+                                            attrs)
+        end
+        return nil
+      end
+
+      raise ArgumentError,
+            "Can't insert value. `#{value.class.name}` isn't supported."
+    end
+
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+
+    # Return length of string
+    #
+    # @return [void]
+    def length
+      yxml_text_length
+    end
+
+    alias size length
+
+    # Return adjacent XMLElement or XMLText node (next)
+    #
+    # @return [Y::XMLElement|Y::XMLText|nil]
+    def next_sibling
+      yxml_text_next_sibling
+    end
+
+    # Return parent XMLElement
+    #
+    # @return [Y::XMLElement|nil]
+    def parent
+      yxml_text_parent
+    end
+
+    # Return adjacent XMLElement or XMLText node (prev)
+    #
+    # @return [Y::XMLElement|Y::XMLText|nil]
+    def prev_sibling
+      yxml_text_prev_sibling
+    end
+
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+
+    # Removes a part from text
+    #
+    # **Attention:** In comparison to String#slice, {XMLText#slice!} will not
+    # return the substring that gets removed. Even this being technically
+    # possible, it requires us to read the substring before removing it, which
+    # is not desirable in most situations.
+    #
+    # @example Removes a single character
+    #   doc = Y::Doc.new
+    #
+    #   text = doc.get_xml_text("my xml text")
+    #   text << "Hello"
+    #
+    #   text.slice!(0)
+    #
+    #   text.to_s == "ello" # true
+    #
+    # @example Removes a range of characters
+    #   doc = Y::Doc.new
+    #
+    #   text = doc.get_xml_text("my xml text")
+    #   text << "Hello"
+    #
+    #   text.slice!(1..2)
+    #   text.to_s == "Hlo" # true
+    #
+    #   text.slice!(1...2)
+    #   text.to_s == "Ho" # true
+    #
+    # @example Removes a range of chars from start and for given length
+    #   doc = Y::Doc.new
+    #
+    #   text = doc.get_xml_text("my xml text")
+    #   text << "Hello"
+    #
+    #   text.slice!(0, 3)
+    #
+    #   text.to_s == "lo" # true
+    #
+    # @overload slice!(index)
+    #   Removes a single character at index
+    #
+    # @overload slice!(start, length)
+    #   Removes a range of characters
+    #
+    # @overload slice!(range)
+    #   Removes a range of characters
+    #
+    # @return [void]
+    def slice!(*args)
+      if args.size.zero?
+        raise ArgumentError,
+              "Provide one of `index`, `range`, `start, length` as arguments"
+      end
+
+      if args.size == 1
+        arg = args.first
+
+        if arg.is_a?(Range)
+          yxml_text_remove_range(transaction, arg.first, arg.last - arg.first)
+          return nil
+        end
+
+        if arg.is_a?(Numeric)
+          yxml_text_remove_range(transaction, arg.to_int, 1)
+          return nil
+        end
+      end
+
+      if args.size == 2
+        first, second = args
+
+        if first.is_a?(Numeric) && second.is_a?(Numeric)
+          yxml_text_remove_range(transaction, first, second)
+          return nil
+        end
+      end
+
+      raise ArgumentError, "Please check your arguments, can't slice."
+    end
+
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+
+    # Returns string representation of XMLText
+    #
+    # @return [String]
+    def to_s
+      yxml_text_to_s
+    end
+
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+
+    # make attributes just work on an element in the form of `attr_name` and
+    # `attr_name=`
+    #
+    # @example Set and get an attribute
+    #   doc = Y::Doc.new
+    #   xml_element = doc.get_xml_element("my xml")
+    #   xml_element.attr_name = "Hello"
+    #
+    #   puts xml_element.attr_name # "Hello"
+    #
+    # @!visibility private
+    def method_missing(method_name, *args, &block)
+      is_setter = method_name.to_s.end_with?("=")
+
+      setter = method_name
+      setter += "=" unless is_setter
+      getter = method_name
+      getter = getter.to_s.slice(0...-1).to_sym if is_setter
+
+      define_singleton_method(setter.to_sym) do |new_val|
+        yxml_text_insert_attribute(transaction,
+                                   method_name.to_s
+                                              .delete_suffix("=")
+                                              .delete_prefix("attr_"),
+                                   new_val)
+      end
+
+      define_singleton_method(getter) do
+        yxml_text_get_attribute(method_name.to_s.delete_prefix("attr_"))
+      end
+
+      if is_setter
+        value = args[0]
+        send(setter, value)
+      end
+    rescue StandardError
+      super(method_name, *args, &block)
+    end
+
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+
+    # Make sure we only respond to attributes
+    # @!visibility private
+    def respond_to_missing?(method_name, include_private = false)
+      method_name.to_s.start_with?("attr_") || super
+    end
+
+    private
+
+    def can_insert?(value)
+      value.is_a?(NilClass) ||
+        value.is_a?(Symbol) ||
+        [true, false].include?(value) ||
+        value.is_a?(Numeric) ||
+        value.is_a?(Enumerable) ||
+        value.is_a?(Hash)
+    end
+
+    # @!method yxml_text_attributes
+    #
+    # @return [Hash]
+
+    # @!method yxml_text_format(transaction, index, length, attrs)
+    #
+    # @param [Integer] index
+    # @param [Integer] length
+    # @param [Hash] attrs
+    # @return [void]
+
+    # @!method yxml_text_get_attribute(name)
+    #
+    # @param [String] name
+    # @return [String|nil]
+
+    # @!method yxml_text_insert(transaction, index, str)
+    #
+    # @param [Y::Transaction] transaction
+    # @param [Integer] index
+    # @param [String] str
+    # @return [void]
+
+    # @!method yxml_text_insert_attribute(transaction, name, value)
+    #
+    # @param [Y::Transaction] transaction
+    # @param [String] name
+    # @param [String] value
+    # @return [void]
+
+    # @!method yxml_text_insert_with_attrs(transaction, index, value, attrs)
+    #
+    # @param [Y::Transaction] transaction
+    # @param [Integer] index
+    # @param [String] value
+    # @param [Hash] attrs
+    # @return [void]
+
+    # @!method yxml_text_insert_embed(transaction, index, value)
+    #
+    # @param [Y::Transaction] transaction
+    # @param [Integer] index
+    # @param [String] value
+    # @return [void]
+
+    # @!method yxml_text_insert_embed_with_attrs(txn, index, value, attrs)
+    #
+    # @param [Y::Transaction] txn
+    # @param [Integer] index
+    # @param [true|false|Float|Integer|Array|Hash] value
+    # @param [Hash] attrs
+    # @return [void]
+
+    # @!method yxml_text_length
+    #
+    # @return [Integer]
+
+    # @!method yxml_text_next_sibling
+    #
+    # @return [Y::XMLElement|Y::XMLText|nil]
+
+    # @!method yxml_text_parent
+    #
+    # @return [Y::XMLElement|nil]
+
+    # @!method yxml_text_prev_sibling
+    #
+    # @return [Y::XMLElement|Y::XMLText|nil]
+
+    # @!method yxml_text_push(transaction, str)
+    #
+    # @param [Y::Transaction] transaction
+    # @param [String] str
+    # @return [void]
+
+    # @!method yxml_text_remove_range(transaction, index, length)
+    #
+    # @param [Y::Transaction] transaction
+    # @param [Integer] index
+    # @param [Integer] length
+    # @return [void]
+
+    # @!method yxml_text_to_s()
+    #
+    # @return [void]
+
+    # A reference to the current active transaction of the document this text
+    # belongs to.
+    #
+    # @return [Y::Transaction] A transaction object
+    def transaction
+      document.current_transaction
+    end
   end
+
+  # rubocop:enable Metrics/ClassLength
 end

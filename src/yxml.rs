@@ -1,8 +1,7 @@
 use crate::util::{map_hash_to_attrs, map_ruby_type_to_rust};
 use crate::ytransaction::{YTransaction, TRANSACTION_WRAPPER};
 use rutie::{
-    AnyObject, Array, Fixnum, Hash, Module, NilClass, Object, RString, Symbol,
-    VM,
+    AnyObject, Fixnum, Hash, Module, NilClass, Object, RString, Symbol, VM,
 };
 use yrs::types::xml::Attributes;
 use yrs::{Xml, XmlElement, XmlText};
@@ -253,21 +252,20 @@ class!(YXmlText);
 methods!(
     YXmlText,
     rtself,
-    fn yxml_text_attributes() -> Array {
+    fn yxml_text_attributes() -> Hash {
         let xml_element = rtself.get_data(&*XML_TEXT_WRAPPER);
 
-        let mut arr = Array::new();
+        let mut h = Hash::new();
 
         let attrs: Attributes = xml_element.attributes();
         for (key, val) in attrs {
-            let mut pair = Array::with_capacity(2);
-            pair.push(RString::new_utf8(key));
-            pair.push(RString::new_utf8(&val));
-
-            arr.push(pair);
+            h.store(
+                Symbol::new(key),
+                RString::new_utf8(&val)
+            );
         }
 
-        arr
+        h
     },
     fn yxml_text_format(transaction: YTransaction, index: Fixnum, length: Fixnum, attrs: Hash) -> NilClass {
         let mut t = transaction.map_err(|e| VM::raise_ex(e)).unwrap();
@@ -412,17 +410,6 @@ methods!(
 
         let xml_text = rtself.get_data(&*XML_TEXT_WRAPPER);
         xml_text.push(tx, &c.to_string());
-
-        NilClass::new()
-    },
-    fn yxml_text_remove_attribute(transaction: YTransaction, name: RString) -> NilClass {
-        let mut t = transaction.map_err(|e| VM::raise_ex(e)).unwrap();
-        let tx = t.get_data_mut(&*TRANSACTION_WRAPPER);
-
-        let n = name.map_err(|e| VM::raise_ex(e)).unwrap();
-
-        let xml_text = rtself.get_data(&*XML_TEXT_WRAPPER);
-        xml_text.remove_attribute(tx, &n.to_string());
 
         NilClass::new()
     },

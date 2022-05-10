@@ -170,28 +170,48 @@ pub extern "C" fn Init_yrb() {
             });
 
         module.define_nested_class("XMLText", None).define(|klass| {
-            klass.def("attributes", yxml::yxml_text_attributes);
-            klass.def("format", yxml::yxml_text_format);
-            klass.def("get_attribute", yxml::yxml_text_get_attribute);
-            klass.def("insert", yxml::yxml_text_insert);
-            klass.def("insert_attribute", yxml::yxml_text_insert_attribute);
-            klass.def("insert_embed", yxml::yxml_text_insert_embed);
-            klass.def(
-                "insert_embed_with_attributes",
+            klass.def_private(
+                "yxml_text_attributes",
+                yxml::yxml_text_attributes,
+            );
+            klass.def_private("yxml_text_format", yxml::yxml_text_format);
+            klass.def_private(
+                "yxml_text_get_attribute",
+                yxml::yxml_text_get_attribute,
+            );
+            klass.def_private("yxml_text_insert", yxml::yxml_text_insert);
+            klass.def_private(
+                "yxml_text_insert_attribute",
+                yxml::yxml_text_insert_attribute,
+            );
+            klass.def_private(
+                "yxml_text_insert_embed",
+                yxml::yxml_text_insert_embed,
+            );
+            klass.def_private(
+                "yxml_text_insert_embed_with_attrs",
                 yxml::yxml_text_insert_embed_with_attributes,
             );
-            klass.def(
-                "insert_with_attributes",
+            klass.def_private(
+                "yxml_text_insert_with_attrs",
                 yxml::yxml_text_insert_with_attributes,
             );
-            klass.def("length", yxml::yxml_text_length);
-            klass.def("next_sibling", yxml::yxml_text_next_sibling);
-            klass.def("parent", yxml::yxml_text_parent);
-            klass.def("prev_sibling", yxml::yxml_text_prev_sibling);
-            klass.def("push", yxml::yxml_text_push);
-            klass.def("remove_attribute", yxml::yxml_text_remove_attribute);
-            klass.def("remove_range", yxml::yxml_text_remove_range);
-            klass.def("to_s", yxml::yxml_text_to_string);
+            klass.def_private("yxml_text_length", yxml::yxml_text_length);
+            klass.def_private(
+                "yxml_text_next_sibling",
+                yxml::yxml_text_next_sibling,
+            );
+            klass.def_private("yxml_text_parent", yxml::yxml_text_parent);
+            klass.def_private(
+                "yxml_text_prev_sibling",
+                yxml::yxml_text_prev_sibling,
+            );
+            klass.def_private("yxml_text_push", yxml::yxml_text_push);
+            klass.def_private(
+                "yxml_text_remove_range",
+                yxml::yxml_text_remove_range,
+            );
+            klass.def_private("yxml_text_to_s", yxml::yxml_text_to_string);
         });
     });
 }

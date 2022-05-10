@@ -100,7 +100,7 @@ RSpec.describe Y::XMLElement do
     expect(xml_element[1].tag).to eq(b.tag)
   end
 
-  it "creates a new text and inserts at the end of the child list of this element" do
+  it "creates and inserts new text as last child of this element" do
     doc = Y::Doc.new
     xml_element = doc.get_xml_element("my xml")
     xml_element.push_text
@@ -135,11 +135,28 @@ RSpec.describe Y::XMLElement do
     expect(xml_element[0].tag).to eq(b.tag)
   end
 
-  it "creates a new text and inserts at the front of the child list of this element" do
+  it "creates and inserts new text as first child of this element" do
     doc = Y::Doc.new
     xml_element = doc.get_xml_element("my xml")
     xml_element.unshift_text
 
     expect(xml_element.to_s).to eq("<UNDEFINED></UNDEFINED>")
+  end
+
+  context "when syncing documents" do
+    it "updates remote xml from local xml" do
+      local = Y::Doc.new
+      local_xml = local.get_xml_element("my xml")
+      a = local_xml << "A"
+      b = a << "B"
+
+      remote = Y::Doc.new
+      remote_xml = remote.get_xml_element("my xml")
+
+      update = local.diff(remote.state)
+      remote.sync(update)
+
+      expect(remote_xml.to_s).to eq("<UNDEFINED><A><B></B></A></UNDEFINED>")
+    end
   end
 end
