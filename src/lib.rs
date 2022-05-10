@@ -75,24 +75,36 @@ pub extern "C" fn Init_yrb() {
         module
             .define_nested_class("Transaction", None)
             .define(|klass| {
-                klass.def(
-                    "apply_update",
+                klass.def_private(
+                    "ytransaction_apply_update",
                     ytransaction::ytransaction_apply_update,
                 );
-                klass.def("commit", ytransaction::ytransaction_commit);
-                klass.def("get_array", ytransaction::ytransaction_get_array);
-                klass.def("get_map", ytransaction::ytransaction_get_map);
-                klass.def("get_text", ytransaction::ytransaction_get_text);
-                klass.def(
-                    "get_xml_element",
+                klass.def_private(
+                    "ytransaction_commit",
+                    ytransaction::ytransaction_commit,
+                );
+                klass.def_private(
+                    "ytransaction_get_array",
+                    ytransaction::ytransaction_get_array,
+                );
+                klass.def_private(
+                    "ytransaction_get_map",
+                    ytransaction::ytransaction_get_map,
+                );
+                klass.def_private(
+                    "ytransaction_get_text",
+                    ytransaction::ytransaction_get_text,
+                );
+                klass.def_private(
+                    "ytransaction_get_xml_element",
                     ytransaction::ytransaction_get_xml_element,
                 );
-                klass.def(
-                    "get_xml_text",
+                klass.def_private(
+                    "ytransaction_get_xml_text",
                     ytransaction::ytransaction_get_xml_text,
                 );
-                klass.def(
-                    "state_vector",
+                klass.def_private(
+                    "ytransaction_state_vector",
                     ytransaction::ytransaction_state_vector,
                 );
             });

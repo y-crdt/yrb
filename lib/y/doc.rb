@@ -105,7 +105,7 @@ module Y
     #
     # @return [::Array<Int>] Binary encoded state vector
     def state
-      current_transaction.state_vector
+      current_transaction.state
     end
 
     # Synchronizes this document with the diff from another document
@@ -113,10 +113,8 @@ module Y
     # @param [::Array<Int>] diff Binary encoded update
     # @return [void]
     def sync(diff)
-      current_transaction.apply_update(diff)
+      current_transaction.apply(diff)
     end
-
-    private
 
     # @!method ydoc_encode_diff_v1
     #   Encodes the diff of current document state vs provided state
