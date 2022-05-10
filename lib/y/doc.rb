@@ -111,9 +111,12 @@ module Y
     # Synchronizes this document with the diff from another document
     #
     # @param [::Array<Int>] diff Binary encoded update
+    # @return [void]
     def sync(diff)
       current_transaction.apply_update(diff)
     end
+
+    private
 
     # @!method ydoc_encode_diff_v1
     #   Encodes the diff of current document state vs provided state
