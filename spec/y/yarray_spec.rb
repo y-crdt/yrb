@@ -193,4 +193,21 @@ RSpec.describe Y::Array do
       expect(element).to eq(1)
     end
   end
+
+  context "when syncing documents" do
+    it "updates remote array from local array" do
+      local = Y::Doc.new
+
+      local_arr = local.get_array("my array")
+      local_arr << "world"
+
+      remote = Y::Doc.new
+      diff = local.diff(remote.state)
+      remote.sync(diff)
+
+      remote_arr = remote.get_array("my array")
+
+      expect(remote_arr.to_a).to match_array(["world"])
+    end
+  end
 end

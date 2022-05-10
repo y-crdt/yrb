@@ -38,9 +38,8 @@ pub extern "C" fn Init_yrb() {
 
         module.define_nested_class("Doc", None).define(|klass| {
             klass.def_self("new", ydoc::ydoc_new);
-            klass.def("transact", ydoc::ydoc_transact);
-            klass.def("state_vector", ydoc::ydoc_state_vector);
-            klass.def("encode_diff_v1", ydoc::ydoc_encode_diff_v1);
+            klass.def_private("ydoc_transact", ydoc::ydoc_transact);
+            klass.def_private("ydoc_encode_diff_v1", ydoc::ydoc_encode_diff_v1);
         });
 
         module.define_nested_class("Map", None).define(|klass| {
@@ -101,33 +100,73 @@ pub extern "C" fn Init_yrb() {
         module
             .define_nested_class("XMLElement", None)
             .define(|klass| {
-                klass.def("attributes", yxml::yxml_element_attributes);
-                klass.def("first_child", yxml::yxml_element_first_child);
-                klass.def("get", yxml::yxml_element_get);
-                klass.def("get_attribute", yxml::yxml_element_get_attribute);
-                klass.def(
-                    "insert_attribute",
+                klass.def_private(
+                    "yxml_element_attributes",
+                    yxml::yxml_element_attributes,
+                );
+                klass.def_private(
+                    "yxml_element_first_child",
+                    yxml::yxml_element_first_child,
+                );
+                klass.def_private("yxml_element_get", yxml::yxml_element_get);
+                klass.def_private(
+                    "yxml_element_get_attribute",
+                    yxml::yxml_element_get_attribute,
+                );
+                klass.def_private(
+                    "yxml_element_insert_attribute",
                     yxml::yxml_element_insert_attribute,
                 );
-                klass.def("insert_element", yxml::yxml_element_insert_element);
-                klass.def("insert_text", yxml::yxml_element_insert_text);
-                klass.def("next_sibling", yxml::yxml_element_next_sibling);
-                klass.def("parent", yxml::yxml_element_parent);
-                klass.def("prev_sibling", yxml::yxml_element_prev_sibling);
-                klass.def("push_elem_back", yxml::yxml_element_push_elem_back);
-                klass
-                    .def("push_elem_front", yxml::yxml_element_push_elem_front);
-                klass.def("push_text_back", yxml::yxml_element_push_text_back);
-                klass
-                    .def("push_text_front", yxml::yxml_element_push_text_front);
-                klass.def(
-                    "remove_attribute",
+                klass.def_private(
+                    "yxml_element_insert_element",
+                    yxml::yxml_element_insert_element,
+                );
+                klass.def_private(
+                    "yxml_element_insert_text",
+                    yxml::yxml_element_insert_text,
+                );
+                klass.def_private(
+                    "yxml_element_next_sibling",
+                    yxml::yxml_element_next_sibling,
+                );
+                klass.def_private(
+                    "yxml_element_parent",
+                    yxml::yxml_element_parent,
+                );
+                klass.def_private(
+                    "yxml_element_prev_sibling",
+                    yxml::yxml_element_prev_sibling,
+                );
+                klass.def_private(
+                    "yxml_element_push_elem_back",
+                    yxml::yxml_element_push_elem_back,
+                );
+                klass.def_private(
+                    "yxml_element_push_elem_front",
+                    yxml::yxml_element_push_elem_front,
+                );
+                klass.def_private(
+                    "yxml_element_push_text_back",
+                    yxml::yxml_element_push_text_back,
+                );
+                klass.def_private(
+                    "yxml_element_push_text_front",
+                    yxml::yxml_element_push_text_front,
+                );
+                klass.def_private(
+                    "yxml_element_remove_attribute",
                     yxml::yxml_element_remove_attribute,
                 );
-                klass.def("remove_range", yxml::yxml_element_remove_range);
-                klass.def("size", yxml::yxml_element_size);
-                klass.def("tag", yxml::yxml_element_tag);
-                klass.def("to_s", yxml::yxml_element_to_string);
+                klass.def_private(
+                    "yxml_element_remove_range",
+                    yxml::yxml_element_remove_range,
+                );
+                klass.def_private("yxml_element_size", yxml::yxml_element_size);
+                klass.def_private("yxml_element_tag", yxml::yxml_element_tag);
+                klass.def_private(
+                    "yxml_element_to_s",
+                    yxml::yxml_element_to_string,
+                );
             });
 
         module.define_nested_class("XMLText", None).define(|klass| {

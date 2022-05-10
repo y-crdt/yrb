@@ -1,7 +1,8 @@
 use crate::util::{map_hash_to_attrs, map_ruby_type_to_rust};
 use crate::ytransaction::{YTransaction, TRANSACTION_WRAPPER};
 use rutie::{
-    AnyObject, Array, Fixnum, Hash, Module, NilClass, Object, RString, VM,
+    AnyObject, Array, Fixnum, Hash, Module, NilClass, Object, RString, Symbol,
+    VM,
 };
 use yrs::types::xml::Attributes;
 use yrs::{Xml, XmlElement, XmlText};
@@ -13,21 +14,20 @@ class!(YXmlElement);
 methods!(
     YXmlElement,
     rtself,
-    fn yxml_element_attributes() -> Array {
+    fn yxml_element_attributes() -> Hash {
         let xml_element = rtself.get_data(&*XML_ELEMENT_WRAPPER);
 
-        let mut arr = Array::new();
+        let mut h = Hash::new();
 
         let attrs: Attributes = xml_element.attributes();
         for (key, val) in attrs {
-            let mut pair = Array::with_capacity(2);
-            pair.push(RString::new_utf8(key));
-            pair.push(RString::new_utf8(&val));
-
-            arr.push(pair);
+            h.store(
+                Symbol::new(key),
+                RString::new_utf8(&val)
+            );
         }
 
-        arr
+        h
     },
     fn yxml_element_first_child() -> AnyObject {
        let index = 0;
@@ -230,7 +230,9 @@ methods!(
         NilClass::new()
     },
     fn yxml_element_size() -> Fixnum {
-        Fixnum::new(0)
+        let xml_element = rtself.get_data(&*XML_ELEMENT_WRAPPER);
+
+        Fixnum::new(i64::from(xml_element.len()))
     },
     fn yxml_element_tag() -> RString {
         let xml_element = rtself.get_data(&*XML_ELEMENT_WRAPPER);

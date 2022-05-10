@@ -19,7 +19,7 @@ module Y
     # The currently active transaction for this document
     # @return [Y::Transaction]
     def current_transaction
-      @current_transaction ||= transact
+      @current_transaction ||= ydoc_transact
     end
 
     # Create a diff between this document and another document. The diff is
@@ -29,7 +29,7 @@ module Y
     # @param [::Array<Int>] state The state to create the diff against
     # @return [::Array<Int>] Binary encoded diff
     def diff(state)
-      encode_diff_v1(state)
+      ydoc_encode_diff_v1(state)
     end
 
     # Gets or creates a new array by name
@@ -80,6 +80,26 @@ module Y
       text
     end
 
+    # Gets or creates a new XMLElement by name
+    #
+    # @param [String] name The name of the structure
+    # @return [Y::XMLElement]
+    def get_xml_element(name)
+      xml_element = current_transaction.get_xml_element(name)
+      xml_element.document = self
+      xml_element
+    end
+
+    # Gets or creates a new XMLText by name
+    #
+    # @param [String] name The name of the structure
+    # @return [Y::XMLText]
+    def get_xml_text(name)
+      xml_text = current_transaction.get_xml_text(name)
+      xml_text.document = self
+      xml_text
+    end
+
     # Creates a state vector of this document. This can be used to compare the
     # state of two documents with each other and to later on sync them.
     #
@@ -95,12 +115,21 @@ module Y
       current_transaction.apply_update(diff)
     end
 
-    # @!method transact
+    # @!method ydoc_encode_diff_v1
+    #   Encodes the diff of current document state vs provided state
+    #
+    #   @example Create transaction on doc
+    #     doc = Y::Doc.new
+    #     tx = doc.ydoc_encode_diff_v1(other_state)
+    #
+    # @return [Array<Integer>] Binary encoded update
+
+    # @!method ydoc_transact
     #   Creates a new transaction for the document
     #
     #   @example Create transaction on doc
     #     doc = Y::Doc.new
-    #     tx = doc.transact
+    #     tx = doc.ydoc_transact
     #
     # @return [Y::Transaction] The transaction object
   end
