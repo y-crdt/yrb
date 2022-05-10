@@ -182,4 +182,15 @@ RSpec.describe Y::Array do
 
     expect(arr.length).to eq(1)
   end
+
+  it "iterates over all elements" do
+    doc = Y::Doc.new
+    arr = doc.get_array("my array")
+
+    arr << 1
+
+    arr.each do |element|
+      expect(element).to eq(1)
+    end
+  end
 end

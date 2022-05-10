@@ -69,6 +69,11 @@ module Y
       yarray_insert_range(transaction, size, combined)
     end
 
+    # @return [void]
+    def each(&block)
+      yarray_each(block)
+    end
+
     # Check if the array is empty
     #
     # @return [true|false]
@@ -221,10 +226,11 @@ module Y
 
     private
 
-    # @!method yarray_length
-    #   Returns length of array
+    # @!method yarray_each(proc)
+    #   Iterates over all elements in Array by calling the provided proc
+    #   with the value as argument.
     #
-    # @return [Integer] Length of array
+    # @param [Proc<Object>] proc A proc that is called for every element
 
     # @!method yarray_get(index)
     #   Retrieves content as specified index
@@ -247,6 +253,11 @@ module Y
     # @param [Integer] index
     # @param [Array<Boolean, Float, Integer, Array, Hash, Text>] arr
     # @return [void]
+
+    # @!method yarray_length
+    #   Returns length of array
+    #
+    # @return [Integer] Length of array
 
     # @!method yarray_push_back(transaction, value)
     #   Adds an element to the end of the array

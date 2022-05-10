@@ -1,6 +1,6 @@
 use crate::util::{map_ruby_type_to_rust, map_yrs_value_to_ruby};
 use crate::ytransaction::{YTransaction, TRANSACTION_WRAPPER};
-use rutie::{AnyObject, Array as RArray, Fixnum, NilClass, Object, VM};
+use rutie::{AnyObject, Array as RArray, Fixnum, NilClass, Object, Proc, VM};
 use yrs::types::Value;
 use yrs::Array;
 
@@ -11,9 +11,19 @@ class!(YArray);
 methods!(
     YArray,
     rtself,
-    fn yarray_length() -> Fixnum {
-        let arr: &Array = rtself.get_data(&*ARRAY_WRAPPER);
-        Fixnum::new(i64::from(arr.len()))
+    fn yarray_each(block: Proc) -> NilClass {
+        let b = block.map_err(|e| VM::raise_ex(e)).unwrap();
+
+        let a: &Array = rtself.get_data(&*ARRAY_WRAPPER);
+
+        a
+            .iter()
+            .for_each(|val| {
+                let args = [map_yrs_value_to_ruby(val)];
+                b.call(&args);
+            });
+
+        NilClass::new()
     },
     fn yarray_get(index: Fixnum) -> AnyObject {
         let i = index.map_err(|e| VM::raise_ex(e)).unwrap();
@@ -59,6 +69,10 @@ methods!(
         arr.insert_range(tx, i.to_u32(), mapped_values);
 
         NilClass::new()
+    },
+    fn yarray_length() -> Fixnum {
+        let arr: &Array = rtself.get_data(&*ARRAY_WRAPPER);
+        Fixnum::new(i64::from(arr.len()))
     },
     fn yarray_push_back(transaction: YTransaction, value: AnyObject) -> NilClass {
         let mut txn = transaction.map_err(|e| VM::raise_ex(e)).unwrap();

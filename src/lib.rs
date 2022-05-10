@@ -18,6 +18,7 @@ module!(Y);
 pub extern "C" fn Init_yrb() {
     Module::new("Y").define(|module| {
         module.define_nested_class("Array", None).define(|klass| {
+            klass.def_private("yarray_each", yarray::yarray_each);
             klass.def_private("yarray_get", yarray::yarray_get);
             klass.def_private("yarray_insert", yarray::yarray_insert);
             klass.def_private(
