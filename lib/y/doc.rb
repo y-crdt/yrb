@@ -124,6 +124,7 @@ module Y
     #     tx = doc.ydoc_encode_diff_v1(other_state)
     #
     # @return [Array<Integer>] Binary encoded update
+    # @!visibility private
 
     # @!method ydoc_transact
     #   Creates a new transaction for the document
@@ -133,5 +134,6 @@ module Y
     #     tx = doc.ydoc_transact
     #
     # @return [Y::Transaction] The transaction object
+    # @!visibility private
   end
 end
