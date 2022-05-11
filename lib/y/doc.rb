@@ -16,10 +16,24 @@ module Y
   #   remote_map = remote.get_map("my_map")
   #   pp remote_map.to_h #=> {hello: "world"}
   class Doc
+    # Commit current transaction
+    #
+    # This is a convenience method that invokes {Y::Transaction#commit} on the
+    # current transaction used by this document.
+    #
+    # @return [void]
+    def commit
+      current_transaction.commit
+    end
+
     # The currently active transaction for this document
     # @return [Y::Transaction]
     def current_transaction
-      @current_transaction ||= ydoc_transact
+      @current_transaction ||= begin
+        transaction = ydoc_transact
+        transaction.document = self
+        transaction
+      end
     end
 
     # Create a diff between this document and another document. The diff is
@@ -76,7 +90,7 @@ module Y
     def get_text(name, input = nil)
       text = current_transaction.get_text(name)
       text.document = self
-      text.push(current_transaction, input) unless input.nil?
+      text.push(input) unless input.nil?
       text
     end
 
@@ -93,10 +107,12 @@ module Y
     # Gets or creates a new XMLText by name
     #
     # @param [String] name The name of the structure
+    # @param [String] input Optional initial text value
     # @return [Y::XMLText]
-    def get_xml_text(name)
+    def get_xml_text(name, input = nil)
       xml_text = current_transaction.get_xml_text(name)
       xml_text.document = self
+      xml_text.push(input) unless input.nil?
       xml_text
     end
 
@@ -115,6 +131,47 @@ module Y
     def sync(diff)
       current_transaction.apply(diff)
     end
+
+    # rubocop:disable Metrics/MethodLength
+
+    # Creates a new transaction and provides it to the given block
+    #
+    # @example Insert into text
+    #   doc = Y::Doc.new
+    #   text = doc.get_text("my text")
+    #
+    #   doc.transact do
+    #     text << "Hello, World!"
+    #   end
+    #
+    # @yield [transaction]
+    # @yieldparam [Y::Transaction] transaction
+    # @yieldreturn [void]
+    # @return [Y::Transaction]
+    def transact
+      current_transaction.commit
+
+      if block_given?
+        # create new transaction just for the lifetime of this block
+        tmp_transaction = ydoc_transact
+        tmp_transaction.document = self
+
+        # override transaction for the lifetime of the block
+        @current_transaction = tmp_transaction
+
+        yield tmp_transaction
+
+        tmp_transaction.commit
+      end
+
+      # create new transaction
+      @current_transaction = ydoc_transact
+      @current_transaction.document = self
+
+      current_transaction
+    end
+
+    # rubocop:enable Metrics/MethodLength
 
     # @!method ydoc_encode_diff_v1
     #   Encodes the diff of current document state vs provided state

@@ -1,16 +1,14 @@
 use crate::util::{
-    convert_array_to_vecu8, map_attrs_to_hash, map_hash_to_attrs,
-    map_ruby_type_to_rust, map_yrs_value_to_ruby,
+    map_attrs_to_hash, map_hash_to_attrs, map_ruby_type_to_rust,
+    map_yrs_value_to_ruby,
 };
 use crate::ytransaction::{YTransaction, TRANSACTION_WRAPPER};
 use rutie::{
-    AnyObject, Array, Fixnum, Hash, NilClass, Object, RString, Symbol, VM,
+    AnyObject, Fixnum, Hash, Integer, NilClass, Object, Proc, RString, Symbol,
+    VM,
 };
-use std::cell::RefCell;
-use std::rc::Rc;
 use yrs::types::Delta;
-use yrs::updates::decoder::Decode;
-use yrs::{Text, Update};
+use yrs::{SubscriptionId, Text};
 
 wrappable_struct!(Text, TextWrapper, TEXT_WRAPPER);
 class!(YText);
@@ -114,7 +112,7 @@ methods!(
         let l = length.map_err(|e| VM::raise_ex(e)).unwrap();
 
         let tx = txn.get_data_mut(&*TRANSACTION_WRAPPER);
-        let text = rtself.get_data_mut(&*TEXT_WRAPPER);
+        let text: &Text = rtself.get_data_mut(&*TEXT_WRAPPER);
 
         text.remove_range(tx, i.to_u32(), l.to_u32());
 
@@ -135,70 +133,72 @@ methods!(
 
         NilClass::new()
     },
-    fn ytext_changes(transaction: YTransaction, update: Array) -> Array {
-        let mut txn = transaction.map_err(|e| VM::raise_ex(e)).unwrap();
-        let tx = txn.get_data_mut(&*TRANSACTION_WRAPPER);
+    fn ytext_observe(callback: Proc) -> Integer {
+        let c = callback.map_err(|e| VM::raise_ex(e)).unwrap();
 
-        let raw_update = convert_array_to_vecu8(update.map_err(|e| VM::raise_ex(e)).unwrap());
-        let decoded_update = Update::decode_v1(raw_update.as_slice());
+        let text: &mut Text = rtself.get_data_mut(&*TEXT_WRAPPER);
+        let subscription_id: SubscriptionId = text
+            .observe(move |transaction, text_event| {
+                let delta = text_event.delta(transaction);
+                for event in delta {
+                    match event {
+                        Delta::Inserted(v, attrs) => {
+                            let mut payload = Hash::new();
+                            payload.store(Symbol::new("insert"), map_yrs_value_to_ruby(v.clone()));
 
-        let mut text = rtself.get_data_mut(&*TEXT_WRAPPER);
+                            match attrs {
+                                Some(a) => {
+                                    let copy = a.clone();
+                                    let result = map_attrs_to_hash(*copy).to_any_object();
+                                    payload.store(Symbol::new("attributes"), result);
+                                },
+                                None => ()
+                            }
 
-        let changes: Rc<RefCell<Vec<Delta>>> = Rc::new(RefCell::new(Vec::with_capacity(1)));
-        let changes_to_borrow = changes.clone();
+                            let args = &[payload.to_any_object()];
+                            c.call(args);
+                        },
+                        Delta::Retain(position, attrs) => {
+                            let mut payload = Hash::new();
+                            payload.store(Symbol::new("retain"), Integer::from(*position));
 
-        let _sub = text.observe(move |txn, text_event| {
-            let mut delta = text_event.delta(txn).to_vec();
-            (*changes_to_borrow).borrow_mut().append(&mut delta);
-        });
+                            match attrs {
+                                Some(a) => {
+                                    let copy = a.clone();
+                                    let result = map_attrs_to_hash(*copy).to_any_object();
+                                    payload.store(Symbol::new("attributes"), result);
+                                },
+                                None => ()
+                            }
 
-        tx.apply_update(decoded_update);
-        tx.commit();
+                            let args = &[payload.to_any_object()];
+                            c.call(args);
+                        },
+                        Delta::Deleted(position) => {
+                            let mut payload = Hash::new();
+                            payload.store(Symbol::new("delete"), Integer::from(*position));
 
-        let mut arr = Array::with_capacity((*changes).borrow().len());
-
-        for change in (*changes).to_owned().into_inner() {
-            match change {
-                Delta::Inserted(v, attrs) => {
-                    let a = attrs.unwrap_or_default();
-                    let attrs = map_attrs_to_hash(*a);
-
-                    let mut payload = Hash::new();
-                    payload.store(Symbol::new("value"), map_yrs_value_to_ruby(v));
-                    payload.store(Symbol::new("attrs"), attrs);
-
-                    let mut h = Hash::new();
-                    h.store(Symbol::new("insert"), payload);
-
-                    arr.push(h);
-                },
-                Delta::Retain(position, attrs) => {
-                    let a = attrs.unwrap_or_default();
-                    let attrs = map_attrs_to_hash(*a);
-
-                    let mut payload = Hash::new();
-                    payload.store(Symbol::new("position"), Fixnum::new(i64::from(position)));
-                    payload.store(Symbol::new("attrs"), attrs);
-
-                    let mut h = Hash::new();
-                    h.store(Symbol::new("retain"), payload);
-
-                    arr.push(h);
-                },
-                Delta::Deleted(position) => {
-                    let mut h = Hash::new();
-                    h.store(Symbol::new("deleted"), Fixnum::new(i64::from(position)));
-
-                    arr.push(h);
+                            let args = &[payload.to_any_object()];
+                            c.call(args);
+                        }
+                    }
                 }
-            }
-        }
+            })
+            .into();
 
-        arr
+        Integer::from(subscription_id)
     },
     fn ytext_to_string() -> RString {
         let text = rtself.get_data(&*TEXT_WRAPPER);
 
         RString::new_utf8(&text.to_string())
+    },
+    fn ytext_unobserve(subscription_id: Integer) -> NilClass {
+        let s = subscription_id.map_err(|e| VM::raise_ex(e)).unwrap();
+
+        let text: &mut Text = rtself.get_data_mut(&*TEXT_WRAPPER);
+        text.unobserve(s.into());
+
+        NilClass::new()
     }
 );

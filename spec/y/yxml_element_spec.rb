@@ -148,7 +148,7 @@ RSpec.describe Y::XMLElement do
       local = Y::Doc.new
       local_xml = local.get_xml_element("my xml")
       a = local_xml << "A"
-      b = a << "B"
+      a << "B"
 
       remote = Y::Doc.new
       remote_xml = remote.get_xml_element("my xml")

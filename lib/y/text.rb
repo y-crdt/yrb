@@ -39,6 +39,43 @@ module Y
       ytext_push(transaction, str)
     end
 
+    # Attach listener to text changes
+    #
+    # @example Listen to changes in text type
+    #   local = Y::Doc.new
+    #
+    #   text = local.get_text("my text")
+    #   text.attach(->(delta) { pp delta }) # { insert: "Hello, World!" }
+    #
+    #   local.transact do
+    #     text << "Hello, World!"
+    #   end
+    #
+    # @example Listen to changes in text type
+    #   local = Y::Doc.new
+    #
+    #   text = local.get_text("my text")
+    #   text.attach(->(delta) { pp delta }) # { insert: "Hello, World!" }
+    #
+    #   text << "Hello, World!"
+    #
+    #   # todo: required, otherwise segfault
+    #   local.commit
+    #
+    # @param [Proc] callback
+    # @return [Integer]
+    def attach(callback)
+      ytext_observe(callback)
+    end
+
+    # Detach listener
+    #
+    # @param [Integer] subscription_id
+    # @return [void]
+    def detach(subscription_id)
+      ytext_unobserve(subscription_id)
+    end
+
     # Checks if text is empty
     #
     # @example Check if text is empty
@@ -201,10 +238,10 @@ module Y
       end
 
       if args.size == 2
-        first, second = args
+        start, length = args
 
-        if first.is_a?(Numeric) && second.is_a?(Numeric)
-          ytext_remove_range(transaction, first, second)
+        if start.is_a?(Numeric) && length.is_a?(Numeric)
+          ytext_remove_range(transaction, start, length)
           return nil
         end
       end
@@ -302,10 +339,22 @@ module Y
     #
     # @return [Integer]
 
+    # @!method ytext_observe(proc)
+    #   Observe text changes
+    #
+    # @param [Proc] proc
+    # @return [Integer]
+
     # @!method ytext_to_s()
     #   Returns string representation of text
     #
     # @return [String]
+
+    # @!method ytext_unobserve(subscription_id)
+    #   Detach listener
+    #
+    # @param [Integer] subscription_id
+    # @return [void]
 
     # A reference to the current active transaction of the document this map
     # belongs to.

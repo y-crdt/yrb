@@ -58,7 +58,7 @@ DEPENDENCIES
   github-markup
   rake (~> 13.0)
   redcarpet
-  rspec (~> 3.0)
+  rspec (~> 3.11.0)
   rubocop (~> 1.21)
   rubocop-rspec (~> 2.10.0)
   y-rb!

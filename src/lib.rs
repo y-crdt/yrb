@@ -53,6 +53,10 @@ pub extern "C" fn Init_yrb() {
             klass.def_private("ymap_to_h", ymap::ymap_to_hash);
         });
 
+        module
+            .define_nested_class("SubscriptionID", None)
+            .define(|_klass| {});
+
         module.define_nested_class("Text", None).define(|klass| {
             klass.def_private("ytext_insert", ytext::ytext_insert);
             klass.def_private("ytext_insert_embed", ytext::ytext_insert_embed);
@@ -67,9 +71,10 @@ pub extern "C" fn Init_yrb() {
             klass.def_private("ytext_remove_range", ytext::ytext_remove_range);
             klass.def_private("ytext_format", ytext::ytext_format);
             klass.def_private("ytext_length", ytext::ytext_length);
+            klass.def_private("ytext_observe", ytext::ytext_observe);
             klass.def_private("ytext_push", ytext::ytext_push);
-            klass.def_private("ytext_changes", ytext::ytext_changes);
             klass.def_private("ytext_to_s", ytext::ytext_to_string);
+            klass.def_private("ytext_unobserve", ytext::ytext_unobserve);
         });
 
         module

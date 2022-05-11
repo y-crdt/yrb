@@ -2,6 +2,17 @@
 
 module Y
   class Transaction
+    # @!attribute [r] document
+    #
+    # @return [Y::Doc] The document this array belongs to
+    attr_accessor :document
+
+    def initialize(doc = nil)
+      @document = doc
+
+      super()
+    end
+
     # Applies the binary encoded update for this document. This will bring the
     # the document to the same state as the one the update is from.
     #
@@ -23,7 +34,9 @@ module Y
     # @param [String] name
     # @return [Y::Array]
     def get_array(name)
-      ytransaction_get_array(name)
+      array = ytransaction_get_array(name)
+      array.document = document
+      array
     end
 
     # Create or get map type
@@ -31,7 +44,9 @@ module Y
     # @param [String] name
     # @return [Y::Map]
     def get_map(name)
-      ytransaction_get_map(name)
+      map = ytransaction_get_map(name)
+      map.document = document
+      map
     end
 
     # Create or get text type
@@ -39,7 +54,9 @@ module Y
     # @param [String] name
     # @return [Y::Text]
     def get_text(name)
-      ytransaction_get_text(name)
+      text = ytransaction_get_text(name)
+      text.document = document
+      text
     end
 
     # Create or get XMLElement type
@@ -47,15 +64,19 @@ module Y
     # @param [String] name
     # @return [Y::XMLElement]
     def get_xml_element(name)
-      ytransaction_get_xml_element(name)
+      xml_element = ytransaction_get_xml_element(name)
+      xml_element.document = document
+      xml_element
     end
 
     # Create or get XMLText type
     #
     # @param [String] name
-    # @return [Y::XMLRTet]
+    # @return [Y::XMLText]
     def get_xml_text(name)
-      ytransaction_get_xml_text(name)
+      xml_text = ytransaction_get_xml_text(name)
+      xml_text.document = document
+      xml_text
     end
 
     # Return state vector for transaction

@@ -148,4 +148,57 @@ RSpec.describe Y::Text do
       expect(remote_text.to_s).to eq("Hello, World!")
     end
   end
+
+  context "when changing text" do
+    it "invokes callback" do
+      local = Y::Doc.new
+      text = local.get_text("my text")
+
+      called = nil
+      listener = proc { |changes| called = changes }
+
+      subscription_id = text.attach(listener)
+
+      text << "Hello, Wörld!"
+      text.slice! 8, 1
+      text.insert 8, "o"
+
+      text.document.current_transaction.commit
+      text.detach(subscription_id)
+
+      expect(called).to eq({ insert: "Hello, World!" })
+    end
+
+    it "commits automatically" do
+      local = Y::Doc.new
+
+      changes = []
+
+      text = local.get_text("my text")
+      text.attach(proc { |delta| changes << delta })
+
+      local.transact do
+        text << "Hello, Wörld!"
+      end
+
+      local.transact do
+        text.slice!(8)
+      end
+
+      local.transact do
+        text.insert(8, "o")
+      end
+
+      expect(text.to_s).to eq("Hello, World!")
+      expect(changes).to match_array(
+        [
+          { insert: "Hello, Wörld!" },
+          { retain: 8 },
+          { delete: 1 },
+          { retain: 8 },
+          { insert: "o" }
+        ]
+      )
+    end
+  end
 end

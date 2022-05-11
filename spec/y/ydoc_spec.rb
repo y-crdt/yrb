@@ -74,5 +74,23 @@ RSpec.describe Y::Doc do
 
       expect(remote_text.to_s).to eq(local_text.to_s)
     end
+
+    it "observe a change event on text after applying update" do
+      local_doc = Y::Doc.new
+      local_text = local_doc.get_text("my text")
+
+      changes = nil
+      local_text.attach(->(c) { changes = c })
+
+      remote_doc = Y::Doc.new
+      remote_text = remote_doc.get_text("my text")
+      remote_text << "hello"
+
+      update = remote_doc.diff(local_doc.state)
+      local_doc.sync(update)
+      local_doc.commit
+
+      expect(changes).to eq({ insert: "hello" })
+    end
   end
 end
