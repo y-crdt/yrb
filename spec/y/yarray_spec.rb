@@ -210,4 +210,68 @@ RSpec.describe Y::Array do
       expect(remote_arr.to_a).to match_array(["world"])
     end
   end
+
+  context "when changing" do
+    it "invokes callback" do
+      local = Y::Doc.new
+      arr = local.get_array("my array")
+
+      called = nil
+      listener = proc { |changes| called = changes }
+
+      subscription_id = arr.attach(listener)
+
+      arr << 1
+      arr << 2
+      arr.slice!(1)
+      arr << 3
+
+      local.commit
+      arr.detach(subscription_id)
+
+      expect(called).to eq(
+        [
+          { added: [1, 3] }
+        ]
+      )
+    end
+
+    it "commits automatically" do
+      local = Y::Doc.new
+
+      changes = []
+
+      arr = local.get_array("my array")
+      arr.attach(->(delta) { changes << delta })
+
+      local.transact do
+        arr << 1
+        arr << 2
+        arr << 3
+      end
+
+      local.transact do
+        arr.slice!(1)
+      end
+
+      local.transact do
+        arr[1] = 2
+      end
+
+      expect(arr.to_a).to match_array([1, 2, 3])
+      expect(changes).to match_array(
+        [
+          [{ added: [1, 2, 3] }],
+          [
+            { retain: 1 },
+            { removed: 1 }
+          ],
+          [
+            { retain: 1 },
+            { added: [2] }
+          ]
+        ]
+      )
+    end
+  end
 end

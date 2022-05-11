@@ -26,6 +26,7 @@ pub extern "C" fn Init_yrb() {
                 yarray::yarray_insert_range,
             );
             klass.def_private("yarray_length", yarray::yarray_length);
+            klass.def_private("yarray_observe", yarray::yarray_observe);
             klass.def_private("yarray_push_back", yarray::yarray_push_back);
             klass.def_private("yarray_push_front", yarray::yarray_push_front);
             klass.def_private("yarray_remove", yarray::yarray_remove);
@@ -34,6 +35,7 @@ pub extern "C" fn Init_yrb() {
                 yarray::yarray_remove_range,
             );
             klass.def_private("yarray_to_a", yarray::yarray_to_a);
+            klass.def_private("yarray_unobserve", yarray::yarray_unobserve);
         });
 
         module.define_nested_class("Doc", None).define(|klass| {
@@ -48,9 +50,11 @@ pub extern "C" fn Init_yrb() {
             klass.def_private("ymap_each", ymap::ymap_each);
             klass.def_private("ymap_get", ymap::ymap_get);
             klass.def_private("ymap_insert", ymap::ymap_insert);
+            klass.def_private("ymap_observe", ymap::ymap_observe);
             klass.def_private("ymap_remove", ymap::ymap_remove);
             klass.def_private("ymap_size", ymap::ymap_size);
             klass.def_private("ymap_to_h", ymap::ymap_to_hash);
+            klass.def_private("ymap_unobserve", ymap::ymap_unobserve);
         });
 
         module
@@ -147,6 +151,10 @@ pub extern "C" fn Init_yrb() {
                     yxml::yxml_element_next_sibling,
                 );
                 klass.def_private(
+                    "yxml_element_observe",
+                    yxml::yxml_element_observe,
+                );
+                klass.def_private(
                     "yxml_element_parent",
                     yxml::yxml_element_parent,
                 );
@@ -184,6 +192,10 @@ pub extern "C" fn Init_yrb() {
                     "yxml_element_to_s",
                     yxml::yxml_element_to_string,
                 );
+                klass.def_private(
+                    "yxml_element_unobserve",
+                    yxml::yxml_element_unobserve,
+                );
             });
 
         module.define_nested_class("XMLText", None).define(|klass| {
@@ -218,6 +230,7 @@ pub extern "C" fn Init_yrb() {
                 "yxml_text_next_sibling",
                 yxml::yxml_text_next_sibling,
             );
+            klass.def_private("yxml_text_observe", yxml::yxml_text_observe);
             klass.def_private("yxml_text_parent", yxml::yxml_text_parent);
             klass.def_private(
                 "yxml_text_prev_sibling",
@@ -229,6 +242,7 @@ pub extern "C" fn Init_yrb() {
                 yxml::yxml_text_remove_range,
             );
             klass.def_private("yxml_text_to_s", yxml::yxml_text_to_string);
+            klass.def_private("yxml_text_unobserve", yxml::yxml_text_unobserve);
         });
     });
 }

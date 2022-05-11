@@ -149,7 +149,7 @@ RSpec.describe Y::Text do
     end
   end
 
-  context "when changing text" do
+  context "when changing" do
     it "invokes callback" do
       local = Y::Doc.new
       text = local.get_text("my text")

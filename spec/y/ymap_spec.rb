@@ -139,4 +139,71 @@ RSpec.describe Y::Map do
       expect(remote_map).to have_key(:hello)
     end
   end
+
+  context "when changing" do
+    it "invokes callback" do
+      local = Y::Doc.new
+      map = local.get_map("my map")
+
+      called = []
+      listener = proc { |changes| called = changes }
+
+      subscription_id = map.attach(listener)
+
+      map[:hello] = "world"
+      map[:say] = "goodbye"
+
+      local.commit
+      map.detach(subscription_id)
+
+      expect(called).to match_array(
+        [
+          { inserted: { hello: "world" } },
+          { inserted: { say: "goodbye" } }
+        ]
+      )
+    end
+
+    it "commits automatically" do
+      local = Y::Doc.new
+
+      changes = []
+
+      map = local.get_map("my map")
+      map.attach(->(delta) { changes << delta })
+
+      local.transact do
+        map[:hello] = "world"
+        map[:say] = "goodbye"
+      end
+
+      local.transact do
+        map.delete(:say)
+      end
+
+      local.transact do
+        map[:say] = "hello again"
+      end
+
+      expect(map.to_h).to eq(
+        {
+          hello: "world",
+          say: "hello again"
+        }
+      )
+
+      expect(changes[0]).to match_array(
+        [
+          { inserted: { say: "goodbye" } },
+          { inserted: { hello: "world" } }
+        ]
+      )
+      expect(changes[1]).to match_array(
+        [{ removed: { say: "goodbye" } }]
+      )
+      expect(changes[2]).to match_array(
+        [{ inserted: { say: "hello again" } }]
+      )
+    end
+  end
 end

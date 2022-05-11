@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module Y
+  # rubocop:disable Metrics/ClassLength
+
   # A XMLElement
   #
   # Someone should not instantiate an element directly, but use
@@ -79,6 +81,14 @@ module Y
       yxml_element_next_sibling
     end
 
+    # Attach listener to get notified about changes to the element
+    #
+    # @param [Proc] callback
+    # @return [Integer] The subscription ID
+    def attach(callback)
+      yxml_element_observe(callback)
+    end
+
     # Retrieve parent element
     #
     # @return [Y::XMLElement|nil]
@@ -125,6 +135,73 @@ module Y
       yxml_element_size
     end
 
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+
+    # Removes one or more children from XML Element
+    #
+    # @example Removes a single element
+    #   doc = Y::Doc.new
+    #
+    #   xml_element = doc.get_xml_element("my xml")
+    #   xml_element << "A"
+    #   xml_element << "B"
+    #   xml_element << "C"
+    #
+    #   xml_element.slice!(1)
+    #
+    #   xml_element.to_s # <UNDEFINED><A></A><C></C></UNDEFINED>
+    #
+    # @overload slice!(n)
+    #   Removes nth node from child list
+    #
+    # @overload slice!(start, length)
+    #   Removes a range of nodes
+    #
+    # @overload slice!(range)
+    #   Removes a range of nodes
+    #
+    # @return [void]
+    def slice!(*args)
+      if args.size.zero?
+        raise ArgumentError,
+              "Provide one of `index`, `range`, `start, length` as arguments"
+      end
+
+      if args.size == 1
+        arg = args.first
+
+        if arg.is_a?(Range)
+          if arg.exclude_end?
+            yxml_element_remove_range(transaction, arg.first,
+                                      arg.last - arg.first)
+          end
+          unless arg.exclude_end?
+            yxml_element_remove_range(transaction, arg.first,
+                                      arg.last + 1 - arg.first)
+          end
+          return nil
+        end
+
+        if arg.is_a?(Numeric)
+          yxml_element_remove_range(transaction, arg.to_int, 1)
+          return nil
+        end
+      end
+
+      if args.size == 2
+        first, second = args
+
+        if first.is_a?(Numeric) && second.is_a?(Numeric)
+          yxml_element_remove_range(transaction, first, second)
+          return nil
+        end
+      end
+
+      raise ArgumentError, "Please check your arguments, can't slice."
+    end
+
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+
     # Tag name
     #
     # @return [String]
@@ -137,6 +214,14 @@ module Y
     # @return [String]
     def to_s
       yxml_element_to_s
+    end
+
+    # Detach a listener
+    #
+    # @param [Integer] subscription_id
+    # @return [void]
+    def detach(subscription_id)
+      yxml_element_unobserve(subscription_id)
     end
 
     # Creates a new node and puts it in front of the child list
@@ -255,6 +340,11 @@ module Y
     #
     # @return [Y::XMLElement|XMLText|nil]
 
+    # @!method yxml_element_observe(callback)
+    #
+    # @param [Proc] callback
+    # @return [Integer] The subscription ID
+
     # @!method yxml_element_parent()
     #
     # @return [Y::XMLElement|nil]
@@ -312,6 +402,11 @@ module Y
     #
     # @return [String]
 
+    # @!method yxml_element_unobserve(subscription_id)
+    #
+    # @param [Integer] subscription_id
+    # @return [void]
+
     # A reference to the current active transaction of the document this element
     # belongs to.
     #
@@ -320,8 +415,6 @@ module Y
       document.current_transaction
     end
   end
-
-  # rubocop:disable Metrics/ClassLength
 
   # A XMLText
   #
@@ -362,11 +455,27 @@ module Y
 
     alias push <<
 
+    # Attach a listener to get notified about changes
+    #
+    # @param [Proc] callback
+    # @return [Integer] subscription_id
+    def attach(callback)
+      yxml_text_observe(callback)
+    end
+
     # Return text attributes
     #
     # @return [Hash]
     def attrs
       yxml_text_attributes
+    end
+
+    # Detach a listener
+    #
+    # @param [Integer] subscription_id
+    # @return [void]
+    def detach(subscription_id)
+      yxml_text_unobserve(subscription_id)
     end
 
     # Format text
@@ -673,6 +782,11 @@ module Y
     #
     # @return [Y::XMLElement|Y::XMLText|nil]
 
+    # @!method yxml_text_observe(callback)
+    #
+    # @param [Proc] callback
+    # @return [Integer] A subscription ID
+
     # @!method yxml_text_parent
     #
     # @return [Y::XMLElement|nil]
@@ -696,6 +810,11 @@ module Y
 
     # @!method yxml_text_to_s()
     #
+    # @return [void]
+
+    # @!method yxml_text_unobserve(subscription_id)
+    #
+    # @param [Integer] subscription_id
     # @return [void]
 
     # A reference to the current active transaction of the document this text

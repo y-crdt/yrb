@@ -1,4 +1,6 @@
+use crate::ymap::MAP_WRAPPER;
 use crate::ytext::TEXT_WRAPPER;
+use crate::yxml::{XML_ELEMENT_WRAPPER, XML_TEXT_WRAPPER};
 use lib0::any::Any;
 use rutie::{
     AnyException, AnyObject, Array, Boolean, Exception, Fixnum, Float, Hash,
@@ -62,10 +64,18 @@ pub(crate) fn map_yrs_value_to_ruby(value: Value) -> AnyObject {
             let values = a.iter().map(|n| map_yrs_value_to_ruby(n));
             Array::from_iter(values).to_any_object()
         }
+        Value::YMap(m) => Module::from_existing("Y")
+            .get_nested_class("Text")
+            .wrap_data(m, &*MAP_WRAPPER),
         Value::YText(t) => Module::from_existing("Y")
             .get_nested_class("Text")
             .wrap_data(t, &*TEXT_WRAPPER),
-        _ => panic!("not supported yet"),
+        Value::YXmlElement(x) => Module::from_existing("Y")
+            .get_nested_class("XMLElement")
+            .wrap_data(x, &*XML_ELEMENT_WRAPPER),
+        Value::YXmlText(x) => Module::from_existing("Y")
+            .get_nested_class("XMLText")
+            .wrap_data(x, &*XML_TEXT_WRAPPER),
     }
 }
 

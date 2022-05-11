@@ -159,4 +159,67 @@ RSpec.describe Y::XMLElement do
       expect(remote_xml.to_s).to eq("<UNDEFINED><A><B></B></A></UNDEFINED>")
     end
   end
+
+  context "when changing" do
+    it "invokes callback" do
+      local = Y::Doc.new
+      xml_element = local.get_xml_element("my xml element")
+
+      called = nil
+      listener = proc { |changes| called = changes }
+
+      subscription_id = xml_element.attach(listener)
+
+      xml_element << "A"
+      xml_element << "B"
+
+      local.commit
+      xml_element.detach(subscription_id)
+
+      expect(called.first[:added].size).to eq(2)
+      expect(called.first[:added].first.tag).to eq("A")
+      expect(called.first[:added].last.tag).to eq("B")
+    end
+
+    it "commits automatically" do
+      local = Y::Doc.new
+
+      changes = []
+
+      xml_element = local.get_xml_element("my xml element")
+      xml_element.attach(proc { |delta| changes << delta })
+
+      local.transact do
+        xml_element << "A"
+        xml_element << "B"
+        xml_element << "C"
+      end
+
+      local.transact do
+        xml_element.slice!(1)
+      end
+
+      local.transact do
+        xml_element[1] = "B"
+      end
+
+      expect(xml_element.to_s).to eq(
+        "<UNDEFINED><A></A><B></B><C></C></UNDEFINED>"
+      )
+      expect(changes.size).to eq(3)
+
+      expect(changes[0].size).to eq(1)
+      expect(changes[0].first).to have_key(:added)
+      expect(changes[0].first[:added].map(&:tag)).to match_array(%w[A B C])
+
+      expect(changes[1].size).to eq(2)
+      expect(changes[1].first).to eq({ retain: 1 })
+      expect(changes[1].last).to eq({ removed: 1 })
+
+      expect(changes[2].size).to eq(2)
+      expect(changes[2].first).to eq({ retain: 1 })
+      expect(changes[2].last).to have_key(:added)
+      expect(changes[2].last[:added].first.tag).to eq("B")
+    end
+  end
 end

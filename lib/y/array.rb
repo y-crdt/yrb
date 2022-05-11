@@ -41,11 +41,38 @@ module Y
       yarray_get(index)
     end
 
+    # Inserts value at position
+    #
+    # @param [Integer] index
+    # @param [true|false|Float|Integer|String|Array|Hash]
+    # @return [void]
+    def []=(index, value)
+      yarray_insert(transaction, index, value)
+    end
+
     # Adds an element to the end of the array
     #
     # @return [void]
     def <<(value)
       yarray_push_back(transaction, value)
+    end
+
+    # Attach listener to array changes
+    #
+    # @example Listen to changes in array type
+    #   local = Y::Doc.new
+    #
+    #   arr = local.get_array("my array")
+    #   arr.attach(->(delta) { pp delta })
+    #
+    #   local.transact do
+    #     arr << 1
+    #   end
+    #
+    # @param [Proc] callback
+    # @return [Integer]
+    def attach(callback)
+      yarray_observe(callback)
     end
 
     # Adds to array all elements from each Array in `other_arrays`.
@@ -67,6 +94,14 @@ module Y
       end
 
       yarray_insert_range(transaction, size, combined)
+    end
+
+    # Detach listener
+    #
+    # @param [Integer] subscription_id
+    # @return [void]
+    def detach(subscription_id)
+      yarray_unobserve(subscription_id)
     end
 
     # @return [void]
@@ -273,6 +308,11 @@ module Y
     # @param [Object] value
     # @return [void]
 
+    # @!method yarray_observe(callback)
+    #
+    # @param [Proc] callback
+    # @return [Integer]
+
     # @!method yarray_remove(transaction, index)
     #   Removes a single element from array at index
     #
@@ -292,6 +332,11 @@ module Y
     #   Transforms the array into a Ruby array
     #
     # @return [Array]
+
+    # @!method yarray_unobserve(subscription_id)
+    #
+    # @param [Integer] subscription_id
+    # @return [void]
 
     # A reference to the current active transaction of the document this map
     # belongs to.

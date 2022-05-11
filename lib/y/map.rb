@@ -32,6 +32,14 @@ module Y
       super()
     end
 
+    # Attach a listener to get notified about any changes to the map
+    #
+    # @param [Proc] callback
+    # @return [Integer] A subscription ID
+    def attach(callback)
+      ymap_observe(callback)
+    end
+
     # Removes all map entries
     #
     # @return [Self]
@@ -69,6 +77,14 @@ module Y
     end
 
     # rubocop:enable Layout/LineLength
+
+    # Detach listener
+    #
+    # @param [Integer] subscription_id
+    # @return [void]
+    def detach(subscription_id)
+      ymap_unobserve(subscription_id)
+    end
 
     # @return [void]
     def each(&block)
@@ -144,6 +160,11 @@ module Y
     # @param [String|Symbol] key
     # @param [Any] value
 
+    # @!method ymap_observe(callback)
+    #
+    # @param [Proc] callback
+    # @return [Integer]
+
     # @!method ymap_remove(transaction, key)
     #   Removes key-value pair from Map if key exists.
     #
@@ -159,6 +180,11 @@ module Y
     #   Returns a Hash representation of the Map
     #
     # @return [Hash] Hash representation of Map
+
+    # @!method ymap_unobserve(subscription_id)
+    #
+    # @param [Integer] subscription_id
+    # @return [void]
 
     # A reference to the current active transaction of the document this map
     # belongs to.

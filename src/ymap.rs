@@ -2,11 +2,12 @@ use crate::util::{map_ruby_type_to_rust, map_yrs_value_to_ruby};
 use crate::ytransaction::{YTransaction, TRANSACTION_WRAPPER};
 use lib0::any::Any;
 use rutie::{
-    AnyObject, Boolean, Class, Fixnum, Hash, NilClass, Object, Proc, RString,
-    Symbol, VM,
+    AnyObject, Array, Boolean, Class, Fixnum, Hash, Integer, NilClass, Object,
+    Proc, RString, Symbol, VM,
 };
 use std::rc::Rc;
-use yrs::Map;
+use yrs::types::EntryChange;
+use yrs::{Map, SubscriptionId};
 
 wrappable_struct!(Map, MapWrapper, MAP_WRAPPER);
 class!(YMap);
@@ -101,6 +102,58 @@ methods!(
 
         map_yrs_value_to_ruby(result.unwrap_or(yrs::types::Value::Any(Any::Null)))
     },
+    fn ymap_observe(callback: Proc) -> Integer {
+        let c = callback.map_err(|e| VM::raise_ex(e)).unwrap();
+
+        let map: &mut Map = rtself.get_data_mut(&*MAP_WRAPPER);
+        let subscription_id: SubscriptionId = map
+            .observe(move |transaction, map_event| {
+                let delta = map_event.keys(transaction);
+                let mut changes: Vec<AnyObject> = Vec::new();
+
+                for (key, change) in delta {
+                    match change {
+                        EntryChange::Inserted(v) => {
+                            let mut h = Hash::new();
+                            h.store(Symbol::new(&key.to_string()), map_yrs_value_to_ruby(v.clone()));
+
+                            let mut payload = Hash::new();
+                            payload.store(Symbol::new("inserted"), h);
+
+                            changes.push(payload.to_any_object());
+                        },
+                        EntryChange::Updated(old, new) => {
+                            let mut values = Array::with_capacity(2);
+                            values.push(map_yrs_value_to_ruby(old.clone()));
+                            values.push(map_yrs_value_to_ruby(new.clone()));
+
+                            let mut h = Hash::new();
+                            h.store(Symbol::new(&key.to_string()), values);
+
+                            let mut payload = Hash::new();
+                            payload.store(Symbol::new("updated"), h);
+
+                            changes.push(payload.to_any_object());
+                        },
+                        EntryChange::Removed(v) => {
+                            let mut h = Hash::new();
+                            h.store(Symbol::new(&key.to_string()), map_yrs_value_to_ruby(v.clone()));
+
+                            let mut payload = Hash::new();
+                            payload.store(Symbol::new("removed"), h);
+
+                            changes.push(payload.to_any_object());
+                        }
+                    }
+                }
+
+                let args = &[Array::from_iter(changes).to_any_object()];
+                c.call(args);
+            })
+            .into();
+
+        Integer::from(subscription_id)
+    },
     fn ymap_remove(transaction: YTransaction, key: AnyObject) -> AnyObject {
         let mut tx = transaction.map_err(|e| VM::raise_ex(e)).unwrap();
         let k = key.map_err(|e| VM::raise_ex(e)).unwrap();
@@ -135,4 +188,12 @@ methods!(
 
         h
     },
+    fn ymap_unobserve(subscription_id: Integer) -> NilClass {
+        let s = subscription_id.map_err(|e| VM::raise_ex(e)).unwrap();
+
+        let map: &mut Map = rtself.get_data_mut(&*MAP_WRAPPER);
+        map.unobserve(s.into());
+
+        NilClass::new()
+    }
 );
