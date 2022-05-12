@@ -1,5 +1,25 @@
 # Decision log
 
+## 2022-05-12
+
+### Transactions do not always commit automatically
+
+In `yrs`, the lifetime of a transaction is determined automatically. This can
+lead to an interesting situation in Ruby, where we attach a listener to receive
+changes, never commit a transaction explicitly and where the transaction gets
+dropped automatically. I believe we still maintain a pointer to the transaction
+that no longer exists, and therefore we receive a segfault.
+
+## 2022-05-12
+
+### Add event-driven approach to receive changes
+
+It is not clear if this ends up being the final API to receive changes, but
+it is the one that is supported in one or the other way across all `yrs`
+implementations. It might be beneficial to add a synchronous API in the future,
+but this isn't supported right away. All common styles of closure like behavior
+are supported: `Proc`, `Lambda` and `Block`.
+
 ## 2022-05-09
 
 ### Supported operations on data types are either read-only or mutable

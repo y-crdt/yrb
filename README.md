@@ -54,6 +54,8 @@ remote.sync(update)
 puts remote_text.to_s == local_text.to_s # true  
 ```  
 
+More [examples](./docs/examples).
+
 ## Development
 
 Make sure you have `cargo` available (2021 edition). The gem needs the lib to
@@ -75,7 +77,7 @@ push git commits and the created tag, and push the `.gem` file to
 
 ## Docs
 
-You can run `yard` locally and check the docs with:
+You can run `yard` locally and open the docs with:
 
 ```bash
 yard server 
