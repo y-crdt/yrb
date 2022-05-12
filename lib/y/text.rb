@@ -63,9 +63,12 @@ module Y
     #   local.commit
     #
     # @param [Proc] callback
+    # @param [Block] block
     # @return [Integer]
-    def attach(callback)
-      ytext_observe(callback)
+    def attach(callback, &block)
+      return ytext_observe(callback) unless callback.nil?
+
+      ytext_observe(block.to_proc) unless block.nil?
     end
 
     # Detach listener

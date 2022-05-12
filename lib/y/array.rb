@@ -44,7 +44,7 @@ module Y
     # Inserts value at position
     #
     # @param [Integer] index
-    # @param [true|false|Float|Integer|String|Array|Hash]
+    # @param [true|false|Float|Integer|String|Array|Hash] value
     # @return [void]
     def []=(index, value)
       yarray_insert(transaction, index, value)
@@ -70,9 +70,12 @@ module Y
     #   end
     #
     # @param [Proc] callback
+    # @param [Block] block
     # @return [Integer]
-    def attach(callback)
-      yarray_observe(callback)
+    def attach(callback, &block)
+      return yarray_observe(callback) unless callback.nil?
+
+      yarray_observe(block.to_proc) unless block.nil?
     end
 
     # Adds to array all elements from each Array in `other_arrays`.

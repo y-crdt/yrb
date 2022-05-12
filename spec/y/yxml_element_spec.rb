@@ -181,6 +181,27 @@ RSpec.describe Y::XMLElement do
       expect(called.first[:added].last.tag).to eq("B")
     end
 
+    it "supports block as callback argument" do
+      local = Y::Doc.new
+      xml_element = local.get_xml_element("my xml element")
+
+      called = nil
+
+      subscription_id = xml_element.attach do |changes|
+        called = changes
+      end
+
+      xml_element << "A"
+      xml_element << "B"
+
+      local.commit
+      xml_element.detach(subscription_id)
+
+      expect(called.first[:added].size).to eq(2)
+      expect(called.first[:added].first.tag).to eq("A")
+      expect(called.first[:added].last.tag).to eq("B")
+    end
+
     it "commits automatically" do
       local = Y::Doc.new
 

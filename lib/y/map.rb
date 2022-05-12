@@ -35,9 +35,12 @@ module Y
     # Attach a listener to get notified about any changes to the map
     #
     # @param [Proc] callback
-    # @return [Integer] A subscription ID
-    def attach(callback)
-      ymap_observe(callback)
+    # @param [Block] block
+    # @return [Integer]
+    def attach(callback, &block)
+      return ymap_observe(callback) unless callback.nil?
+
+      ymap_observe(block.to_proc) unless block.nil?
     end
 
     # Removes all map entries

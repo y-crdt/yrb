@@ -83,10 +83,25 @@ module Y
 
     # Attach listener to get notified about changes to the element
     #
+    # This supports either a `Proc` or a `Block`.
+    #
+    # @example Receive changes via Proc
+    #   doc = Y::Doc.new
+    #   xml_element = doc.get_xml_element("my xml element")
+    #   xml_element.attach ->(changes) { … }
+    #
+    # @example Receive changes via Block
+    #   doc = Y::Doc.new
+    #   xml_element = doc.get_xml_element("my xml element")
+    #   xml_element.attach { |changes| … }
+    #
     # @param [Proc] callback
+    # @param [Block] block
     # @return [Integer] The subscription ID
-    def attach(callback)
-      yxml_element_observe(callback)
+    def attach(callback = nil, &block)
+      return yxml_element_observe(callback) unless callback.nil?
+
+      yxml_element_observe(block.to_proc) unless block.nil?
     end
 
     # Retrieve parent element
@@ -459,8 +474,9 @@ module Y
     #
     # @param [Proc] callback
     # @return [Integer] subscription_id
-    def attach(callback)
-      yxml_text_observe(callback)
+    def attach(callback = nil, &block)
+      yxml_text_observe(callback) unless callback.nil?
+      yxml_text_observe(block.to_proc) unless block.nil?
     end
 
     # Return text attributes
