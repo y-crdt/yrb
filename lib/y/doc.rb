@@ -46,6 +46,16 @@ module Y
       ydoc_encode_diff_v1(state)
     end
 
+    # Creates a full diff for the current document. It is similar to {#diff},
+    # but does not take a state. Instead it creates an empty state and passes it
+    # to the encode_diff function.
+    #
+    # @return [::Array<Int>] Binary encoded diff
+    def full_diff
+      empty_state = Y::Doc.new.state
+      ydoc_encode_diff_v1(empty_state)
+    end
+
     # Gets or creates a new array by name
     #
     # If the optional values array is present, fills the array up with elements
@@ -130,6 +140,17 @@ module Y
     # @return [void]
     def sync(diff)
       current_transaction.apply(diff)
+    end
+
+    # Restores a specific document from an update that contains full state
+    #
+    # This is doing the same as {#sync}, but it exists to be explicit about
+    # the intent. This is the companion to {#full_diff}.
+    #
+    # @param [::Array<Int>] full_diff Binary encoded update
+    # @return [void]
+    def restore(full_diff)
+      current_transaction.apply(full_diff)
     end
 
     # rubocop:disable Metrics/MethodLength

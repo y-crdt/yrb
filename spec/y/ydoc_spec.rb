@@ -93,4 +93,24 @@ RSpec.describe Y::Doc do
       expect(changes).to eq({ insert: "hello" })
     end
   end
+
+  context "when serializing and deserializing full documents" do
+    it "encodes and restores full document" do
+      doc = Y::Doc.new
+
+      text = doc.get_text("my text")
+      text << "Hello, World"
+
+      arr = doc.get_array("my array")
+      arr << 1
+
+      update = doc.full_diff
+
+      doc2 = Y::Doc.new
+      doc2.restore(update)
+
+      expect(doc2.get_text("my text").to_s).to eq("Hello, World")
+      expect(doc2.get_array("my array").to_a).to match_array([1])
+    end
+  end
 end
