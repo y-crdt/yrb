@@ -1,28 +1,40 @@
-image: ruby:3.0.3
-
-before_script:
-  - gem install bundler -v 2.2.32
-  - ./bin/setup
-
 stages:
   - lint
   - build
   - test
 
-cache:
-  paths:
-    - vendor/ruby
-
 rubocop:
   stage: lint
+  image: ruby:3.0.3
+  cache:
+    paths:
+      - vendor/ruby
+  before_script:
+    - gem install bundler -v 2.2.32
+    - ./bin/setup
   script:
     - rubocop
 
-build:
+build-linux-x86:
   stage: build
   image: rust:latest
+  cache:
+    paths:
+      - target/
   script:
-    cargo build --release
+    cargo build --target x86_64-unknown-linux-gnu --release
+  artifacts:
+    paths:
+      - target/release
+
+build-linux-arm:
+  stage: build
+  image: rust:latest
+  cache:
+    paths:
+      - target/
+  script:
+    cargo build --target aarch64-unknown-linux-gnu --release
   artifacts:
     paths:
       - target/release
