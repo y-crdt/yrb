@@ -1,3 +1,6 @@
+variables:
+  CARGO_HOME: $CI_PROJECT_DIR/.cargo
+
 stages:
   - prepare
   - lint
@@ -21,12 +24,26 @@ build-linux-x86:
   image: registry.gitlab.com/gitlab-org/incubation-engineering/real-time-editing/yrb:ruby-3.0.3
   cache:
     paths:
-      - target/
+      - target
+      - .cargo
   script:
     - cargo build --release
   artifacts:
     paths:
       - target/release
+
+build-macos-x86:
+  stage: build
+  image: registry.gitlab.com/gitlab-org/incubation-engineering/real-time-editing/yrb:ruby-3.0.3
+  cache:
+    paths:
+      - target
+      - .cargo
+  script:
+    - cargo build --target x86_64-apple-darwin --release
+  artifacts:
+    paths:
+      - target/x86_64-apple-darwin/release
 
 rspec:
   stage: test
