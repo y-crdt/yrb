@@ -1,8 +1,5 @@
 # Yrb
 
-> Attention: This gem isn't published yet, but you can play around with it.
-> Feedback on the Ruby API is welcome 🙌.
-
 Yrb is a Ruby binding for Y-CRDT. It provides distributed data types that enable
 real-time collaboration between devices. Yrb can sync data with any other
 platform that has a Y-CRDT binding, allowing for seamless cross-domain
@@ -26,6 +23,11 @@ And then execute:
 Or install it yourself as:
 
     $ gem install y-rb
+
+> **⚠ WARNING: Binary dependencies are not pre-built.**  
+> In an upcoming version we will address the issue of binaries not being
+> pre-built. Until then, you need to have the latest Rust + Cargo working on
+> your machine in order to install y-rb.
 
 ## Usage
 
@@ -54,7 +56,7 @@ remote.sync(update)
 puts remote_text.to_s == local_text.to_s # true  
 ```  
 
-More [examples](./docs/examples).
+More [examples](docs/examples.md).
 
 ## Development
 
@@ -86,7 +88,7 @@ open "http://0.0.0.0:8808/"
 
 ## Decision log
 
-For this `gem`, we maintain a [decision log](./docs/decisions.md). Please consult it
+For this `gem`, we maintain a [decision log](docs/decisions.md). Please consult it
 in case there is some ambiguity in terms of why certain implementation details
 look as they are. 
 

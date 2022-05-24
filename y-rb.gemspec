@@ -10,8 +10,8 @@ Gem::Specification.new do |spec|
   spec.email = %w[hmoser@gitlab.com box@hannesmoser.at]
 
   spec.summary = "Ruby bindings for yrs"
-  spec.description = "Yrs \"wires\" is a Rust port of the Yjs framework."
-  spec.homepage = "https://about.gitlab.com"
+  spec.description = "Ruby bindings for yrs. Yrs \"wires\" is a Rust port of the Yjs framework."
+  spec.homepage = "https://github.com/y-crdt/yrb"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 2.6.0"
 
