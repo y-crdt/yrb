@@ -19,33 +19,14 @@ rubocop:
   script:
     - rubocop
 
-build-linux-x86:
-  stage: build
-  image: registry.gitlab.com/gitlab-org/incubation-engineering/real-time-editing/yrb:ruby-3.0.3
-  cache:
-    paths:
-      - target
-      - .cargo
-  script:
-    - cargo build --release
-  artifacts:
-    paths:
-      - target/release
-
-build-macos-x86:
-  stage: build
-  image: registry.gitlab.com/gitlab-org/incubation-engineering/real-time-editing/yrb:ruby-3.0.3
-  cache:
-    paths:
-      - target
-      - .cargo
-  script:
-    - cargo build --target x86_64-apple-darwin --release
-  artifacts:
-    paths:
-      - target/x86_64-apple-darwin/release
-
 rspec:
   stage: test
+  image: registry.gitlab.com/gitlab-org/incubation-engineering/real-time-editing/yrb:ruby-3.0.3
+  cache:
+    paths:
+      - vendor/ruby
+  before_script:
+    - gem install bundler -v 2.2.32
+    - ./bin/setup
   script:
     - rake spec

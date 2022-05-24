@@ -86,7 +86,7 @@ open "http://0.0.0.0:8808/"
 
 ## Decision log
 
-For this `gem`, we maintain a [decision log](./decisions.md). Please consult it
+For this `gem`, we maintain a [decision log](./docs/decisions.md). Please consult it
 in case there is some ambiguity in terms of why certain implementation details
 look as they are. 
 

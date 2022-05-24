@@ -4,6 +4,7 @@ require "bundler/gem_tasks"
 require "rspec/core/rake_task"
 require "yard"
 require "rubocop/rake_task"
+require "thermite/tasks"
 
 RSpec::Core::RakeTask.new(:spec)
 
@@ -34,3 +35,5 @@ end
 RuboCop::RakeTask.new
 
 YARD::Rake::YardocTask.new
+
+Thermite::Tasks.new

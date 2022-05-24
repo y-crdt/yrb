@@ -2,19 +2,20 @@
 
 require_relative "lib/y/version"
 
+# rubocop:disable Metrics/BlockLength
 Gem::Specification.new do |spec|
   spec.name = "y-rb"
   spec.version = Y::VERSION
   spec.authors = ["Hannes Moser"]
-  spec.email = ["box@hannesmoser.at"]
+  spec.email = %w[hmoser@gitlab.com box@hannesmoser.at]
 
-  spec.summary = "Bindings for y-crdt"
+  spec.summary = "Ruby bindings for yrs"
   spec.description = "Yrs \"wires\" is a Rust port of the Yjs framework."
-  spec.homepage = "https://gitlab.org"
+  spec.homepage = "https://about.gitlab.com"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 2.6.0"
 
-  spec.metadata["allowed_push_host"] = "TODO: Set to your gem server 'https://example.com'"
+  spec.metadata["allowed_push_host"] = "https://rubygems.org"
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://gitlab.com/gitlab-org/incubation-engineering/real-time-editing/y-rb"
@@ -27,10 +28,17 @@ Gem::Specification.new do |spec|
       (f == __FILE__) || f.match(%r{\A(?:(?:test|spec|features)/|\.(?:git|travis|circleci)|appveyor)})
     end
   end
+
   spec.bindir = "exe"
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "rutie", "~> 0.0.4"
   spec.metadata["rubygems_mfa_required"] = "true"
+
+  spec.add_dependency "rake", "~> 13.0"
+  spec.add_dependency "rutie", "~> 0.0.4"
+  spec.add_dependency "thermite", "~> 0"
+
+  spec.extensions << "ext/Rakefile"
 end
+# rubocop:enable Metrics/BlockLength
