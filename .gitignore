@@ -8,6 +8,7 @@
 /spec/reports/
 /tmp/
 y-rb-*.gem
+y_rb-*.tar.gz
 mkmf.log
 
 # rspec failure tracking
