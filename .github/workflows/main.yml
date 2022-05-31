@@ -1,0 +1,28 @@
+name: Build & deploy documentation
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Update gh-pages with docs
+    steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v3
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.0"
+      - name: Install required gem dependencies
+        run: gem install yard github-markup redcarpet --no-document
+      - name: Build YARD Ruby Documentation
+        run: yardoc --output-dir doc
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./doc
+          publish_branch: gh-pages
