@@ -7,8 +7,8 @@ updates:
       time: "11:00"
     open-pull-requests-limit: 10
   - package-ecosystem: cargo
-      directory: "/"
-      schedule:
-        interval: daily
-        time: "11:00"
-      open-pull-requests-limit: 10
+    directory: "/"
+    schedule:
+      interval: daily
+      time: "11:00"
+    open-pull-requests-limit: 10
