@@ -1,7 +1,7 @@
 [package]
 name = "y-rb"
-version = "0.1.0"
-authors = ["Hannes Moser <box@hannesmoser.at>"]
+version = "0.1.1"
+authors = ["Hannes Moser <box@hannesmoser.at>", "Hannes Moser <hmoser@gitlab.com>"]
 edition = "2021"
 homepage = "https://github.com/y-crdt/yrb"
 repository = "https://github.com/y-crdt/yrb"
@@ -10,8 +10,7 @@ repository = "https://github.com/y-crdt/yrb"
 lazy_static = "1.4.0"
 rutie = "0.8.4"
 yrs = "0.9.1"
-lib0 = "0.9.1"
-cross = "0.2.1"
+lib0 = "0.9.1" # must match yrs version
 
 [lib]
 name = "y_rb"
@@ -19,3 +18,5 @@ crate-type = ["cdylib"]
 
 [package.metadata.thermite]
 github_releases = true
+github_release_type = "latest"
+git_tag_regex = "^v(\\d+\\.\\d+\\.\\d+)-rust$"
