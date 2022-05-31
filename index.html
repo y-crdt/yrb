@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  File: README
+  
+    &mdash; Documentation by YARD 0.9.27
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "README";
+  relpath = '';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="_index.html">Index</a> &raquo; 
+    <span class="title">File: README</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><div id='filecontents'><h1 id="yrb">Yrb</h1>
+
+<p>Yrb is a Ruby binding for Y-CRDT. It provides distributed data types that enable
+real-time collaboration between devices. Yrb can sync data with any other
+platform that has a Y-CRDT binding, allowing for seamless cross-domain
+communication.</p>
+
+<p>The library is a thin wrapper around Yrs, taking advantage of the safety and
+performance of Rust.</p>
+
+<h2 id="installation">Installation</h2>
+
+<p>Add this line to your application&#39;s Gemfile:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_gem'>gem</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>y-rb</span><span class='tstring_end'>&#39;</span></span>
+</code></pre>
+
+<p>And then execute:</p>
+
+<pre class="code ruby"><code class="ruby">$ bundle install
+</code></pre>
+
+<p>Or install it yourself as:</p>
+
+<pre class="code ruby"><code class="ruby">$ gem install y-rb
+</code></pre>
+
+<blockquote>
+<p><strong>⚠ WARNING: Binary dependencies are not pre-built.</strong><br>
+In an upcoming version we will address the issue of binaries not being
+pre-built. Until then, you need to have the latest Rust + Cargo working on
+your machine in order to install y-rb.</p>
+</blockquote>
+
+<h2 id="usage">Usage</h2>
+
+<pre class="code ruby"><code class="ruby"><span class='comment'># creates a new document and text structure
+</span><span class='id identifier rubyid_local'>local</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Y.html" title="Y (module)">Y</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Y/Doc.html" title="Y::Doc (class)">Doc</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> 
+<span class='id identifier rubyid_local_text'>local_text</span> <span class='op'>=</span> <span class='id identifier rubyid_local'>local</span><span class='period'>.</span><span class='id identifier rubyid_get_text'>get_text</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>my text</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+
+<span class='comment'># add some data to the text structure
+</span><span class='id identifier rubyid_local_text'>local_text</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>hello</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>  
+
+<span class='comment'># create a remote doccument sharing the same text structure
+</span><span class='id identifier rubyid_remote'>remote</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Y.html" title="Y (module)">Y</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Y/Doc.html" title="Y::Doc (class)">Doc</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> 
+<span class='id identifier rubyid_remote_text'>remote_text</span> <span class='op'>=</span> <span class='id identifier rubyid_remote'>remote</span><span class='period'>.</span><span class='id identifier rubyid_get_text'>get_text</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>my text</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>  
+
+<span class='comment'># retrieve the current state of the remote document
+</span><span class='id identifier rubyid_remote_state'>remote_state</span> <span class='op'>=</span> <span class='id identifier rubyid_remote'>remote</span><span class='period'>.</span><span class='id identifier rubyid_state'>state</span>  
+
+<span class='comment'># create an update for the remote document based on the current
+</span><span class='comment'># state of the remote document
+</span><span class='id identifier rubyid_update'>update</span> <span class='op'>=</span> <span class='id identifier rubyid_local'>local</span><span class='period'>.</span><span class='id identifier rubyid_diff'>diff</span><span class='lparen'>(</span><span class='id identifier rubyid_remote_state'>remote_state</span><span class='rparen'>)</span>  
+
+<span class='comment'># apply update to remote document
+</span><span class='id identifier rubyid_remote'>remote</span><span class='period'>.</span><span class='id identifier rubyid_sync'>sync</span><span class='lparen'>(</span><span class='id identifier rubyid_update'>update</span><span class='rparen'>)</span>  
+
+<span class='id identifier rubyid_puts'>puts</span> <span class='id identifier rubyid_remote_text'>remote_text</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='op'>==</span> <span class='id identifier rubyid_local_text'>local_text</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='comment'># true  
+</span></code></pre>
+
+<p>More <a href="docs/examples.md">examples</a>.</p>
+
+<h2 id="development">Development</h2>
+
+<p>Make sure you have <code>cargo</code> available (2021 edition). The gem needs the lib to
+be built every time when there is a change.</p>
+
+<pre class="code bash"><code class="bash">cargo build --release
+</code></pre>
+
+<p>After checking out the repo, run <code>bin/setup</code> to install dependencies. Then,
+run <code>rake spec</code> to run the tests. You can also run <code>bin/console</code> for an
+interactive prompt that will allow you to experiment.</p>
+
+<p>To install this gem onto your local machine, run <code>bundle exec rake install</code>.
+To release a new version, update the version number in <code>version.rb</code>, and then
+run <code>bundle exec rake release</code>, which will create a git tag for the version,
+push git commits and the created tag, and push the <code>.gem</code> file to
+<a href="https://rubygems.org">rubygems.org</a>.</p>
+
+<h2 id="docs">Docs</h2>
+
+<p>You can run <code>yard</code> locally and open the docs with:</p>
+
+<pre class="code bash"><code class="bash">yard server 
+open &quot;http://0.0.0.0:8808/&quot;
+</code></pre>
+
+<h2 id="decision-log">Decision log</h2>
+
+<p>For this <code>gem</code>, we maintain a <a href="docs/decisions.md">decision log</a>. Please consult it
+in case there is some ambiguity in terms of why certain implementation details
+look as they are. </p>
+
+<h2 id="license">License</h2>
+
+<p>The gem is available as open source under the terms of the
+<a href="https://opensource.org/licenses/MIT">MIT License</a>.</p>
+</div></div>
+
+      <div id="footer">
+  Generated on Tue May 31 11:24:57 2022 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.27 (ruby-3.0.4).
+</div>
+
+    </div>
+  </body>
+</html>
