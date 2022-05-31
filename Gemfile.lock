@@ -61,12 +61,13 @@ GEM
 
 PLATFORMS
   arm64-darwin-21
+  x86_64-linux
 
 DEPENDENCIES
   github-markup
   redcarpet
   rspec (~> 3.11.0)
-  rubocop (~> 1.21)
+  rubocop (~> 1.30)
   rubocop-rspec (~> 2.10.0)
   y-rb!
   yard
