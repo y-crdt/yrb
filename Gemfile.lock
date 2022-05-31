@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    y-rb (0.1.0)
+    y-rb (0.1.1)
       rake (~> 13.0)
       rutie (~> 0.0.4)
       thermite (~> 0)
