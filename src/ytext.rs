@@ -1,11 +1,11 @@
 use crate::util::{
     map_attrs_to_hash, map_hash_to_attrs, map_ruby_type_to_rust,
-    map_yrs_value_to_ruby,
+    map_yrs_value_to_ruby
 };
 use crate::ytransaction::{YTransaction, TRANSACTION_WRAPPER};
 use rutie::{
     AnyObject, Fixnum, Hash, Integer, NilClass, Object, Proc, RString, Symbol,
-    VM,
+    VM
 };
 use yrs::types::Delta;
 use yrs::{SubscriptionId, Text};

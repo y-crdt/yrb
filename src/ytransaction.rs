@@ -4,7 +4,7 @@ use crate::ymap::MAP_WRAPPER;
 use crate::ytext::TEXT_WRAPPER;
 use crate::yxml::{XML_ELEMENT_WRAPPER, XML_TEXT_WRAPPER};
 use rutie::{
-    AnyObject, Array, Module, NilClass, Object, RString, VerifiedObject, VM,
+    AnyObject, Array, Module, NilClass, Object, RString, VerifiedObject, VM
 };
 use yrs::updates::decoder::Decode;
 use yrs::updates::encoder::Encode;

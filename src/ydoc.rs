@@ -37,7 +37,7 @@ methods!(
 pub extern "C" fn ydoc_new(
     argc: Argc,
     argv: *const AnyObject,
-    _rtself: AnyObject,
+    _rtself: AnyObject
 ) -> AnyObject {
     let args = Value::from(0);
 

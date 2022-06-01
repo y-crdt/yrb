@@ -1,11 +1,11 @@
 use crate::util::{
     map_attrs_to_hash, map_hash_to_attrs, map_ruby_type_to_rust,
-    map_yrs_value_to_ruby,
+    map_yrs_value_to_ruby
 };
 use crate::ytransaction::{YTransaction, TRANSACTION_WRAPPER};
 use rutie::{
     AnyObject, Array as RArray, Fixnum, Hash, Integer, Module, NilClass,
-    Object, Proc, RString, Symbol, VM,
+    Object, Proc, RString, Symbol, VM
 };
 use yrs::types::xml::Attributes;
 use yrs::types::{Change, Delta};

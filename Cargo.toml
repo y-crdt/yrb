@@ -18,5 +18,3 @@ crate-type = ["cdylib"]
 
 [package.metadata.thermite]
 github_releases = true
-github_release_type = "latest"
-git_tag_regex = "^v(\\d+\\.\\d+\\.\\d+)-rust$"

@@ -2,7 +2,7 @@ use crate::util::{map_ruby_type_to_rust, map_yrs_value_to_ruby};
 use crate::ytransaction::{YTransaction, TRANSACTION_WRAPPER};
 use rutie::{
     AnyObject, Array as RArray, Fixnum, Hash, Integer, NilClass, Object, Proc,
-    Symbol, VM,
+    Symbol, VM
 };
 use yrs::types::{Change, Value};
 use yrs::{Array, SubscriptionId};

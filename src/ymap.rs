@@ -3,7 +3,7 @@ use crate::ytransaction::{YTransaction, TRANSACTION_WRAPPER};
 use lib0::any::Any;
 use rutie::{
     AnyObject, Array, Boolean, Class, Fixnum, Hash, Integer, NilClass, Object,
-    Proc, RString, Symbol, VM,
+    Proc, RString, Symbol, VM
 };
 use std::rc::Rc;
 use yrs::types::EntryChange;

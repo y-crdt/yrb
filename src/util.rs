@@ -4,7 +4,7 @@ use crate::yxml::{XML_ELEMENT_WRAPPER, XML_TEXT_WRAPPER};
 use lib0::any::Any;
 use rutie::{
     AnyException, AnyObject, Array, Boolean, Exception, Fixnum, Float, Hash,
-    Integer, Module, NilClass, Object, RString, Symbol,
+    Integer, Module, NilClass, Object, RString, Symbol
 };
 use std::borrow::Borrow;
 use std::collections::HashMap;
@@ -49,14 +49,12 @@ pub(crate) fn map_any_type_to_ruby(input: &Any) -> AnyObject {
                 let key = Symbol::new(k.as_ref());
                 let val = map_any_type_to_ruby(v);
                 h.store(key, val);
-                ()
             });
             h.to_any_object()
         }
     }
 }
 
-// This function gets reported as unused.
 pub(crate) fn map_yrs_value_to_ruby(value: Value) -> AnyObject {
     match value {
         Value::Any(v) => map_any_type_to_ruby(v.borrow()),
@@ -75,12 +73,12 @@ pub(crate) fn map_yrs_value_to_ruby(value: Value) -> AnyObject {
             .wrap_data(x, &*XML_ELEMENT_WRAPPER),
         Value::YXmlText(x) => Module::from_existing("Y")
             .get_nested_class("XMLText")
-            .wrap_data(x, &*XML_TEXT_WRAPPER),
+            .wrap_data(x, &*XML_TEXT_WRAPPER)
     }
 }
 
 pub(crate) fn map_ruby_type_to_rust(
-    input: AnyObject,
+    input: AnyObject
 ) -> Result<Any, AnyException> {
     if let Ok(_v) = input.try_convert_to::<NilClass>() {
         return Ok(Any::Null);
@@ -107,7 +105,7 @@ pub(crate) fn map_ruby_type_to_rust(
 
     Err(AnyException::new(
         "TypeError",
-        Some("cannot map input type"),
+        Some("cannot map input type")
     ))
 }
 
