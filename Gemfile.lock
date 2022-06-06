@@ -34,7 +34,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.11.0)
     rspec-support (3.11.0)
-    rubocop (1.30.0)
+    rubocop (1.30.1)
       parallel (~> 1.10)
       parser (>= 3.1.0.0)
       rainbow (>= 2.2.2, < 4.0)
@@ -61,12 +61,13 @@ GEM
 
 PLATFORMS
   arm64-darwin-21
+  x86_64-linux
 
 DEPENDENCIES
   github-markup
   redcarpet
   rspec (~> 3.11.0)
-  rubocop (~> 1.21)
+  rubocop (~> 1.30)
   rubocop-rspec (~> 2.10.0)
   y-rb!
   yard
