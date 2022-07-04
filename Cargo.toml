@@ -10,7 +10,7 @@ repository = "https://github.com/y-crdt/yrb"
 lazy_static = "1.4.0"
 rutie = "0.8.4"
 yrs = "0.9.1"
-lib0 = "0.9.1" # must match yrs version
+lib0 = "0.10.0" # must match yrs version
 
 [lib]
 name = "y_rb"
