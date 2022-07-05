@@ -59,6 +59,21 @@ RSpec.describe Y::Doc do
   end
 
   context "when syncing documents" do
+    it "sync changes from the start" do
+      local_doc = Y::Doc.new
+      local_text = local_doc.get_text("my text")
+      local_text << "hello "
+
+      remote_doc = Y::Doc.new
+      remote_text = remote_doc.get_text("my text")
+
+      update_remote = local_doc.diff
+
+      remote_doc.sync(update_remote)
+
+      expect(remote_text.to_s).to eq(local_text.to_s)
+    end
+
     it "sync changes of a local document to a remote doc" do
       local_doc = Y::Doc.new
       local_text = local_doc.get_text("my text")

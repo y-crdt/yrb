@@ -16,6 +16,9 @@ module Y
   #   remote_map = remote.get_map("my_map")
   #   pp remote_map.to_h #=> {hello: "world"}
   class Doc
+    ZERO_STATE = [0]
+    private_constant :ZERO_STATE
+
     # Commit current transaction
     #
     # This is a convenience method that invokes {Y::Transaction#commit} on the
@@ -42,7 +45,7 @@ module Y
     #
     # @param [::Array<Int>] state The state to create the diff against
     # @return [::Array<Int>] Binary encoded diff
-    def diff(state)
+    def diff(state = ZERO_STATE)
       ydoc_encode_diff_v1(state)
     end
 

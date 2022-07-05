@@ -4,7 +4,7 @@ use crate::ymap::MAP_WRAPPER;
 use crate::ytext::TEXT_WRAPPER;
 use crate::yxml::{XML_ELEMENT_WRAPPER, XML_TEXT_WRAPPER};
 use rutie::{
-    AnyObject, Array, Module, NilClass, Object, RString, VerifiedObject, VM
+    AnyObject, Array, Module, NilClass, Object, RString, VerifiedObject, VM,
 };
 use yrs::updates::decoder::Decode;
 use yrs::updates::encoder::Encode;
@@ -31,7 +31,8 @@ methods!(
         let u = convert_array_to_vecu8(update.unwrap());
 
         let transaction = rtself.get_data_mut(&*TRANSACTION_WRAPPER);
-        transaction.apply_update(Update::decode_v1(u.as_slice()));
+        let update = Update::decode_v1(u.as_slice()).unwrap();
+        transaction.apply_update(update);
 
         NilClass::new()
     },

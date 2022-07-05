@@ -26,10 +26,16 @@ methods!(
         let mut doc: &Doc = rtself.get_data_mut(&*DOC_WRAPPER);
         let state_vector_encoded: Vec<u8> =
             convert_array_to_vecu8(state_vector.unwrap());
-        let sv = &StateVector::decode_v1(state_vector_encoded.as_slice());
+
+        let result = &StateVector::decode_v1(state_vector_encoded.as_slice());
+        let sv = match result {
+            Ok(sv) => sv,
+            Err(error) => {
+                panic!("decoding the state vector failed: {:?}", error)
+            }
+        };
 
         let update = doc.encode_state_as_update_v1(sv);
-
         convert_vecu8_to_array(update)
     }
 );
@@ -37,7 +43,7 @@ methods!(
 pub extern "C" fn ydoc_new(
     argc: Argc,
     argv: *const AnyObject,
-    _rtself: AnyObject
+    _rtself: AnyObject,
 ) -> AnyObject {
     let args = Value::from(0);
 
