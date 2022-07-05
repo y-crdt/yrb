@@ -16,7 +16,7 @@ module Y
   #   remote_map = remote.get_map("my_map")
   #   pp remote_map.to_h #=> {hello: "world"}
   class Doc
-    ZERO_STATE = [0]
+    ZERO_STATE = [0].freeze
     private_constant :ZERO_STATE
 
     # Commit current transaction

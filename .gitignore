@@ -17,3 +17,6 @@ mkmf.log
 # Added by cargo
 /target
 Cargo.lock
+
+# build artifacts
+lib/y_rb.so
