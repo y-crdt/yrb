@@ -9,7 +9,7 @@ repository = "https://github.com/y-crdt/yrb"
 [dependencies]
 lazy_static = "1.4.0"
 rutie = "0.8.4"
-yrs = "0.9.1"
+yrs = "0.10.1"
 lib0 = "0.9.1" # must match yrs version
 
 [lib]
