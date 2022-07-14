@@ -24,10 +24,14 @@ Or install it yourself as:
 
     $ gem install y-rb
 
-> **⚠ WARNING: Binary dependencies are not pre-built.**  
-> In an upcoming version we will address the issue of binaries not being
-> pre-built. Until then, you need to have the latest Rust + Cargo working on
-> your machine in order to install y-rb.
+> **⚠ WARNING: Partial support for pre-built binaries.**  
+> `y-rb` comes with experimental pre-built binaries for a few platforms, but it
+> is not possible to support all targets right now. Please make sure there is an
+> archive that matches the OS, CPU architecture, and Ruby version. You can find
+> the assets listed with each [release](https://github.com/y-crdt/yrb/releases).
+>
+> If the platform is not listed, you need to add the latest stable Rust + Cargo
+> to your build dependencies in order for `y-rb` to install properly.
 
 ## Usage
 
@@ -39,7 +43,7 @@ local_text = local.get_text("my text")
 # add some data to the text structure
 local_text.push("hello")  
   
-# create a remote doccument sharing the same text structure
+# create a remote document sharing the same text structure
 remote = Y::Doc.new 
 remote_text = remote.get_text("my text")  
 

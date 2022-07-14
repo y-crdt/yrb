@@ -1,0 +1,17 @@
+[build]
+
+[build.dockerfile]
+file = "./build/Dockerfile"
+
+[build.env]
+passthrough = [
+    "RUBY_VERSION"
+]
+
+[target.aarch64-apple-darwin]
+
+[target.x86_64-apple-darwin]
+
+[target.x86_64-unknown-linux-gnu]
+
+[target.x86_64-unknown-linux-musl]
