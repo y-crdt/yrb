@@ -10,7 +10,17 @@ require_relative "version"
 require_relative "xml"
 
 module Y
-  Rutie.new(:y_rb).init(
+  # support pre-built and local built libraries
+  lib_path = if Dir.exist?(File.join(__dir__, "..", "..", "target", "release"))
+               nil
+             else
+               File.join(__dir__, "..", "..")
+             end
+
+  Rutie.new(
+    :y_rb,
+    lib_path: lib_path
+  ).init(
     "Init_yrb",
     File.join(__dir__, "..")
   )

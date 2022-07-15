@@ -1,6 +1,6 @@
 variables:
   CARGO_HOME: $CI_PROJECT_DIR/.cargo
-  PACKAGE_VERSION: "0.1.2"
+  PACKAGE_VERSION: "0.1.3"
   PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/y_rb/${PACKAGE_VERSION}"
 
 stages:
@@ -27,27 +27,32 @@ build-linux:
 build-macos:
   stage: build
   image: ${IMAGE_VERSION}
+  variables:
+    HOMEBREW_NO_INSTALL_CLEANUP: 1
+    HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK: 1
   script:
     - /bin/bash -c "$(curl "https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh")"
-    - brew install rbenv
-    - echo 'if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi' >> ~/.bash_profile
-    - source ~/.bash_profile
-    - rbenv install ${RUBY_VERSION}
-    - rbenv global ${RUBY_VERSION}
+    - brew install gnupg
+    - curl -sSL https://rvm.io/pkuczynski.asc | gpg --import -
+    - curl -L https://get.rvm.io | bash -s stable
+    - /bin/bash -l -c "rvm requirements"
+    - /bin/bash -l -c "rvm install $RUBY_VERSION"
+    - /bin/bash -l -c "rvm --default use $RUBY_VERSION"
     - curl https://sh.rustup.rs -sSf | sh -s -- -y
     - source /Users/gitlab/builds/gitlab-org/incubation-engineering/real-time-editing/yrb/.cargo/env
     - rustup target add aarch64-apple-darwin
-    - gem install bundler
-    - bundle install
-    - bundle exec rake thermite:tarball
+    - rustup target add aarch64-unknown-linux-gnu
+    - /bin/bash -l -c "gem install bundler"
+    - /bin/bash -l -c "bundle install"
+    - /bin/bash -l -c "bundle exec rake thermite:tarball"
   tags: [ shared-macos-amd64 ]
   artifacts:
     paths:
       - "y_rb-*.tar.gz"
   parallel:
     matrix:
-      - IMAGE_VERSION: [ "macos-11-xcode-12", "macos-12-xcode-13" ]
-        RUBY_VERSION: [ "2.6.10", "2.7.6", "3.0.4", "3.1.2" ]
+      - IMAGE_VERSION: ["macos-11-xcode-12", "macos-12-xcode-13"]
+        RUBY_VERSION: ["2.6.10", "2.7.6", "3.0.4", "3.1.2"]
 
 upload:
   stage: upload

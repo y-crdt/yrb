@@ -2,8 +2,7 @@
 
 require_relative "lib/y/version"
 
-# rubocop:disable Metrics/BlockLength
-Gem::Specification.new do |spec|
+Gem::Specification.new do |spec| # rubocop:disable Metrics/BlockLength
   spec.name = "y-rb"
   spec.version = Y::VERSION
   spec.authors = ["Hannes Moser"]
@@ -39,6 +38,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency "rutie", "~> 0.0.4"
   spec.add_dependency "thermite", "~> 0"
 
+  spec.add_development_dependency "activesupport", "~> 6.1.6.1"
+  spec.add_development_dependency "minitar", "~> 0.9"
+
   spec.extensions << "ext/Rakefile"
 end
-# rubocop:enable Metrics/BlockLength
