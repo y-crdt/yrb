@@ -1,29 +1,3 @@
-[package]
-name = "y-rb"
-version = "0.1.3"
-authors = ["Hannes Moser <box@hannesmoser.at>", "Hannes Moser <hmoser@gitlab.com>"]
-edition = "2021"
-homepage = "https://github.com/y-crdt/yrb"
-repository = "https://github.com/y-crdt/yrb"
-
-[dependencies]
-lazy_static = "1.4.0"
-rutie = "0.8.4"
-yrs = "0.12.0"
-lib0 = "0.12.0" # must match yrs version
-
-[target.aarch64-unknown-linux-musl.dependencies]
-rutie = {version="0.8.4", features=["no-link"]}
-
-[target.x86_64-unknown-linux-musl.dependencies]
-rutie = {version="0.8.4", features=["no-link"]}
-
-[target.aarch64-unknown-linux-gnu.dependencies]
-rutie = {version="0.8.4", features=["no-link"]}
-
-[lib]
-name = "y_rb"
-crate-type = ["cdylib"]
-
-[package.metadata.thermite]
-github_releases = true
+[workspace]
+resolver = "2"
+members = ["ext/yrb"]

@@ -1,9 +1,0 @@
-[build]
-
-[build.dockerfile]
-file = "./build/Dockerfile"
-
-[build.env]
-passthrough = [
-    "RUBY_VERSION"
-]
