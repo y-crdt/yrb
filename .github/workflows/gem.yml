@@ -2,6 +2,9 @@ name: Build and release gem
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - migrate-to-magnus
 
 jobs:
   native_gem:
@@ -10,29 +13,27 @@ jobs:
     strategy:
       matrix:
         platform:
-          - x86_64-linux
-          - aarch64-linux
-          - arm-linux
-          - x86_64-darwin
-          - arm64-darwin
-          - x64-mingw32
-          - x64-mingw-ucrt
-        ruby_version:
-          - 2.7.6
-          - 3.0.4
-          - 3.1.2
+          - "aarch64-linux"
+          - "arm64-darwin"
+          - "x86_64-darwin"
+          - "x86_64-linux"
+          - "x86_64-linux-musl"
 
     steps:
       - uses: actions/checkout@v2
 
-      - uses: ruby/setup-ruby@v1
+      - uses: oxidize-rb/actions/setup-ruby-and-rust@main
         with:
-          ruby-version: ${{ matrix.ruby_version }}
-          bundler-cache: true
+          ruby-version: "3.1"
+          bundler-cache: false
+          cargo-cache: true
+          cargo-vendor: true
 
       - uses: oxidize-rb/cross-gem-action@main
         with:
           platform: ${{ matrix.platform }}
+          env: |
+            RUBY_CC_VERSION=3.1.0:3.0.0:2.7.0
 
       - uses: actions/download-artifact@v3
         with:

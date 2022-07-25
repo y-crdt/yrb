@@ -47,7 +47,7 @@ RSpec.describe Y::Array do
     arr << { format: "bold" }
 
     expect(arr.to_a).to eq([42, 1.2, true, false, [1, 2, 3],
-                            { format: "bold" }])
+                            { "format" => "bold" }])
   end
 
   it "retrieves element at position" do
@@ -188,6 +188,7 @@ RSpec.describe Y::Array do
     arr = doc.get_array("my array")
 
     arr << 1
+    arr << 2
 
     arr.each do |element|
       expect(element).to eq(1)

@@ -29,7 +29,7 @@ RSpec.describe Y::XMLElement do
     xml_element = doc.get_xml_element("my xml")
     xml_element.attr_name = "Hello"
 
-    expect(xml_element.attrs).to eq({ name: "Hello" })
+    expect(xml_element.attrs).to eq({ "name" => "Hello" })
   end
 
   it "attributes is an alias to attrs" do
@@ -37,7 +37,7 @@ RSpec.describe Y::XMLElement do
     xml_element = doc.get_xml_element("my xml")
     xml_element.attr_name = "Hello"
 
-    expect(xml_element.attributes).to eq({ name: "Hello" })
+    expect(xml_element.attributes).to eq({ "name" => "Hello" })
   end
 
   it "retrieves first child from element" do

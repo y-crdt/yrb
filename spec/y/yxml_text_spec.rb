@@ -32,7 +32,7 @@ RSpec.describe Y::XMLText do
 
     xml_text.attr_name = "Hello"
 
-    expect(xml_text.attrs).to eq({ name: "Hello" })
+    expect(xml_text.attrs).to eq({ "name" => "Hello" })
   end
 
   it "formats text" do

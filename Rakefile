@@ -1,39 +1,88 @@
 # frozen_string_literal: true
 
 require "bundler/gem_tasks"
-require "rspec/core/rake_task"
-require "yard"
-require "rubocop/rake_task"
-require "thermite/tasks"
+require "rubygems/package_task"
+require "rake/testtask"
+require "rake/extensiontask"
+require "rb_sys"
 
-RSpec::Core::RakeTask.new(:spec)
+cross_rubies = %w[3.1.0 3.0.0 2.7.0]
+cross_platforms = %w[
+  aarch64-linux
+  arm64-darwin
+  x86_64-darwin
+  x86_64-linux
+  x86_64-linux-musl
+]
 
-RuboCop::RakeTask.new
+spec = Bundler.load_gemspec("y-rb.gemspec")
 
-task default: %i[spec rubocop]
+Gem::PackageTask.new(spec).define
+task "package" => cross_platforms.map { |p| "gem:#{p}" }
 
-desc "Compile the y-rb crate"
-task :compile do
-  # MacOS: ARM + x64
-  `cargo build --release --target=aarch64-apple-darwin`
-  `cargo build --release --target=x86_64-apple-darwin`
-
-  # Copy to target folder
-  `cp target/aarch64-apple-darwin/release/liby_rb.dylib target/release/`
+Rake::ExtensionTask.new("yrb", spec) do |ext|
+  ext.source_pattern = "*.{rs,toml}"
+  ext.cross_compile = true
+  ext.cross_platform = cross_platforms
+  ext.config_script = ENV["ALTERNATE_CONFIG_SCRIPT"] || "extconf.rb"
+  ext.cross_compiling do |spec|
+    spec.files.reject! { |file| File.fnmatch?("*.tar.gz", file) }
+    spec.dependencies.reject! { |dep| dep.name == "rb-sys" }
+  end
 end
 
-task :clean do
-  `cargo clean`
+namespace "gem" do
+  task "prepare" do
+    sh "bundle"
+  end
+
+  cross_platforms.each do |plat|
+    desc "Build all native binary gems in parallel"
+    multitask "native" => plat
+
+    desc "Build the native gem for #{plat}"
+    task plat => "prepare" do
+      require "rake_compiler_dock"
+
+      ENV["RCD_IMAGE"] = if plat == "x86_64-linux-musl"
+                           "eliias/rbsys-x86_64-linux-musl:#{RbSys::VERSION}"
+                         else
+                           "rbsys/#{plat}:#{RbSys::VERSION}"
+                         end
+
+      RakeCompilerDock.sh <<-SH, platform: plat
+          bundle --local && \
+          RUBY_CC_VERSION="#{cross_rubies.join(":")}" rake native:#{plat} pkg/#{spec.full_name}-#{plat}.gem
+      SH
+    end
+  end
 end
 
-task test: :spec
-
-task :docs do
-  `yard server --reload`
+begin
+  require "rspec/core/rake_task"
+  RSpec::Core::RakeTask.new(:spec, [] => [:compile])
+  task test: :spec
+  task default: %i[test]
+rescue LoadError
+  # Ok
 end
 
-RuboCop::RakeTask.new
+begin
+  require "rubocop/rake_task"
 
-YARD::Rake::YardocTask.new
+  RuboCop::RakeTask.new
+rescue LoadError
+  # Ok
+end
 
-Thermite::Tasks.new
+begin
+  require "yard"
+
+  YARD::Rake::YardocTask.new
+
+  task :docs do
+    `yard server --reload`
+  end
+rescue LoadError
+  # Ok
+end
