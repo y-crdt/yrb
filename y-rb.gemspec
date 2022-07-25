@@ -34,12 +34,13 @@ Gem::Specification.new do |spec| # rubocop:disable Metrics/BlockLength
 
   spec.metadata["rubygems_mfa_required"] = "true"
 
-  spec.add_dependency "rake", "~> 13.0"
-  spec.add_dependency "rutie", "~> 0.0.4"
-  spec.add_dependency "thermite", "~> 0"
+  spec.add_runtime_dependency "rake", "~> 13.0"
+
+  spec.add_dependency "rb_sys", "~> 0.9.26"
 
   spec.add_development_dependency "activesupport", "~> 6.1.6.1"
   spec.add_development_dependency "minitar", "~> 0.9"
+  spec.add_development_dependency "rake-compiler", "~> 1.2.0"
 
   spec.extensions << "ext/Rakefile"
 end

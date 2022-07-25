@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "y/rb"
+require "y"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

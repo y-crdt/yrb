@@ -1,5 +1,5 @@
 [package]
-name = "y-rb"
+name = "yrb"
 version = "0.1.3"
 authors = ["Hannes Moser <box@hannesmoser.at>", "Hannes Moser <hmoser@gitlab.com>"]
 edition = "2021"
@@ -7,10 +7,9 @@ homepage = "https://github.com/y-crdt/yrb"
 repository = "https://github.com/y-crdt/yrb"
 
 [dependencies]
-lazy_static = "1.4.0"
-rutie = "0.8.4"
-yrs = "0.11.1"
 lib0 = "0.11.1" # must match yrs version
+magnus = "0.3.2"
+yrs = "0.11.1"
 
 [target.aarch64-unknown-linux-musl.dependencies]
 rutie = {version="0.8.4", features=["no-link"]}
@@ -22,7 +21,7 @@ rutie = {version="0.8.4", features=["no-link"]}
 rutie = {version="0.8.4", features=["no-link"]}
 
 [lib]
-name = "y_rb"
+name = "yrb"
 crate-type = ["cdylib"]
 
 [package.metadata.thermite]

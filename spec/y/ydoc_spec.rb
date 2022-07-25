@@ -38,7 +38,6 @@ RSpec.describe Y::Doc do
     expect(text).to be_instance_of(Y::Text)
   end
 
-
   it "returns text with initial input" do
     doc = Y::Doc.new
     text = doc.get_text("my text", "Hello, World!")
