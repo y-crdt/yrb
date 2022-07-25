@@ -38,6 +38,15 @@ RSpec.describe Y::Doc do
     expect(text).to be_instance_of(Y::Text)
   end
 
+
+  it "returns text with initial input" do
+    doc = Y::Doc.new
+    text = doc.get_text("my text", "Hello, World!")
+
+    expect(text).to be_instance_of(Y::Text)
+    expect(text.to_s).to eql("Hello, World!")
+  end
+
   it "returns XMLElement" do
     doc = Y::Doc.new
     xml_element = doc.get_xml_element("my xml element")
@@ -50,6 +59,14 @@ RSpec.describe Y::Doc do
     xml_text = doc.get_xml_text("my xml text")
 
     expect(xml_text).to be_instance_of(Y::XMLText)
+  end
+
+  it "returns XMLText with initial input" do
+    doc = Y::Doc.new
+    xml_text = doc.get_xml_text("my xml text", "Hello, World!")
+
+    expect(xml_text).to be_instance_of(Y::XMLText)
+    expect(xml_text.to_s).to eql("Hello, World!")
   end
 
   it "returns state" do

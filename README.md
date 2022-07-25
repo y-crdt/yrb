@@ -41,7 +41,7 @@ local = Y::Doc.new
 local_text = local.get_text("my text")
 
 # add some data to the text structure
-local_text.push("hello")  
+local_text << "hello"  
   
 # create a remote document sharing the same text structure
 remote = Y::Doc.new 

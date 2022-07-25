@@ -103,7 +103,7 @@ module Y
     def get_text(name, input = nil)
       text = current_transaction.get_text(name)
       text.document = self
-      text.push(input) unless input.nil?
+      text << input unless input.nil?
       text
     end
 
@@ -125,7 +125,7 @@ module Y
     def get_xml_text(name, input = nil)
       xml_text = current_transaction.get_xml_text(name)
       xml_text.document = self
-      xml_text.push(input) unless input.nil?
+      xml_text << input unless input.nil?
       xml_text
     end
 
