@@ -1,6 +1,6 @@
 #![feature(const_trait_impl)]
 
-use magnus::{eval, method, Error, Module, Object, require, RModule, define_module, function};
+use magnus::{method, Error, Module, Object, define_module, function};
 use crate::yarray::YArray;
 use crate::ydoc::YDoc;
 use crate::ytext::YText;
@@ -10,6 +10,7 @@ mod yarray;
 mod ydoc;
 mod ytext;
 mod ytransaction;
+mod utils;
 
 #[magnus::init]
 fn init() -> Result<(), Error> {
@@ -43,6 +44,9 @@ fn init() -> Result<(), Error> {
         .expect("cannot define class Y::Text");
 
     ytext.define_private_method("ytext_insert", method!(YText::ytext_insert, 3)).expect("cannot define private method: ytext_insert");
+    ytext.define_private_method("ytext_insert_embed", method!(YText::ytext_insert_embed, 3)).expect("cannot define private method: ytext_insert_embed");
+    ytext.define_private_method("ytext_insert_embed_with_attributes", method!(YText::ytext_insert_embed_with_attributes, 4)).expect("cannot define private method: ytext_insert_embed_with_attributes");
+    ytext.define_private_method("ytext_length", method!(YText::ytext_length, 0)).expect("cannot define private method: ytext_length");
     ytext.define_private_method("ytext_push", method!(YText::ytext_push, 2)).expect("cannot define private method: ytext_push");
     ytext.define_private_method("ytext_to_s", method!(YText::ytext_to_s, 0)).expect("cannot define private method: ytext_to_s");
 
