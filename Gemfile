@@ -8,6 +8,6 @@ gemspec
 gem "github-markup"
 gem "redcarpet"
 gem "rspec", "~> 3.11.0"
-gem "rubocop", "~> 1.32"
+gem "rubocop", "~> 1.33"
 gem "rubocop-rspec", "~> 2.12.1"
 gem "yard"
