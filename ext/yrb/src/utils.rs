@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use lib0::any::Any;
-use magnus::{Error, exception, RArray, RHash, Value};
+use magnus::{RArray, RHash, Value};
 use magnus::r_hash::ForEach;
 use yrs::types::Attrs;
 
@@ -47,7 +47,6 @@ pub(crate) fn map_magnus_value_to_lib0_any(value: Value) -> Result<Any, TypeConv
                 map_magnus_value_to_lib0_any(val.unwrap()).unwrap()
             )
             .collect::<Vec<Any>>();
-
         Ok(Any::Array(Box::from(arr)))
     } else if let Some(v) = RHash::from_value(value) {
         let mut map: HashMap<String, Any> = HashMap::new();
@@ -62,6 +61,10 @@ pub(crate) fn map_magnus_value_to_lib0_any(value: Value) -> Result<Any, TypeConv
     };
 }
 
-pub(crate) fn map_magnus_rhash_to_lib0_attrs(hash: RHash) -> Result<Attrs, TypeConversionError> {
+pub(crate) fn map_magnus_rhash_to_lib0_attrs(_hash: RHash) -> Result<Attrs, TypeConversionError> {
+    todo!()
+}
+
+pub(crate) fn map_yrs_value_to_magnus_type(_value: yrs::types::Value) -> Value {
     todo!()
 }

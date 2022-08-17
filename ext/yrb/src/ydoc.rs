@@ -1,5 +1,5 @@
 use std::cell::RefCell;
-use magnus::{DataType, Error, RClass, TypedData};
+use magnus::{Error};
 use yrs::{Doc, StateVector};
 use yrs::updates::decoder::Decode;
 use crate::YTransaction;

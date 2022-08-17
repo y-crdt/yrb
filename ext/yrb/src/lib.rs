@@ -1,5 +1,3 @@
-#![feature(const_trait_impl)]
-
 use magnus::{method, Error, Module, Object, define_module, function};
 use crate::yarray::YArray;
 use crate::ydoc::YDoc;
@@ -11,6 +9,12 @@ mod ydoc;
 mod ytext;
 mod ytransaction;
 mod utils;
+mod yvalue;
+mod yattrs;
+mod yany;
+mod ymap;
+mod yxml_element;
+mod yxml_text;
 
 #[magnus::init]
 fn init() -> Result<(), Error> {
@@ -21,6 +25,10 @@ fn init() -> Result<(), Error> {
         .expect("cannot find class Y::Array");
 
     yarray.define_private_method("yarray_each", method!(YArray::yarray_each, 1)).expect("cannot define private method: yarray_each");
+    yarray.define_private_method("yarray_get", method!(YArray::yarray_get, 1)).expect("cannot define private method: yarray_get");
+    yarray.define_private_method("yarray_length", method!(YArray::yarray_length, 0)).expect("cannot define private method: yarray_length");
+    yarray.define_private_method("yarray_push_back", method!(YArray::yarray_push_back, 2)).expect("cannot define private method: yarray_push_back");
+    yarray.define_private_method("yarray_to_a", method!(YArray::yarray_to_a, 0)).expect("cannot define private method: yarray_to_a");
 
     let ydoc = module
         .define_class("Doc", Default::default())
@@ -35,8 +43,11 @@ fn init() -> Result<(), Error> {
 
     ytransaction.define_private_method("ytransaction_apply_update", method!(YTransaction::ytransaction_apply_update, 1)).expect("cannot define private method: ytransaction_apply_update");
     ytransaction.define_private_method("ytransaction_commit", method!(YTransaction::ytransaction_commit, 0)).expect("cannot define private method: ytransaction_commit");
-    ytransaction.define_private_method("ytransaction_apply_update", method!(YTransaction::ytransaction_get_array, 1)).expect("cannot define private method: ytransaction_get_array");
+    ytransaction.define_private_method("ytransaction_get_array", method!(YTransaction::ytransaction_get_array, 1)).expect("cannot define private method: ytransaction_get_array");
+    ytransaction.define_private_method("ytransaction_get_map", method!(YTransaction::ytransaction_get_map, 1)).expect("cannot define private method: ytransaction_get_mao");
     ytransaction.define_private_method("ytransaction_get_text", method!(YTransaction::ytransaction_get_text, 1)).expect("cannot define private method: ytransaction_get_text");
+    ytransaction.define_private_method("ytransaction_get_xml_element", method!(YTransaction::ytransaction_get_xml_element, 1)).expect("cannot define private method: ytransaction_get_xml_element");
+    ytransaction.define_private_method("ytransaction_get_xml_text", method!(YTransaction::ytransaction_get_xml_text, 1)).expect("cannot define private method: ytransaction_get_xml_text");
     ytransaction.define_private_method("ytransaction_state_vector", method!(YTransaction::ytransaction_state_vector, 0)).expect("cannot define private method: ytransaction_state_vector");
 
     let ytext = module
@@ -49,6 +60,14 @@ fn init() -> Result<(), Error> {
     ytext.define_private_method("ytext_length", method!(YText::ytext_length, 0)).expect("cannot define private method: ytext_length");
     ytext.define_private_method("ytext_push", method!(YText::ytext_push, 2)).expect("cannot define private method: ytext_push");
     ytext.define_private_method("ytext_to_s", method!(YText::ytext_to_s, 0)).expect("cannot define private method: ytext_to_s");
+
+    let yxml_element = module
+        .define_class("XMLElement", Default::default())
+        .expect("cannot define class Y::XmlElement");
+
+    let yxml_text = module
+        .define_class("XMLText", Default::default())
+        .expect("cannot define class Y::XmlText");
 
     Ok(())
 }

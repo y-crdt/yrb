@@ -1,7 +1,6 @@
-use std::borrow::BorrowMut;
 use std::cell::RefCell;
-use lib0::any::Any;
 use magnus::{Error, exception, RHash, Value};
+use magnus::block::Proc;
 use yrs::{Text};
 use crate::utils::{map_magnus_rhash_to_lib0_attrs, map_magnus_value_to_lib0_any};
 use crate::YTransaction;
@@ -66,6 +65,27 @@ impl YText {
             .borrow()
             .len()
     }
+    pub(crate) fn ytext_observe(&self, _block:Proc) -> u32 {
+        let subscription_id = self.0
+            .borrow_mut()
+            .observe(move |transaction, text_event| {
+                let delta = text_event.delta(transaction);
+                for _event in delta {
+                    // match event {
+                    //     Delta::Inserted(v, attrs) => {
+                    //         let yattrs = YAttrs(attrs);
+                    //         yattrs.try_into();
+                    //         let mut payload = RHash::new();
+                    //         payload.aset(Symbol::from_value("attributes"), attrs);
+                    //     }
+                    //     Delta::Deleted()
+                    //     _ => {}
+                    // }
+                }
+            });
+
+        subscription_id.into()
+    }
     pub(crate) fn ytext_push(&self, transaction: &YTransaction, chunk: String) {
         self.0
             .borrow_mut()
@@ -75,5 +95,10 @@ impl YText {
         return self.0
             .borrow()
             .to_string();
+    }
+    pub(crate) fn ytext_unobserve(&self, subscription_id: u32) {
+        return self.0
+            .borrow_mut()
+            .unobserve(subscription_id)
     }
 }

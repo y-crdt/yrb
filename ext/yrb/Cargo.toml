@@ -7,22 +7,11 @@ homepage = "https://github.com/y-crdt/yrb"
 repository = "https://github.com/y-crdt/yrb"
 
 [dependencies]
-lib0 = "0.11.1" # must match yrs version
+lib0 = "0.11.2" # must match yrs version
 magnus = "0.3.2"
-yrs = "0.11.1"
 
-[target.aarch64-unknown-linux-musl.dependencies]
-rutie = {version="0.8.4", features=["no-link"]}
-
-[target.x86_64-unknown-linux-musl.dependencies]
-rutie = {version="0.8.4", features=["no-link"]}
-
-[target.aarch64-unknown-linux-gnu.dependencies]
-rutie = {version="0.8.4", features=["no-link"]}
+yrs = "0.11.2"
 
 [lib]
 name = "yrb"
 crate-type = ["cdylib"]
-
-[package.metadata.thermite]
-github_releases = true
