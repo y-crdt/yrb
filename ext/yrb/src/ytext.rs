@@ -1,9 +1,11 @@
 use std::cell::RefCell;
+use lib0::any::Any;
 use magnus::{Error, exception, RHash, Value};
 use magnus::block::Proc;
 use yrs::{Text};
-use crate::utils::{map_magnus_rhash_to_lib0_attrs, map_magnus_value_to_lib0_any};
+use crate::utils::{map_magnus_rhash_to_lib0_attrs};
 use crate::YTransaction;
+use crate::yvalue::YValue;
 
 #[magnus::wrap(class = "Y::Text")]
 pub(crate) struct YText(pub(crate) RefCell<Text>);
@@ -18,17 +20,11 @@ impl YText {
             .insert(&mut *transaction.0.borrow_mut(), index, &*chunk);
     }
     pub(crate) fn ytext_insert_embed(&self, transaction: &YTransaction, index: u32, content: Value) -> Result<(), Error> {
-        let c = match map_magnus_value_to_lib0_any(content) {
-            Ok(val) => val,
-            Err(_e) => return Err(Error::new(
-                exception::type_error(),
-                "incompatible type for `content`"
-            )),
-        };
+        let yvalue = YValue::from(content);
+        let avalue = Any::from(yvalue);
 
-        self.0
-            .borrow_mut()
-            .insert_embed(&mut *transaction.0.borrow_mut(), index, c);
+        self.0.borrow_mut()
+            .insert_embed(&mut *transaction.0.borrow_mut(), index, avalue);
 
         Ok(())
     }
@@ -38,34 +34,29 @@ impl YText {
         index: u32,
         embed: Value,
         attrs: RHash) -> Result<(), Error> {
-        let e = match map_magnus_value_to_lib0_any(embed) {
-            Ok(val) => val,
-            Err(_e) => return Err(Error::new(
-                exception::type_error(),
-                "incompatible type for `embed`"
-            )),
-        };
+        let yvalue = YValue::from(embed);
+        let avalue = Any::from(yvalue);
 
         let a = match map_magnus_rhash_to_lib0_attrs(attrs) {
             Ok(val) => val,
             Err(_e) => return Err(Error::new(
                 exception::type_error(),
-                "incompatible type for `attrs`"
+                "incompatible type for `attrs`",
             )),
         };
 
         self.0
             .borrow_mut()
-            .insert_embed_with_attributes(&mut *transaction.0.borrow_mut(), index, e, a);
+            .insert_embed_with_attributes(&mut *transaction.0.borrow_mut(), index, avalue, a);
 
         Ok(())
     }
     pub(crate) fn ytext_length(&self) -> u32 {
         return self.0
             .borrow()
-            .len()
+            .len();
     }
-    pub(crate) fn ytext_observe(&self, _block:Proc) -> u32 {
+    pub(crate) fn ytext_observe(&self, _block: Proc) -> u32 {
         let subscription_id = self.0
             .borrow_mut()
             .observe(move |transaction, text_event| {
@@ -99,6 +90,6 @@ impl YText {
     pub(crate) fn ytext_unobserve(&self, subscription_id: u32) {
         return self.0
             .borrow_mut()
-            .unobserve(subscription_id)
+            .unobserve(subscription_id);
     }
 }
