@@ -1,19 +1,11 @@
 use std::borrow::Borrow;
-use std::cell::{Ref, RefCell};
+use std::cell::{RefCell};
 use std::collections::HashMap;
-use std::ops::{Deref, DerefMut};
 use lib0::any::Any;
 use magnus::{class, Float, Integer, QNIL, RArray, RHash, RString, Symbol, Value};
-use magnus::r_hash::ForEach;
 use magnus::r_hash::ForEach::Continue;
 use magnus::value::Qnil;
-use yrs::types::Attrs;
 use yrs::types::Value as YrsValue;
-use crate::utils::{map_magnus_value_to_lib0_any, map_yrs_value_to_magnus_type};
-use crate::{YArray, YText};
-use crate::ymap::YMap;
-use crate::yxml_element::YXmlElement;
-use crate::yxml_text::YXmlText;
 
 pub(crate) struct YValue(pub(crate) RefCell<Value>);
 

@@ -2,12 +2,10 @@ use std::borrow::{Borrow, BorrowMut};
 use std::cell::RefCell;
 use lib0::any::Any;
 use magnus::block::Proc;
-use magnus::{Error, exception, Integer, QNIL, RArray, RHash, Symbol, Value};
-use magnus::exception::exception;
+use magnus::{Error, RArray, RHash,Symbol, Value};
 use magnus::value::Qnil;
-use yrs::{Array, SubscriptionId};
-use yrs::types::{Change, Value as YrsValue};
-use crate::utils::map_magnus_value_to_lib0_any;
+use yrs::{Array};
+use yrs::types::{Change};
 use crate::YTransaction;
 use crate::yvalue::YValue;
 
@@ -16,8 +14,7 @@ pub(crate) struct YArray(pub(crate) RefCell<Array>);
 
 impl YArray {
     pub(crate) fn yarray_each(&self, block: Proc) -> () {
-        self.0
-            .borrow_mut()
+        self.0.borrow_mut()
             .iter()
             .for_each(|val| {
                 let yvalue = YValue::from(val);
@@ -49,40 +46,51 @@ impl YArray {
     pub(crate) fn yarray_length(&self) -> u32 {
         return self.0.borrow().len();
     }
-    pub(crate) fn yarray_observe(&self, block: Proc) -> u32 {
+    pub(crate) fn yarray_observe(&self, block: Proc) -> Result<u32, Error> {
+        let change_added = Symbol::new("added").to_static();
+        let change_retain = Symbol::new("retain").to_static();
+        let change_removed = Symbol::new("removed").to_static();
+
+        // let mut error: Option<Error> = None;
+
         let subscription_id = self.0.borrow_mut()
             .observe(move |transaction, array_event| {
                 let delta = array_event.delta(transaction);
-                let mut changes = RArray::with_capacity(delta.len());
+                // let mut changes = RArray::with_capacity(delta.len());
+                let (changes, errors): (Vec<_>, Vec<_>) = delta.iter()
+                    .map(|change| {
+                        let payload = RHash::new();
+                        let result = match change {
+                            Change::Added(v) => {
+                                let values = v.iter()
+                                    .map(|v| <YValue as Into<Value>>::into(YValue::from(v.clone())))
+                                    .collect::<RArray>();
+                                payload.aset(change_added, values)
+                            }
+                            Change::Retain(position) => payload.aset(change_retain, Value::from(*position)),
+                            Change::Removed(position) => payload.aset(change_removed, Value::from(*position))
+                        };
 
-                for change in delta {
-                    match change {
-                        Change::Added(v) => {
-                            let mut payload = RHash::new();
-                            let values = v.iter()
-                                .map(|v| YValue::from(v.clone()).into())
-                                .collect::<Vec<Value>>();
-                            payload.aset(Symbol::new("added"), RArray::from_vec(values));
-                            changes.push(payload);
+                        match result {
+                            Ok(()) => Ok(payload),
+                            Err(e) => Err(e)
                         }
-                        Change::Retain(position) => {
-                            let mut payload = RHash::new();
-                            payload.aset(Symbol::new("retain"), Value::from(*position));
-                            changes.push(payload);
-                        }
-                        Change::Removed(position) => {
-                            let mut payload = RHash::new();
-                            payload.aset(Symbol::new("removed"), Value::from(*position));
-                            changes.push(payload);
-                        }
-                    }
+                    })
+                    .partition(Result::is_ok);
+
+                if errors.len() == 0 {
+                    let args = (RArray::from_vec(changes.into_iter().map(Result::unwrap).collect()), );
+                    let result = block.call::<(RArray, ), Qnil>(args);
+                    // todo: make sure we respect the result and bubble up the
+                    //  error so that we can return as part of the Result
                 }
 
-                let args = (changes, );
-                block.call::<(RArray, ), Qnil>(args);
-            }).into();
+                // todo: make sure we respect errors and let the method fail by
+                //  by returning a Result containing an Error
+            })
+            .into();
 
-        subscription_id
+        Ok(subscription_id)
     }
     pub(crate) fn yarray_push_back(&self, transaction: &YTransaction, value: Value) -> () {
         let yvalue = YValue::from(value);

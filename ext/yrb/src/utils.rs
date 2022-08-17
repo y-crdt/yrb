@@ -64,7 +64,3 @@ pub(crate) fn map_magnus_value_to_lib0_any(value: Value) -> Result<Any, TypeConv
 pub(crate) fn map_magnus_rhash_to_lib0_attrs(_hash: RHash) -> Result<Attrs, TypeConversionError> {
     todo!()
 }
-
-pub(crate) fn map_yrs_value_to_magnus_type(_value: yrs::types::Value) -> Value {
-    todo!()
-}

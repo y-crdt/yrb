@@ -55,7 +55,7 @@ RSpec.describe Y::Array do
     arr = doc.get_array("my array")
 
     arr << 1
-    pp arr[0]
+
     expect(arr[0]).to eq(1)
   end
 
