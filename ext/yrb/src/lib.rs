@@ -26,9 +26,16 @@ fn init() -> Result<(), Error> {
 
     yarray.define_private_method("yarray_each", method!(YArray::yarray_each, 1)).expect("cannot define private method: yarray_each");
     yarray.define_private_method("yarray_get", method!(YArray::yarray_get, 1)).expect("cannot define private method: yarray_get");
+    yarray.define_private_method("yarray_insert", method!(YArray::yarray_insert, 3)).expect("cannot define private method: yarray_insert");
+    yarray.define_private_method("yarray_insert_range", method!(YArray::yarray_insert_range, 3)).expect("cannot define private method: yarray_insert_range");
     yarray.define_private_method("yarray_length", method!(YArray::yarray_length, 0)).expect("cannot define private method: yarray_length");
+    yarray.define_private_method("yarray_observe", method!(YArray::yarray_observe, 1)).expect("cannot define private method: yarray_observe");
     yarray.define_private_method("yarray_push_back", method!(YArray::yarray_push_back, 2)).expect("cannot define private method: yarray_push_back");
+    yarray.define_private_method("yarray_push_front", method!(YArray::yarray_push_front, 2)).expect("cannot define private method: yarray_push_front");
+    yarray.define_private_method("yarray_remove", method!(YArray::yarray_remove, 2)).expect("cannot define private method: yarray_remove");
+    yarray.define_private_method("yarray_remove_range", method!(YArray::yarray_remove_range, 3)).expect("cannot define private method: yarray_remove_range");
     yarray.define_private_method("yarray_to_a", method!(YArray::yarray_to_a, 0)).expect("cannot define private method: yarray_to_a");
+    yarray.define_private_method("yarray_unobserve", method!(YArray::yarray_unobserve, 1)).expect("cannot define private method: yarray_unobserve");
 
     let ydoc = module
         .define_class("Doc", Default::default())
