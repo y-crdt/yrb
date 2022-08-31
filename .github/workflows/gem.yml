@@ -1,0 +1,44 @@
+name: Build and release gem
+
+on:
+  workflow_dispatch:
+
+jobs:
+  native_gem:
+    name: Compile native gem
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform:
+          - x86_64-linux
+          - aarch64-linux
+          - arm-linux
+          - x86_64-darwin
+          - arm64-darwin
+          - x64-mingw32
+          - x64-mingw-ucrt
+        ruby_version:
+          - 2.7.6
+          - 3.0.4
+          - 3.1.2
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby_version }}
+          bundler-cache: true
+
+      - uses: oxidize-rb/cross-gem-action@main
+        with:
+          platform: ${{ matrix.platform }}
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: cross-gem
+          path: pkg/
+
+      - name: Display structure of built gems
+        run: ls -R
+        working-directory: pkg/
