@@ -1,4 +1,5 @@
 use std::cell::{RefCell};
+use std::ops::{Deref, DerefMut};
 use magnus::{Error, TryConvert, Value};
 use yrs::{Transaction, Update};
 use yrs::updates::decoder::Decode;
@@ -57,11 +58,5 @@ impl YTransaction {
         return self.0.borrow_mut()
             .state_vector()
             .encode_v1();
-    }
-}
-
-impl TryConvert for YTransaction {
-    fn try_convert(_val: &Value) -> Result<Self, Error> {
-        todo!()
     }
 }

@@ -122,8 +122,7 @@ module Y
       if value.is_a?(String)
         ytext_insert(transaction, index, value) if attrs.nil?
         unless attrs.nil?
-          ytext_insert_with_attrs(transaction, index, value,
-                                  attrs)
+          ytext_insert_with_attributes(transaction, index, value, attrs)
         end
         return nil
       end
@@ -131,8 +130,7 @@ module Y
       if can_insert?(value)
         ytext_insert_embed(transaction, index, value) if attrs.nil?
         unless attrs.nil?
-          ytext_insert_embed_with_attrs(transaction, index, value,
-                                        attrs)
+          ytext_insert_embed_with_attributes(transaction, index, value, attrs)
         end
         return nil
       end
@@ -295,7 +293,7 @@ module Y
     # @param [Y::Text, Y::Array, Y::Map] content
     # @return [nil]
 
-    # @!method ytext_insert_embed_with_attrs(transaction, index, embed, attrs)
+    # @!method ytext_insert_embed_with_attributes(transaction, index, embed, attrs)
     #   Insert into text at position
     #
     # @param [Y::Transaction] transaction
@@ -304,7 +302,7 @@ module Y
     # @param [Hash] attrs
     # @return [nil]
 
-    # @!method ytext_insert_with_attrs(transaction, index, chunk, attrs)
+    # @!method ytext_insert_with_attributes(transaction, index, chunk, attrs)
     #   Insert into text at position
     #
     # @param [Y::Transaction] transaction

@@ -3,6 +3,8 @@ use crate::yarray::YArray;
 use crate::ydoc::YDoc;
 use crate::ytext::YText;
 use crate::ytransaction::YTransaction;
+use crate::yxml_element::YXmlElement;
+use crate::yxml_text::YXmlText;
 
 mod yarray;
 mod ydoc;
@@ -40,7 +42,7 @@ fn init() -> Result<(), Error> {
     let ydoc = module
         .define_class("Doc", Default::default())
         .expect("cannot define class Y::Doc");
-    ydoc.define_singleton_method("new", function!(YDoc::ydoc_new, 0)).expect("cannot define singelton method: ydoc_new");
+    ydoc.define_singleton_method("new", function!(YDoc::ydoc_new, -1)).expect("cannot define singleton method: ydoc_new");
     ydoc.define_private_method("ydoc_transact", method!(YDoc::ydoc_transact, 0)).expect("cannot define private method: ydoc_transact");
     ydoc.define_private_method("ydoc_encode_diff_v1", method!(YDoc::ydoc_encode_diff_v1, 1)).expect("cannot define private method: ydoc_encode_diff_v1");
 
@@ -61,20 +63,62 @@ fn init() -> Result<(), Error> {
         .define_class("Text", Default::default())
         .expect("cannot define class Y::Text");
 
+    ytext.define_private_method("ytext_format", method!(YText::ytext_format, 4)).expect("cannot define private method: ytext_format");
     ytext.define_private_method("ytext_insert", method!(YText::ytext_insert, 3)).expect("cannot define private method: ytext_insert");
     ytext.define_private_method("ytext_insert_embed", method!(YText::ytext_insert_embed, 3)).expect("cannot define private method: ytext_insert_embed");
     ytext.define_private_method("ytext_insert_embed_with_attributes", method!(YText::ytext_insert_embed_with_attributes, 4)).expect("cannot define private method: ytext_insert_embed_with_attributes");
+    ytext.define_private_method("ytext_insert_with_attributes", method!(YText::ytext_insert_with_attributes, 4)).expect("cannot define private method: ytext_insert_with_attributes");
     ytext.define_private_method("ytext_length", method!(YText::ytext_length, 0)).expect("cannot define private method: ytext_length");
+    ytext.define_private_method("ytext_observe", method!(YText::ytext_observe, 1)).expect("cannot define private method: ytext_observe");
     ytext.define_private_method("ytext_push", method!(YText::ytext_push, 2)).expect("cannot define private method: ytext_push");
+    ytext.define_private_method("ytext_remove_range", method!(YText::ytext_remove_range, 3)).expect("cannot define private method: ytext_remove_range");
     ytext.define_private_method("ytext_to_s", method!(YText::ytext_to_s, 0)).expect("cannot define private method: ytext_to_s");
+    ytext.define_private_method("ytext_unobserve", method!(YText::ytext_unobserve, 1)).expect("cannot define private method: ytext_unobserve");
 
     let yxml_element = module
         .define_class("XMLElement", Default::default())
-        .expect("cannot define class Y::XmlElement");
+        .expect("cannot define class Y::XMLElement");
+
+    yxml_element.define_private_method("yxml_element_attributes", method!(YXmlElement::yxml_element_attributes, 0)).expect("cannot define private method: yxml_element_attributes");
+    yxml_element.define_private_method("yxml_element_first_child", method!(YXmlElement::yxml_element_first_child, 0)).expect("cannot define private method: yxml_element_first_child");
+    yxml_element.define_private_method("yxml_element_get", method!(YXmlElement::yxml_element_get, 1)).expect("cannot define private method: yxml_element_get");
+    yxml_element.define_private_method("yxml_element_get_attribute", method!(YXmlElement::yxml_element_get_attribute, 1)).expect("cannot define private method: yxml_element_get_attribute");
+    yxml_element.define_private_method("yxml_element_insert_attribute", method!(YXmlElement::yxml_element_insert_attribute, 3)).expect("cannot define private method: yxml_element_insert_attribute");
+    yxml_element.define_private_method("yxml_element_insert_element", method!(YXmlElement::yxml_element_insert_element, 3)).expect("cannot define private method: yxml_element_insert_element");
+    yxml_element.define_private_method("yxml_element_insert_text", method!(YXmlElement::yxml_element_insert_text, 2)).expect("cannot define private method: yxml_element_insert_text");
+    yxml_element.define_private_method("yxml_element_next_sibling", method!(YXmlElement::yxml_element_next_sibling, 0)).expect("cannot define private method: yxml_element_next_sibling");
+    yxml_element.define_private_method("yxml_element_observe", method!(YXmlElement::yxml_element_observe, 1)).expect("cannot define private method: yxml_element_observe");
+    yxml_element.define_private_method("yxml_element_parent", method!(YXmlElement::yxml_element_parent, 0)).expect("cannot define private method: yxml_element_parent");
+    yxml_element.define_private_method("yxml_element_prev_sibling", method!(YXmlElement::yxml_element_prev_sibling, 0)).expect("cannot define private method: yxml_element_prev_sibling");
+    yxml_element.define_private_method("yxml_element_push_elem_back", method!(YXmlElement::yxml_element_push_element_back, 2)).expect("cannot define private method: yxml_element_push_elem_back");
+    yxml_element.define_private_method("yxml_element_push_elem_front", method!(YXmlElement::yxml_element_push_element_front, 2)).expect("cannot define private method: yxml_element_push_elem_front");
+    yxml_element.define_private_method("yxml_element_push_text_back", method!(YXmlElement::yxml_element_push_text_back, 1)).expect("cannot define private method: yxml_element_push_text_back");
+    yxml_element.define_private_method("yxml_element_push_text_front", method!(YXmlElement::yxml_element_push_text_front, 1)).expect("cannot define private method: yxml_element_push_text_front");
+    yxml_element.define_private_method("yxml_element_remove_range", method!(YXmlElement::yxml_element_remove_range, 3)).expect("cannot define private method: yxml_element_remove_range");
+    yxml_element.define_private_method("yxml_element_size", method!(YXmlElement::yxml_element_size, 0)).expect("cannot define private method: yxml_element_size");
+    yxml_element.define_private_method("yxml_element_tag", method!(YXmlElement::yxml_element_tag, 0)).expect("cannot define private method: yxml_element_tag");
+    yxml_element.define_private_method("yxml_element_to_s", method!(YXmlElement::yxml_element_to_s, 0)).expect("cannot define private method: yxml_element_to_s");
+    yxml_element.define_private_method("yxml_element_unobserve", method!(YXmlElement::yxml_element_unobserve, 1)).expect("cannot define private method: yxml_element_unobserve");
 
     let yxml_text = module
         .define_class("XMLText", Default::default())
-        .expect("cannot define class Y::XmlText");
+        .expect("cannot define class Y::XMLText");
+
+    yxml_text.define_private_method("yxml_text_attributes", method!(YXmlText::yxml_text_attributes, 0)).expect("cannot define private method: yxml_text_attributes");
+    yxml_text.define_private_method("yxml_text_format", method!(YXmlText::yxml_text_format, 4)).expect("cannot define private method: yxml_text_format");
+    yxml_text.define_private_method("yxml_text_get_attribute", method!(YXmlText::yxml_text_get_attribute, 1)).expect("cannot define private method: yxml_text_get_attribute");
+    yxml_text.define_private_method("yxml_text_insert", method!(YXmlText::yxml_text_insert, 3)).expect("cannot define private method: yxml_text_insert");
+    yxml_text.define_private_method("yxml_text_insert_attribute", method!(YXmlText::yxml_text_insert_attribute, 3)).expect("cannot define private method: yxml_text_insert_attribute");
+    yxml_text.define_private_method("yxml_text_insert_embed_with_attrs", method!(YXmlText::yxml_text_insert_embed_with_attributes, 4)).expect("cannot define private method: yxml_text_insert_embed_with_attributes");
+    yxml_text.define_private_method("yxml_text_insert_with_attrs", method!(YXmlText::yxml_text_insert_with_attributes, 4)).expect("cannot define private method: yxml_text_insert_with_attributes");
+    yxml_text.define_private_method("yxml_text_insert_embed", method!(YXmlText::yxml_text_insert_embed, 3)).expect("cannot define private method: yxml_text_insert_embed");
+    yxml_text.define_private_method("yxml_text_length", method!(YXmlText::yxml_text_length, 0)).expect("cannot define private method: yxml_text_length");
+    yxml_text.define_private_method("yxml_text_next_sibling", method!(YXmlText::yxml_text_next_sibling, 0)).expect("cannot define private method: yxml_text_next_sibling");
+    yxml_text.define_private_method("yxml_text_parent", method!(YXmlText::yxml_text_parent, 0)).expect("cannot define private method: yxml_text_parent");
+    yxml_text.define_private_method("yxml_text_prev_sibling", method!(YXmlText::yxml_text_prev_sibling, 0)).expect("cannot define private method: yxml_text_prev_sibling");
+    yxml_text.define_private_method("yxml_text_push", method!(YXmlText::yxml_text_push, 2)).expect("cannot define private method: yxml_text_push");
+    yxml_text.define_private_method("yxml_text_remove_range", method!(YXmlText::yxml_text_remove_range, 3)).expect("cannot define private method: yxml_text_remove_range");
+    yxml_text.define_private_method("yxml_text_to_s", method!(YXmlText::yxml_text_to_s, 0)).expect("cannot define private method: yxml_text_to_s");
 
     Ok(())
 }

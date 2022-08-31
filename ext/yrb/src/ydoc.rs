@@ -1,6 +1,7 @@
 use std::cell::RefCell;
-use magnus::{Error};
-use yrs::{Doc, StateVector};
+use magnus::{Error, Integer, Value};
+use yrs::{Doc, OffsetKind, Options, StateVector};
+use yrs::block::ClientID;
 use yrs::updates::decoder::Decode;
 use crate::YTransaction;
 
@@ -8,8 +9,18 @@ use crate::YTransaction;
 pub(crate) struct YDoc(pub(crate) RefCell<Doc>);
 
 impl YDoc {
-    pub(crate) fn ydoc_new() -> Self {
-        Self(RefCell::new(Doc::new()))
+    pub(crate) fn ydoc_new(client_id: &[Value]) -> Self {
+        let mut options = Options::default();
+
+        if client_id.len() == 1 {
+            let value = client_id.first().unwrap();
+            options.client_id = Integer::from_value(*value).unwrap().to_u64().unwrap();
+        }
+
+        options.offset_kind = OffsetKind::Utf32;
+
+        let doc = Doc::with_options(options);
+        Self(RefCell::new(doc))
     }
 
     pub(crate) fn ydoc_transact(&self) -> YTransaction {

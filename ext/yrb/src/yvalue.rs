@@ -1,11 +1,14 @@
 use std::borrow::Borrow;
-use std::cell::{RefCell};
+use std::cell::{Ref, RefCell};
 use std::collections::HashMap;
+use std::rc::Rc;
 use lib0::any::Any;
 use magnus::{class, Float, Integer, QNIL, RArray, RHash, RString, Symbol, Value};
 use magnus::r_hash::ForEach::Continue;
 use magnus::value::Qnil;
-use yrs::types::Value as YrsValue;
+use yrs::types::{Attrs, Value as YrsValue};
+use yrs::{Text as YrsText, XmlElement as YrsXmlElement, XmlText as YrsXmlText};
+use crate::{YArray, YText, YXmlElement, YXmlText};
 
 pub(crate) struct YValue(pub(crate) RefCell<Value>);
 
@@ -39,6 +42,12 @@ impl From<i64> for YValue {
     }
 }
 
+impl From<u32> for YValue {
+    fn from(value: u32) -> Self {
+        YValue(RefCell::from(Value::from(value)))
+    }
+}
+
 impl From<String> for YValue {
     fn from(value: String) -> Self {
         YValue(RefCell::from(Value::from(value)))
@@ -53,6 +62,42 @@ impl From<RArray> for YValue {
 
 impl From<RHash> for YValue {
     fn from(value: RHash) -> Self {
+        YValue(RefCell::from(Value::from(value)))
+    }
+}
+
+impl From<YrsText> for YValue {
+    fn from(value: YrsText) -> Self {
+        YValue(RefCell::from(Value::from(YText(RefCell::from(value)))))
+    }
+}
+
+impl From<YrsXmlElement> for YValue {
+    fn from(value: YrsXmlElement) -> Self {
+        YValue(RefCell::from(Value::from(YXmlElement(RefCell::from(value)))))
+    }
+}
+
+impl From<YrsXmlText> for YValue {
+    fn from(value: YrsXmlText) -> Self {
+        YValue(RefCell::from(Value::from(YXmlText(RefCell::from(value)))))
+    }
+}
+
+impl From<YText> for YValue {
+    fn from(value: YText) -> Self {
+        YValue(RefCell::from(Value::from(value)))
+    }
+}
+
+impl From<YXmlElement> for YValue {
+    fn from(value: YXmlElement) -> Self {
+        YValue(RefCell::from(Value::from(value)))
+    }
+}
+
+impl From<YXmlText> for YValue {
+    fn from(value: YXmlText) -> Self {
         YValue(RefCell::from(Value::from(value)))
     }
 }
@@ -91,7 +136,15 @@ impl From<YrsValue> for YValue {
     fn from(value: YrsValue) -> Self {
         match value {
             YrsValue::Any(val) => YValue::from(val),
-            _ => panic!("cannot map complex yrs values to yvalue")
+            YrsValue::YText(text) => YValue::from(text),
+            YrsValue::YXmlElement(el) => YValue::from(el),
+            YrsValue::YXmlText(text) => YValue::from(text),
+            // YrsValue::YArray(val) => YValue::from(RArray::from_vec(val.iter().map(|item| {
+            //     let yvalue = YValue::from(item);
+            //     *yvalue.0
+            // }))),
+            // YrsValue::YMap(val) => YValue::from(RHash::from_iter(val.iter())),
+            v => panic!("cannot map complex yrs values to yvalue: {}", v.to_string())
         }
     }
 }
