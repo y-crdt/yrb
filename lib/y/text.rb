@@ -87,7 +87,7 @@ module Y
     #
     #   text.empty? # true
     #
-    # @return [true|false]
+    # @return [TrueClass,FalseClass]
     def empty?
       length.zero?
     end
@@ -277,6 +277,8 @@ module Y
         value.is_a?(Hash)
     end
 
+    # rubocop:disable Layout/LineLength
+
     # @!method ytext_insert(transaction, index, chunk)
     #   Insert into text at position
     #
@@ -356,6 +358,8 @@ module Y
     #
     # @param [Integer] subscription_id
     # @return [void]
+
+    # rubocop:enable Layout/LineLength
 
     # A reference to the current active transaction of the document this map
     # belongs to.

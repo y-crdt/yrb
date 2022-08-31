@@ -11,28 +11,24 @@ jobs:
       matrix:
         platform:
           - x86_64-linux
-          - aarch64-linux
-          - arm-linux
           - x86_64-darwin
           - arm64-darwin
-          - x64-mingw32
-          - x64-mingw-ucrt
-        ruby_version:
-          - 2.7.6
-          - 3.0.4
-          - 3.1.2
 
     steps:
       - uses: actions/checkout@v2
 
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ${{ matrix.ruby_version }}
+          ruby-version: '3.1'
           bundler-cache: true
 
       - uses: oxidize-rb/cross-gem-action@main
         with:
           platform: ${{ matrix.platform }}
+          setup:
+
+          env: |
+            RUBY_CC_VERSION=3.1.0
 
       - uses: actions/download-artifact@v3
         with:

@@ -19,5 +19,6 @@ mkmf.log
 Cargo.lock
 
 # build artifacts
+pkg/
 lib/yrb.bundle
 build/out
