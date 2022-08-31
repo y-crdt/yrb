@@ -1,6 +1,7 @@
 use magnus::{method, Error, Module, Object, define_module, function};
 use crate::yarray::YArray;
 use crate::ydoc::YDoc;
+use crate::ymap::YMap;
 use crate::ytext::YText;
 use crate::ytransaction::YTransaction;
 use crate::yxml_element::YXmlElement;
@@ -45,6 +46,21 @@ fn init() -> Result<(), Error> {
     ydoc.define_singleton_method("new", function!(YDoc::ydoc_new, -1)).expect("cannot define singleton method: ydoc_new");
     ydoc.define_private_method("ydoc_transact", method!(YDoc::ydoc_transact, 0)).expect("cannot define private method: ydoc_transact");
     ydoc.define_private_method("ydoc_encode_diff_v1", method!(YDoc::ydoc_encode_diff_v1, 1)).expect("cannot define private method: ydoc_encode_diff_v1");
+
+    let ymap = module
+        .define_class("Map", Default::default())
+        .expect("cannot define class Y::Map");
+
+    ymap.define_private_method("ymap_clear", method!(YMap::ymap_clear, 1)).expect("cannot define private method: ymap_clear");
+    ymap.define_private_method("ymap_contains", method!(YMap::ymap_contains, 1)).expect("cannot define private method: ymap_contains");
+    ymap.define_private_method("ymap_each", method!(YMap::ymap_each, 1)).expect("cannot define private method: ymap_each");
+    ymap.define_private_method("ymap_get", method!(YMap::ymap_get, 1)).expect("cannot define private method: ymap_get");
+    ymap.define_private_method("ymap_insert", method!(YMap::ymap_insert, 3)).expect("cannot define private method: ymap_insert");
+    ymap.define_private_method("ymap_observe", method!(YMap::ymap_observe, 1)).expect("cannot define private method: ymap_observe");
+    ymap.define_private_method("ymap_remove", method!(YMap::ymap_remove, 2)).expect("cannot define private method: ymap_remove");
+    ymap.define_private_method("ymap_size", method!(YMap::ymap_size, 0)).expect("cannot define private method: ymap_size");
+    ymap.define_private_method("ymap_to_h", method!(YMap::ymap_to_h, 0)).expect("cannot define private method: ymap_to_h");
+    ymap.define_private_method("ymap_unobserve", method!(YMap::ymap_unobserve, 1)).expect("cannot define private method: ymap_unobserve");
 
     let ytransaction = module
         .define_class("Transaction", Default::default())

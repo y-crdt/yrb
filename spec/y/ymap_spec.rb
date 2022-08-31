@@ -89,7 +89,7 @@ RSpec.describe Y::Map do
     map[:hello] = "world"
     actual = map.to_h
 
-    expected = { hello: "world" }
+    expected = { "hello" => "world" }
 
     expect(expected).to eq(actual)
   end
@@ -187,8 +187,8 @@ RSpec.describe Y::Map do
 
       expect(map.to_h).to eq(
         {
-          hello: "world",
-          say: "hello again"
+          "hello" => "world",
+          "say" => "hello again"
         }
       )
 
