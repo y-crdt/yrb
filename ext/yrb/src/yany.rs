@@ -1,7 +1,7 @@
+use lib0::any::Any;
+use magnus::{RArray, RHash, RString, Value, QNIL};
 use std::borrow::Borrow;
 use std::ops::{Deref, DerefMut};
-use lib0::any::Any;
-use magnus::{QNIL, RArray, RHash, RString, Value};
 
 pub(crate) struct YAny(pub(crate) Any);
 
@@ -25,11 +25,11 @@ impl TryInto<Value> for YAny {
     fn try_into(self) -> Result<Value, Self::Error> {
         return match self.0 {
             Any::Array(_v) => {
-                let mut arr = RArray::new();
+                let arr = RArray::new();
                 Ok(Value::from(arr))
             }
             Any::Map(_v) => {
-                let mut hash = RHash::new();
+                let hash = RHash::new();
                 Ok(Value::from(hash))
             }
             Any::Null => Ok(Value::from(QNIL)),
@@ -38,7 +38,7 @@ impl TryInto<Value> for YAny {
             Any::Number(v) => Ok(Value::from(v)),
             Any::BigInt(v) => Ok(Value::from(v)),
             Any::String(v) => Ok(Value::from(RString::from(v.borrow()))),
-            Any::Buffer(v) => Ok(Value::from(RString::from_slice(v.borrow()))),
+            Any::Buffer(v) => Ok(Value::from(RString::from_slice(v.borrow())))
         };
     }
 }

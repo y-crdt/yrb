@@ -1,12 +1,10 @@
-use std::borrow::Borrow;
+use crate::yvalue::YValue;
+use lib0::any::Any;
+use magnus::r_hash::ForEach::Continue;
+use magnus::{RHash, Value};
 use std::ops::{Deref, DerefMut};
 use std::rc::Rc;
-use lib0::any::Any;
-use magnus::{RHash, Symbol, Value};
-use magnus::r_hash::ForEach::Continue;
 use yrs::types::Attrs;
-use crate::yany::YAny;
-use crate::yvalue::YValue;
 
 pub(crate) struct YAttrs(pub(crate) Attrs);
 
@@ -20,14 +18,16 @@ impl From<RHash> for YAttrs {
     fn from(value: RHash) -> Self {
         let mut attrs = Attrs::new();
 
-        value.foreach(|key: Value, value: Value| {
-            let k = key.to_string();
-            let yvalue = YValue::from(value);
-            let avalue = Any::from(yvalue);
-            attrs.insert(Rc::from(k), avalue);
+        value
+            .foreach(|key: Value, value: Value| {
+                let k = key.to_string();
+                let yvalue = YValue::from(value);
+                let avalue = Any::from(yvalue);
+                attrs.insert(Rc::from(k), avalue);
 
-            Ok(Continue)
-        }).expect("cannot iterate attributes hash");
+                Ok(Continue)
+            })
+            .expect("cannot iterate attributes hash");
 
         YAttrs { 0: attrs }
     }

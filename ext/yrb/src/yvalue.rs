@@ -1,14 +1,16 @@
-use std::borrow::Borrow;
-use std::cell::{Ref, RefCell};
-use std::collections::HashMap;
-use std::rc::Rc;
+use crate::{YText, YXmlElement, YXmlText};
 use lib0::any::Any;
-use magnus::{class, Float, Integer, QNIL, RArray, RHash, RString, Symbol, Value};
 use magnus::r_hash::ForEach::Continue;
 use magnus::value::Qnil;
-use yrs::types::{Attrs, Value as YrsValue};
-use yrs::{Text as YrsText, XmlElement as YrsXmlElement, XmlText as YrsXmlText};
-use crate::{YArray, YText, YXmlElement, YXmlText};
+use magnus::{
+    class, Float, Integer, RArray, RHash, RString, Symbol, Value, QNIL
+};
+use std::cell::RefCell;
+use std::collections::HashMap;
+use yrs::types::Value as YrsValue;
+use yrs::{
+    Text as YrsText, XmlElement as YrsXmlElement, XmlText as YrsXmlText
+};
 
 pub(crate) struct YValue(pub(crate) RefCell<Value>);
 
@@ -74,7 +76,9 @@ impl From<YrsText> for YValue {
 
 impl From<YrsXmlElement> for YValue {
     fn from(value: YrsXmlElement) -> Self {
-        YValue(RefCell::from(Value::from(YXmlElement(RefCell::from(value)))))
+        YValue(RefCell::from(Value::from(YXmlElement(RefCell::from(
+            value
+        )))))
     }
 }
 
@@ -113,14 +117,16 @@ impl From<Any> for YValue {
             Any::String(v) => YValue::from(v.into_string()),
             Any::Buffer(v) => YValue::from(Value::from(v.into_vec())),
             Any::Array(v) => {
-                let arr = v.iter()
+                let arr = v
+                    .iter()
                     .map(|i| YValue::from(i.clone()))
                     .map(|value| *value.0.borrow())
                     .collect::<Vec<Value>>();
                 YValue::from(RArray::from_vec(arr))
             }
             Any::Map(v) => {
-                let map = v.iter()
+                let map = v
+                    .iter()
                     .map(|(key, val)| {
                         let v = val.clone();
                         (key.to_string(), YValue::from(v).into())
@@ -144,7 +150,10 @@ impl From<YrsValue> for YValue {
             //     *yvalue.0
             // }))),
             // YrsValue::YMap(val) => YValue::from(RHash::from_iter(val.iter())),
-            v => panic!("cannot map complex yrs values to yvalue: {}", v.to_string())
+            v => panic!(
+                "cannot map complex yrs values to yvalue: {}",
+                v.to_string()
+            )
         }
     }
 }
@@ -169,12 +178,11 @@ impl From<YValue> for Any {
             Any::Bool(false)
         } else if value.is_kind_of(class::string()) {
             let s = RString::from_value(value).unwrap();
-            unsafe {
-                Any::String(Box::from(s.as_str().unwrap().to_string()))
-            }
+            unsafe { Any::String(Box::from(s.as_str().unwrap().to_string())) }
         } else if value.is_kind_of(class::array()) {
             let arr = RArray::from_value(value).unwrap();
-            let items = arr.each()
+            let items = arr
+                .each()
                 .map(|item| {
                     let yvalue = YValue::from(item.unwrap());
                     Any::from(yvalue)
@@ -192,14 +200,13 @@ impl From<YValue> for Any {
                     converted_key.to_string()
                 } else {
                     let converted_key = RString::from_value(key).unwrap();
-                    let result = unsafe {
-                        converted_key.to_string()
-                    };
+                    let result = converted_key.to_string();
                     result.unwrap()
                 };
                 m.insert(k, Any::from(YValue::from(val)));
                 Ok(Continue)
-            }).expect("cannot map key/value pair");
+            })
+            .expect("cannot map key/value pair");
 
             Any::Map(Box::from(m))
         } else {
@@ -216,9 +223,9 @@ impl Into<Value> for YValue {
 
 #[cfg(test)]
 mod tests {
+    use crate::yvalue::YValue;
     use lib0::any::Any;
     use magnus::RArray;
-    use crate::yvalue::YValue;
 
     #[test]
     fn convert_any_to_yvalue() {
