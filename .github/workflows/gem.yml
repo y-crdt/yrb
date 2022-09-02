@@ -25,10 +25,10 @@ jobs:
       - uses: oxidize-rb/cross-gem-action@main
         with:
           platform: ${{ matrix.platform }}
-          setup:
-
+          setup: |
+            bundle
           env: |
-            RUBY_CC_VERSION=3.1.0
+            RUBY_CC_VERSION=3.1.0:3.0.0:2.7.0
 
       - uses: actions/download-artifact@v3
         with:

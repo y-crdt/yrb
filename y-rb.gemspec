@@ -1,10 +1,14 @@
 # frozen_string_literal: true
 
-require_relative "lib/y/version"
+begin
+  require_relative "lib/y/version"
+rescue LoadError
+  puts "WARNING: Could not load Y::VERSION"
+end
 
 Gem::Specification.new do |spec|
   spec.name = "y-rb"
-  spec.version = Y::VERSION
+  spec.version = defined?(Y::VERSION) ? Y::VERSION : "0.0.0"
   spec.authors = ["Hannes Moser"]
   spec.email = %w[hmoser@gitlab.com box@hannesmoser.at]
 
@@ -37,6 +41,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "activesupport", "~> 6.1.6.1"
   spec.add_development_dependency "minitar", "~> 0.9"
   spec.add_development_dependency "rake-compiler", "~> 1.2.0"
+  spec.add_development_dependency "rake-compiler-dock", "~> 1.2.2"
 
   spec.extensions = ["ext/yrb/extconf.rb"]
 end

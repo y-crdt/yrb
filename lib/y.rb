@@ -1,7 +1,12 @@
 # frozen_string_literal: true
 
 # load native extension
-require_relative "yrb"
+begin
+  ruby_version = /(\d+\.\d+)/.match(::RUBY_VERSION)
+  require_relative "#{ruby_version}/yrb"
+rescue LoadError
+  require "yrb"
+end
 
 require_relative "y/array"
 require_relative "y/doc"
