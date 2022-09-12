@@ -38,7 +38,7 @@ Gem::Specification.new do |spec| # rubocop:disable Metrics/BlockLength
   spec.add_dependency "rutie", "~> 0.0.4"
   spec.add_dependency "thermite", "~> 0"
 
-  spec.add_development_dependency "activesupport", "~> 6.1.6.1"
+  spec.add_development_dependency "activesupport", "~> 6.1.7"
   spec.add_development_dependency "minitar", "~> 0.9"
 
   spec.extensions << "ext/Rakefile"
