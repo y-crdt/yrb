@@ -10,7 +10,7 @@ repository = "https://github.com/y-crdt/yrb"
 lazy_static = "1.4.0"
 rutie = "0.8.4"
 yrs = "0.11.1"
-lib0 = "0.11.1" # must match yrs version
+lib0 = "0.12.0" # must match yrs version
 
 [target.aarch64-unknown-linux-musl.dependencies]
 rutie = {version="0.8.4", features=["no-link"]}
