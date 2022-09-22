@@ -17,16 +17,18 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: ruby/setup-ruby@v1
+      - uses: oxidize-rb/setup-ruby-and-rust@v1
         with:
-          ruby-version: '3.1'
-          bundler-cache: true
+          ruby-version: "3.1"
+          bundler-cache: false
+          cargo-cache: true
+
+      - name: Vendor cargo deps
+        run: mkdir .cargo && cargo vendor $PWD/tmp/cargo-vendor >> .cargo/config.toml
 
       - uses: oxidize-rb/cross-gem-action@main
         with:
           platform: ${{ matrix.platform }}
-          setup: |
-            bundle
           env: |
             RUBY_CC_VERSION=3.1.0:3.0.0:2.7.0
 
