@@ -13,21 +13,22 @@ jobs:
     strategy:
       matrix:
         platform:
-          - x86_64-linux
-          - x86_64-darwin
-          - arm64-darwin
+          - "arm-linux"
+          - "aarch64-linux"
+          - "arm64-darwin"
+          - "x64-mingw-ucrt"
+          - "x86_64-darwin"
+          - "x86_64-linux"
 
     steps:
       - uses: actions/checkout@v2
 
-      - uses: oxidize-rb/actions/setup-ruby-and-rust@v1
+      - uses: oxidize-rb/actions/setup-ruby-and-rust@main
         with:
           ruby-version: "3.1"
           bundler-cache: false
           cargo-cache: true
-
-      - name: Vendor cargo deps
-        run: mkdir .cargo && cargo vendor $PWD/tmp/cargo-vendor >> .cargo/config.toml
+          cargo-vendor: true
 
       - uses: oxidize-rb/cross-gem-action@main
         with:
