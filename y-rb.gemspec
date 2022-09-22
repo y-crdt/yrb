@@ -38,8 +38,6 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "rb_sys", "~> 0.9.30"
 
-  spec.add_development_dependency "activesupport", "~> 6.1.6.1"
-  spec.add_development_dependency "minitar", "~> 0.9"
   spec.add_development_dependency "rake-compiler", "~> 1.2.0"
   spec.add_development_dependency "rake-compiler-dock", "~> 1.2.2"
 

@@ -4,7 +4,6 @@ require "bundler/gem_tasks"
 require "rubygems/package_task"
 require "rake/testtask"
 require "rake/extensiontask"
-require "rake_compiler_dock"
 
 cross_rubies = %w[3.1.0 3.0.0 2.7.0]
 cross_platforms = %w[x86_64-linux x86_64-darwin arm64-darwin]
@@ -26,7 +25,10 @@ Rake::ExtensionTask.new("yrb", spec) do |ext|
 end
 
 task :setup do
+  require "rake_compiler_dock"
   RakeCompilerDock.sh "bundle"
+rescue => e
+  warn e.message
 end
 
 cross_platforms.each do |p|
@@ -44,6 +46,7 @@ end
 
 begin
   require "rubocop/rake_task"
+
   RuboCop::RakeTask.new
 rescue LoadError
   # Ok
@@ -52,6 +55,7 @@ end
 
 begin
   require "yard"
+
   YARD::Rake::YardocTask.new
 
   task :docs do
