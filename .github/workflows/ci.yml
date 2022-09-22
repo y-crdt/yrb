@@ -28,9 +28,6 @@ jobs:
       - name: Run ruby tests
         run: bundle exec rake
 
-      - name: Run rust tests
-        run: cargo test
-
       - name: Lint rust
         run: |
           cargo clippy || true # consider enabling this once lints are fixed
