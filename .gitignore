@@ -24,3 +24,4 @@ lib/yrb.bundle
 build/out
 vendor/
 target/
+Gemfile.lock
