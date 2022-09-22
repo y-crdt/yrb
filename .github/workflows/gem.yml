@@ -2,6 +2,9 @@ name: Build and release gem
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - migrate-to-magnus
 
 jobs:
   native_gem:
