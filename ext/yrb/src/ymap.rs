@@ -11,6 +11,9 @@ use yrs::Map;
 #[magnus::wrap(class = "Y::Map")]
 pub(crate) struct YMap(pub(crate) RefCell<Map>);
 
+/// SAFETY: This is safe because we only access this data when the GVL is held.
+unsafe impl Send for YMap {}
+
 impl YMap {
     pub(crate) fn ymap_clear(&self, transaction: &YTransaction) {
         self.0.borrow_mut().clear(&mut *transaction.0.borrow_mut());

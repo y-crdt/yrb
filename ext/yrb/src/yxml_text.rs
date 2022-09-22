@@ -9,6 +9,9 @@ use yrs::{Xml, XmlText};
 #[magnus::wrap(class = "Y::XMLText")]
 pub(crate) struct YXmlText(pub(crate) RefCell<XmlText>);
 
+/// SAFETY: This is safe because we only access this data when the GVL is held.
+unsafe impl Send for YXmlText {}
+
 impl YXmlText {
     pub(crate) fn yxml_text_attributes(&self) -> RHash {
         RHash::from_iter(self.0.borrow().attributes().into_iter())

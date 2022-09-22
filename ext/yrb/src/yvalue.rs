@@ -225,11 +225,13 @@ impl Into<Value> for YValue {
 mod tests {
     use crate::yvalue::YValue;
     use lib0::any::Any;
-    use magnus::RArray;
 
     #[test]
     fn convert_any_to_yvalue() {
+        let _cleanup = unsafe { magnus::embed::init() };
         let value = Any::Null;
         let yvalue: YValue = value.into();
+
+        assert!(yvalue.0.into_inner().is_nil());
     }
 }

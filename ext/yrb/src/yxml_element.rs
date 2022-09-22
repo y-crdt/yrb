@@ -10,6 +10,9 @@ use yrs::{Xml, XmlElement};
 #[magnus::wrap(class = "Y::XMLElement")]
 pub(crate) struct YXmlElement(pub(crate) RefCell<XmlElement>);
 
+/// SAFETY: This is safe because we only access this data when the GVL is held.
+unsafe impl Send for YXmlElement {}
+
 impl YXmlElement {
     pub(crate) fn yxml_element_attributes(&self) -> RHash {
         RHash::from_iter(self.0.borrow().attributes().into_iter())

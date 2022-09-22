@@ -12,6 +12,9 @@ use yrs::Text;
 #[magnus::wrap(class = "Y::Text")]
 pub(crate) struct YText(pub(crate) RefCell<Text>);
 
+/// SAFETY: This is safe because we only access this data when the GVL is held.
+unsafe impl Send for YText {}
+
 impl YText {
     pub(crate) fn ytext_format(
         &self,

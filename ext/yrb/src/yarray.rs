@@ -11,6 +11,9 @@ use yrs::Array;
 #[magnus::wrap(class = "Y::Array")]
 pub(crate) struct YArray(pub(crate) RefCell<Array>);
 
+/// SAFETY: This is safe because we only access this data when the GVL is held.
+unsafe impl Send for YArray {}
+
 impl YArray {
     pub(crate) fn yarray_each(&self, block: Proc) -> () {
         self.0.borrow_mut().iter().for_each(|val| {

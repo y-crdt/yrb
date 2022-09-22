@@ -12,6 +12,9 @@ use yrs::{Transaction, Update};
 #[magnus::wrap(class = "Y::Transaction")]
 pub(crate) struct YTransaction(pub(crate) RefCell<Transaction>);
 
+/// SAFETY: This is safe because we only access this data when the GVL is held.
+unsafe impl Send for YTransaction {}
+
 impl YTransaction {
     pub(crate) fn ytransaction_apply_update(
         &self,
