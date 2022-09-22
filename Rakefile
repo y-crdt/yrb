@@ -6,7 +6,15 @@ require "rake/testtask"
 require "rake/extensiontask"
 
 cross_rubies = %w[3.1.0 3.0.0 2.7.0]
-cross_platforms = %w[x86_64-linux x86_64-darwin arm64-darwin]
+cross_platforms = %w[
+  arm-linux
+  aarch64-linux
+  arm64-darwin
+  x64-mingw-ucrt
+  x64-mingw32
+  x86_64-darwin
+  x86_64-linux
+]
 ENV["RUBY_CC_VERSION"] = cross_rubies.join(":")
 
 spec = Bundler.load_gemspec("y-rb.gemspec")
@@ -21,6 +29,7 @@ Rake::ExtensionTask.new("yrb", spec) do |ext|
   ext.config_script = ENV["ALTERNATE_CONFIG_SCRIPT"] || "extconf.rb"
   ext.cross_compiling do |spec|
     spec.files.reject! { |file| File.fnmatch?("*.tar.gz", file) }
+    spec.dependencies.reject! { |dep| dep.name == "rb-sys" }
   end
 end
 
