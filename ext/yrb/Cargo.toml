@@ -8,7 +8,7 @@ repository = "https://github.com/y-crdt/yrb"
 
 [dependencies]
 lib0 = "0.11.2" # must match yrs version
-magnus = "0.3.2"
+magnus = { git = "https://github.com/matsadler/magnus" } # waiting for release with full rb-sys backend
 
 yrs = "0.11.2"
 
