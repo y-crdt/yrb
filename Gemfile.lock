@@ -57,7 +57,7 @@ GEM
       unicode-display_width (>= 1.4.0, < 3.0)
     rubocop-ast (1.21.0)
       parser (>= 3.1.1.0)
-    rubocop-rspec (2.13.1)
+    rubocop-rspec (2.13.2)
       rubocop (~> 1.33)
     ruby-progressbar (1.11.0)
     rutie (0.0.4)
@@ -68,7 +68,7 @@ GEM
     tomlrb (1.3.0)
     tzinfo (2.0.5)
       concurrent-ruby (~> 1.0)
-    unicode-display_width (2.2.0)
+    unicode-display_width (2.3.0)
     webrick (1.7.0)
     yard (0.9.28)
       webrick (~> 1.7.0)
@@ -85,7 +85,7 @@ DEPENDENCIES
   redcarpet
   rspec (~> 3.11.0)
   rubocop (~> 1.36)
-  rubocop-rspec (~> 2.13.1)
+  rubocop-rspec (~> 2.13.2)
   y-rb!
   yard
 
