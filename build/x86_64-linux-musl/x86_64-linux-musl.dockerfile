@@ -1,20 +1,5 @@
 FROM messense/rust-musl-cross:x86_64-musl
 
-ENV RUBY_TARGET="x86_64-linux-musl" \
-  RUST_TARGET="x86_64-unknown-linux-musl" \
-  RUSTUP_DEFAULT_TOOLCHAIN="stable" \
-  RUSTUP_HOME="/root/.rustup" \
-  CARGO_HOME="/root/.cargo" \
-  CARGO_BUILD_TARGET="x86_64-unknown-linux-musl" \
-  PKG_CONFIG_ALLOW_CROSS="1" \
-  PATH="/root/.cargo/bin:$PATH" \
-  LIBCLANG_PATH="/usr/lib/llvm-14/lib" \
-  CC_x86_64_unknown_linux_musl="x86_64-unknown-linux-musl-gcc" \
-  CXX_x86_64_unknown_linux_musl="x86_64-unknown-linux-musl-g++" \
-  AR_x86_64_unknown_linux_musl="x86_64-unknown-linux-musl-ar" \
-  BINDGEN_EXTRA_CLANG_ARGS_x86_64_unknown_linux_musl="--sysroot=/usr -I/usr/include/x86_64-linux-musl" \
-  CMAKE_x86_64_unknown_linux_musl="cmake"
-
 # Add dependencies
 RUN apt-get -y update && \
     apt-get install -y \
@@ -147,8 +132,3 @@ COPY sudoers /etc/sudoers.d/rake-compiler-dock
 ENV RUBY_CC_VERSION 3.1.0:3.0.0:2.7.0
 
 CMD bash
-
-COPY rubybashrc.sh /rubybashrc.sh
-RUN /rubybashrc.sh
-
-RUN chmod -R ugo+rwX /root/
