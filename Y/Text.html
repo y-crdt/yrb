@@ -247,7 +247,7 @@ instead.</p>
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#empty%3F-instance_method" title="#empty? (instance method)">#<strong>empty?</strong>  &#x21d2; true|false </a>
+      <a href="#empty%3F-instance_method" title="#empty? (instance method)">#<strong>empty?</strong>  &#x21d2; TrueClass, FalseClass </a>
     
 
     
@@ -760,7 +760,7 @@ instead.</p>
       <div class="method_details ">
   <h3 class="signature " id="empty?-instance_method">
   
-    #<strong>empty?</strong>  &#x21d2; <tt>true|false</tt> 
+    #<strong>empty?</strong>  &#x21d2; <tt>TrueClass</tt>, <tt>FalseClass</tt> 
   
 
   
@@ -795,7 +795,7 @@ instead.</p>
     <li>
       
       
-        <span class='type'>(<tt>true|false</tt>)</span>
+        <span class='type'>(<tt>TrueClass</tt>, <tt>FalseClass</tt>)</span>
       
       
       
@@ -901,12 +901,12 @@ instead.</p>
       <pre class="lines">
 
 
-159
-160
-161</pre>
+157
+158
+159</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/text.rb', line 159</span>
+      <pre class="code"><span class="info file"># File 'lib/y/text.rb', line 157</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_format'>format</span><span class='lparen'>(</span><span class='id identifier rubyid_index'>index</span><span class='comma'>,</span> <span class='id identifier rubyid_length'>length</span><span class='comma'>,</span> <span class='id identifier rubyid_attrs'>attrs</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_ytext_format'>ytext_format</span><span class='lparen'>(</span><span class='id identifier rubyid_transaction'>transaction</span><span class='comma'>,</span> <span class='id identifier rubyid_index'>index</span><span class='comma'>,</span> <span class='id identifier rubyid_length'>length</span><span class='comma'>,</span> <span class='id identifier rubyid_attrs'>attrs</span><span class='rparen'>)</span>
@@ -1041,9 +1041,7 @@ except for the optional third <code>attrs</code> argument.</p>
 137
 138
 139
-140
-141
-142</pre>
+140</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/y/text.rb', line 121</span>
@@ -1052,8 +1050,7 @@ except for the optional third <code>attrs</code> argument.</p>
   <span class='kw'>if</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>String</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_ytext_insert'>ytext_insert</span><span class='lparen'>(</span><span class='id identifier rubyid_transaction'>transaction</span><span class='comma'>,</span> <span class='id identifier rubyid_index'>index</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_attrs'>attrs</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
     <span class='kw'>unless</span> <span class='id identifier rubyid_attrs'>attrs</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
-      <span class='id identifier rubyid_ytext_insert_with_attrs'>ytext_insert_with_attrs</span><span class='lparen'>(</span><span class='id identifier rubyid_transaction'>transaction</span><span class='comma'>,</span> <span class='id identifier rubyid_index'>index</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='comma'>,</span>
-                              <span class='id identifier rubyid_attrs'>attrs</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_ytext_insert_with_attributes'>ytext_insert_with_attributes</span><span class='lparen'>(</span><span class='id identifier rubyid_transaction'>transaction</span><span class='comma'>,</span> <span class='id identifier rubyid_index'>index</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='id identifier rubyid_attrs'>attrs</span><span class='rparen'>)</span>
     <span class='kw'>end</span>
     <span class='kw'>return</span> <span class='kw'>nil</span>
   <span class='kw'>end</span>
@@ -1061,8 +1058,7 @@ except for the optional third <code>attrs</code> argument.</p>
   <span class='kw'>if</span> <span class='id identifier rubyid_can_insert?'>can_insert?</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_ytext_insert_embed'>ytext_insert_embed</span><span class='lparen'>(</span><span class='id identifier rubyid_transaction'>transaction</span><span class='comma'>,</span> <span class='id identifier rubyid_index'>index</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_attrs'>attrs</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
     <span class='kw'>unless</span> <span class='id identifier rubyid_attrs'>attrs</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
-      <span class='id identifier rubyid_ytext_insert_embed_with_attrs'>ytext_insert_embed_with_attrs</span><span class='lparen'>(</span><span class='id identifier rubyid_transaction'>transaction</span><span class='comma'>,</span> <span class='id identifier rubyid_index'>index</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='comma'>,</span>
-                                    <span class='id identifier rubyid_attrs'>attrs</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_ytext_insert_embed_with_attributes'>ytext_insert_embed_with_attributes</span><span class='lparen'>(</span><span class='id identifier rubyid_transaction'>transaction</span><span class='comma'>,</span> <span class='id identifier rubyid_index'>index</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='id identifier rubyid_attrs'>attrs</span><span class='rparen'>)</span>
     <span class='kw'>end</span>
     <span class='kw'>return</span> <span class='kw'>nil</span>
   <span class='kw'>end</span>
@@ -1121,12 +1117,12 @@ except for the optional third <code>attrs</code> argument.</p>
       <pre class="lines">
 
 
-166
-167
-168</pre>
+164
+165
+166</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/text.rb', line 166</span>
+      <pre class="code"><span class="info file"># File 'lib/y/text.rb', line 164</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_length'>length</span>
   <span class='id identifier rubyid_ytext_length'>ytext_length</span>
@@ -1284,6 +1280,8 @@ is not desirable in most situations.</p>
       <pre class="lines">
 
 
+221
+222
 223
 224
 225
@@ -1312,12 +1310,10 @@ is not desirable in most situations.</p>
 248
 249
 250
-251
-252
-253</pre>
+251</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/text.rb', line 223</span>
+      <pre class="code"><span class="info file"># File 'lib/y/text.rb', line 221</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_slice!'>slice!</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_args'>args</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span><span class='period'>.</span><span class='id identifier rubyid_zero?'>zero?</span>
@@ -1405,12 +1401,12 @@ is not desirable in most situations.</p>
       <pre class="lines">
 
 
-267
-268
-269</pre>
+265
+266
+267</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/text.rb', line 267</span>
+      <pre class="code"><span class="info file"># File 'lib/y/text.rb', line 265</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_s'>to_s</span>
   <span class='id identifier rubyid_ytext_to_s'>ytext_to_s</span>
@@ -1425,7 +1421,7 @@ is not desirable in most situations.</p>
 </div>
 
       <div id="footer">
-  Generated on Tue Sep 27 13:20:17 2022 by
+  Generated on Thu Sep 29 07:59:41 2022 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.28 (ruby-3.0.4).
 </div>
