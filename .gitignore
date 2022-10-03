@@ -21,8 +21,8 @@ mkmf.log
 ext/**/target
 pkg/
 lib/yrb.bundle
+lib/*.*
 build/out
 vendor/
 target/
 Gemfile.lock
-
