@@ -45,7 +45,7 @@ module Y
     # @return [Y::XMLElement]
     def []=(index, name)
       node = yxml_element_insert_element(transaction, index, name)
-      node&.document = document
+      node.document = document
       node
     end
 
@@ -540,7 +540,7 @@ module Y
     # - Hash (where the the types of key and values must be supported)
     #
     # @param [Integer] index
-    # @param [String, Float, Array, Hash] value
+    # @param [String, Float, Array, Hash, Boolean] value
     # @param [Hash|nil] attrs
     # @return [void]
     def insert(index, value, attrs = nil)
@@ -550,6 +550,7 @@ module Y
           yxml_text_insert_with_attrs(transaction, index, value,
                                       attrs)
         end
+
         return nil
       end
 
@@ -559,6 +560,7 @@ module Y
           yxml_text_insert_embed_with_attrs(transaction, index, value,
                                             attrs)
         end
+
         return nil
       end
 
@@ -581,21 +583,27 @@ module Y
     #
     # @return [Y::XMLElement|Y::XMLText|nil]
     def next_sibling
-      yxml_text_next_sibling
+      node = yxml_text_next_sibling
+      node.document = document
+      node
     end
 
     # Return parent XMLElement
     #
     # @return [Y::XMLElement|nil]
     def parent
-      yxml_text_parent
+      node = yxml_text_parent
+      node.document = document
+      node
     end
 
     # Return adjacent XMLElement or XMLText node (prev)
     #
     # @return [Y::XMLElement|Y::XMLText|nil]
     def prev_sibling
-      yxml_text_prev_sibling
+      node = yxml_text_prev_sibling
+      node&.document = document
+      node
     end
 
     # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength

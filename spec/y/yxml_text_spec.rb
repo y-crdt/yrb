@@ -191,6 +191,35 @@ RSpec.describe Y::XMLText do
     expect(xml_text.to_s).to eq("Hello, World!")
   end
 
+  context "when traversing elements" do
+    let!(:local) { Y::Doc.new }
+    let!(:local_xml) { local.get_xml_element("my xml") }
+    let!(:first_child) { local_xml << "A" }
+    let!(:first_text) { local_xml.insert_text(1, "my text") }
+    let!(:last_child) { local_xml << "B" }
+    let!(:remote) do
+      doc = Y::Doc.new
+      doc.sync(local.diff)
+      doc
+    end
+
+    it "retrieves next sibling with document reference set" do
+      remote_xml = remote.get_xml_element("my xml")
+      first_text = remote_xml[1]
+      next_sibling = first_text.next_sibling
+
+      expect(next_sibling.document).to eq(remote)
+    end
+
+    it "retrieves previous sibling with document reference set" do
+      remote_xml = remote.get_xml_element("my xml")
+      first_text = remote_xml[1]
+      prev_sibling = first_text.prev_sibling
+
+      expect(prev_sibling.document).to eq(remote)
+    end
+  end
+
   context "when syncing documents" do
     it "updates remote XMLText from local XMLText" do
       local = Y::Doc.new
