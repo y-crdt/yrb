@@ -84,16 +84,16 @@ performance of Rust.</p>
 <pre class="code ruby"><code class="ruby">$ gem install y-rb
 </code></pre>
 
-<blockquote>
-<p><strong>⚠ WARNING: Partial support for pre-built binaries.</strong><br>
-<code>y-rb</code> comes with experimental pre-built binaries for a few platforms, but it
-is not possible to support all targets right now. Please make sure there is an
-archive that matches the OS, CPU architecture, and Ruby version. You can find
-the assets listed with each <a href="https://github.com/y-crdt/yrb/releases">release</a>.</p>
+<h3 id="required-rubygems-version">Required RubyGems version</h3>
 
-<p>If the platform is not listed, you need to add the latest stable Rust + Cargo
-to your build dependencies in order for <code>y-rb</code> to install properly.</p>
-</blockquote>
+<p>Due to a <a href="https://github.com/rubygems/rubygems/pull/5852">bug in RubyGems &lt; 3.3.21</a>,
+RubyGems most needs to be updated for any Ruby version that shipped before or at
+April 2022. RubyGems does not load the correct platform in cases where e.g. the
+platform is described as<code>x86_64-linux-musl</code>, but <code>x86_64-linux</code> is fetched
+instead. </p>
+
+<pre class="code bash"><code class="bash">gem system --update
+</code></pre>
 
 <h2 id="usage">Usage</h2>
 
@@ -162,7 +162,7 @@ look as they are. </p>
 </div></div>
 
       <div id="footer">
-  Generated on Mon Oct  3 08:08:55 2022 by
+  Generated on Mon Oct  3 09:08:56 2022 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.28 (ruby-3.0.4).
 </div>
