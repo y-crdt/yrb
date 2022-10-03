@@ -24,14 +24,17 @@ Or install it yourself as:
 
     $ gem install y-rb
 
-> **⚠ WARNING: Partial support for pre-built binaries.**  
-> `y-rb` comes with experimental pre-built binaries for a few platforms, but it
-> is not possible to support all targets right now. Please make sure there is an
-> archive that matches the OS, CPU architecture, and Ruby version. You can find
-> the assets listed with each [release](https://github.com/y-crdt/yrb/releases).
->
-> If the platform is not listed, you need to add the latest stable Rust + Cargo
-> to your build dependencies in order for `y-rb` to install properly.
+### Required RubyGems version
+
+Due to a [bug in RubyGems < 3.3.21](https://github.com/rubygems/rubygems/pull/5852),
+RubyGems most needs to be updated for any Ruby version that shipped before or at
+April 2022. RubyGems does not load the correct platform in cases where e.g. the
+platform is described as`x86_64-linux-musl`, but `x86_64-linux` is fetched
+instead. 
+
+```bash
+gem system --update
+```
 
 ## Usage
 
