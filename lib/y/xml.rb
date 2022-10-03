@@ -33,7 +33,9 @@ module Y
     # @param [Integer] index
     # @return [Y::XMLElement|nil]
     def [](index)
-      yxml_element_get(index)
+      node = yxml_element_get(index)
+      node&.document = document
+      node
     end
 
     # Create a node at index
@@ -42,7 +44,9 @@ module Y
     # @param [String] name Name of node, e.g. `<p />`
     # @return [Y::XMLElement]
     def []=(index, name)
-      yxml_element_insert_element(transaction, index, name)
+      node = yxml_element_insert_element(transaction, index, name)
+      node&.document = document
+      node
     end
 
     # Returns first child in list or nil if no child exists
@@ -58,7 +62,9 @@ module Y
     #
     # @return [Y::XMLElement]
     def first_child
-      yxml_element_first_child
+      child = yxml_element_first_child
+      child&.document = document
+      child
     end
 
     # Insert text into element at given index
@@ -70,6 +76,7 @@ module Y
     # @return [Y::XMLText]
     def insert_text(index, input = nil)
       text = yxml_element_insert_text(transaction, index)
+      text&.document = document
       text << input unless input.nil?
       text
     end
@@ -78,7 +85,9 @@ module Y
     #
     # @return [Y::XMLElement|Y::XMLText|nil]
     def next_sibling
-      yxml_element_next_sibling
+      node = yxml_element_next_sibling
+      node&.document = document
+      node
     end
 
     # Attach listener to get notified about changes to the element
@@ -108,14 +117,18 @@ module Y
     #
     # @return [Y::XMLElement|nil]
     def parent
-      yxml_element_parent
+      node = yxml_element_parent
+      node.document = document
+      node
     end
 
     # Retrieve element or text adjacent (previous) to this element
     #
     # @return [Y::XMLElement|Y::XMLText|nil]
     def prev_sibling
-      yxml_element_prev_sibling
+      node = yxml_element_prev_sibling
+      node&.document = document
+      node
     end
 
     # Creates a new child an inserts at the end of the children list

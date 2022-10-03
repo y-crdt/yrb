@@ -160,6 +160,66 @@ RSpec.describe Y::XMLElement do
     end
   end
 
+  context "when traversing elements" do
+    let!(:local) { Y::Doc.new }
+    let!(:local_xml) { local.get_xml_element("my xml") }
+    let!(:first_child) { local_xml << "A" }
+    let!(:last_child) { local_xml << "B" }
+    let!(:remote) do
+      doc = Y::Doc.new
+      doc.sync(local.diff)
+      doc
+    end
+
+    it "sets document reference when element is added" do
+      expect(first_child.document).to eq(local)
+    end
+
+    it "retrieves first_child with document reference set" do
+      remote_xml = remote.get_xml_element("my xml")
+      first_child = remote_xml.first_child
+
+      expect(first_child.document).to eq(remote)
+    end
+
+    it "retrieves node at index 0 with document reference set" do
+      remote_xml = remote.get_xml_element("my xml")
+      first_child = remote_xml[0]
+
+      expect(first_child.document).to eq(remote)
+    end
+
+    it "retrieves node at index 1 with document reference set" do
+      remote_xml = remote.get_xml_element("my xml")
+      first_child = remote_xml[1]
+
+      expect(first_child.document).to eq(remote)
+    end
+
+    it "retrieves next sibling with document reference set" do
+      remote_xml = remote.get_xml_element("my xml")
+      first_child = remote_xml.first_child
+      next_sibling = first_child.next_sibling
+
+      expect(next_sibling.document).to eq(remote)
+    end
+
+    it "retrieves previous sibling with document reference set" do
+      remote_xml = remote.get_xml_element("my xml")
+      last_child = remote_xml[1]
+      prev_sibling = last_child.prev_sibling
+
+      expect(prev_sibling.document).to eq(remote)
+    end
+
+    it "retrieves parent with document reference set" do
+      remote_xml = remote.get_xml_element("my xml")
+      parent = remote_xml[1].parent
+
+      expect(parent.document).to eq(remote)
+    end
+  end
+
   context "when changing" do
     it "invokes callback" do
       local = Y::Doc.new
