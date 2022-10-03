@@ -44,11 +44,7 @@ namespace "gem" do
     task plat => "prepare" do
       require "rake_compiler_dock"
 
-      ENV["RCD_IMAGE"] = if plat == "x86_64-linux-musl"
-                           "eliias/rbsys-x86_64-linux-musl:#{RbSys::VERSION}"
-                         else
-                           "rbsys/#{plat}:#{RbSys::VERSION}"
-                         end
+      ENV["RCD_IMAGE"] = "rbsys/#{plat}:#{RbSys::VERSION}"
 
       RakeCompilerDock.sh <<-SH, platform: plat
           bundle && \
