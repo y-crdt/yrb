@@ -24,6 +24,7 @@ jobs:
 
       - uses: oxidize-rb/actions/setup-ruby-and-rust@main
         with:
+          rubygems: latest
           ruby-version: "3.1"
           bundler-cache: false
           cargo-cache: true
