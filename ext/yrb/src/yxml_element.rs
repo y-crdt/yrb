@@ -49,21 +49,26 @@ impl YXmlElement {
         transaction: &YTransaction,
         index: u32,
         name: String
-    ) {
-        self.0.borrow_mut().insert_elem(
+    ) -> YXmlElement {
+        let element = self.0.borrow_mut().insert_elem(
             &mut *transaction.0.borrow_mut(),
             index,
             name
         );
+
+        YXmlElement(RefCell::from(element))
     }
     pub(crate) fn yxml_element_insert_text(
         &self,
         transaction: &YTransaction,
         index: u32
-    ) {
-        self.0
+    ) -> YXmlText {
+        let text = self
+            .0
             .borrow_mut()
             .insert_text(&mut *transaction.0.borrow_mut(), index);
+
+        YXmlText(RefCell::from(text))
     }
     pub(crate) fn yxml_element_next_sibling(&self) -> Option<Value> {
         self.0.borrow().next_sibling().map(|item| match item {

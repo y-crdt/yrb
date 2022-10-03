@@ -160,6 +160,36 @@ RSpec.describe Y::XMLElement do
     end
   end
 
+  context "when inserting elements" do
+    let(:local) { Y::Doc.new }
+    let(:local_xml) { local.get_xml_element("my xml") }
+
+    it "returns newly created element" do
+      node = local_xml << "A"
+
+      expect(node.class).to eq(Y::XMLElement)
+    end
+
+    it "returns newly created element at index" do
+      local_xml[0] = "A"
+      node = local_xml[0]
+
+      expect(node.class).to eq(Y::XMLElement)
+    end
+
+    it "returns newly created text" do
+      text = local_xml.insert_text(0, "Hello, World!")
+
+      expect(text.class).to eq(Y::XMLText)
+    end
+
+    it "returns newly created text" do
+      text = local_xml.push_text("Hello, World!")
+
+      expect(text.class).to eq(Y::XMLText)
+    end
+  end
+
   context "when traversing elements" do
     let!(:local) { Y::Doc.new }
     let!(:local_xml) { local.get_xml_element("my xml") }

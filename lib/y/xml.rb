@@ -76,7 +76,7 @@ module Y
     # @return [Y::XMLText]
     def insert_text(index, input = nil)
       text = yxml_element_insert_text(transaction, index)
-      text&.document = document
+      text.document = document
       text << input unless input.nil?
       text
     end
