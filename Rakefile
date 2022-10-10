@@ -46,15 +46,15 @@ namespace "gem" do
     task plat => "prepare" do
       require "rake_compiler_dock"
 
-      if plat.include?("-musl")
-        ENV["RCD_IMAGE"] = "eliias/rbsys-x86_64-linux-musl:#{RbSys::VERSION}"
-      else
-        ENV["RCD_IMAGE"] = "rbsys/#{plat}:#{RbSys::VERSION}"
-      end
+      ENV["RCD_IMAGE"] = if plat.include?("-musl")
+                           "eliias/rbsys-x86_64-linux-musl:#{RbSys::VERSION}"
+                         else
+                           "rbsys/#{plat}:#{RbSys::VERSION}"
+                         end
 
-      RakeCompilerDock.sh <<-SH, platform: plat
-          bundle && \
-          RUBY_CC_VERSION="#{cross_rubies.join(":")}" rake native:#{plat} pkg/#{spec.full_name}-#{plat}.gem
+      RakeCompilerDock.sh <<~SH, platform: plat
+        bundle && \
+        RUBY_CC_VERSION="#{cross_rubies.join(":")}" rake native:#{plat} pkg/#{spec.full_name}-#{plat}.gem
       SH
     end
   end
