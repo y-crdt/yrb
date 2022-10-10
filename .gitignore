@@ -22,6 +22,7 @@ ext/**/target
 pkg/
 lib/yrb.bundle
 lib/*.*
+!lib/*.rb
 build/out
 vendor/
 target/
