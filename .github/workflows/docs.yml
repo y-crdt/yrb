@@ -18,10 +18,13 @@ jobs:
           ruby-version: "3.0"
       - name: Install required gem dependencies
         run: gem install yard github-markup redcarpet --no-document
+
       - name: Build YARD Ruby Documentation
-        run: yardoc --output-dir doc
+        run: yardoc --output-dir ./doc
+
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
+        if: ${{ github.ref == 'refs/heads/main' }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./doc
