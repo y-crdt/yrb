@@ -30,17 +30,17 @@ impl YTransaction {
     pub(crate) fn ytransaction_get_array(&self, name: String) -> YArray {
         let a = self.0.borrow_mut().get_array(&*name);
 
-        return YArray(RefCell::from(a));
+        YArray(RefCell::from(a))
     }
     pub(crate) fn ytransaction_get_map(&self, name: String) -> YMap {
         let m = self.0.borrow_mut().get_map(&*name);
 
-        return YMap(RefCell::from(m));
+        YMap(RefCell::from(m))
     }
     pub(crate) fn ytransaction_get_text(&self, name: String) -> YText {
         let t = self.0.borrow_mut().get_text(&*name);
 
-        return YText(RefCell::new(t));
+        YText(RefCell::new(t))
     }
     pub(crate) fn ytransaction_get_xml_element(
         &self,
@@ -48,12 +48,12 @@ impl YTransaction {
     ) -> YXmlElement {
         let el = self.0.borrow_mut().get_xml_element(&*name);
 
-        return YXmlElement(RefCell::new(el));
+        YXmlElement(RefCell::new(el))
     }
     pub(crate) fn ytransaction_get_xml_text(&self, name: String) -> YXmlText {
         let t = self.0.borrow_mut().get_xml_text(&*name);
 
-        return YXmlText(RefCell::new(t));
+        YXmlText(RefCell::new(t))
     }
     pub(crate) fn ytransaction_state_vector(&self) -> Vec<u8> {
         return self.0.borrow_mut().state_vector().encode_v1();

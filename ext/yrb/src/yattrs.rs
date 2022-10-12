@@ -10,7 +10,7 @@ pub(crate) struct YAttrs(pub(crate) Attrs);
 
 impl From<Attrs> for YAttrs {
     fn from(value: Attrs) -> Self {
-        YAttrs { 0: value }
+        YAttrs(value)
     }
 }
 
@@ -29,7 +29,7 @@ impl From<RHash> for YAttrs {
             })
             .expect("cannot iterate attributes hash");
 
-        YAttrs { 0: attrs }
+        YAttrs(attrs)
     }
 }
 

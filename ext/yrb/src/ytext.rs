@@ -153,7 +153,7 @@ impl YText {
                         Delta::Retain(index, attrs) => {
                             let payload = RHash::new();
 
-                            let yvalue = YValue::from(index.clone());
+                            let yvalue = YValue::from(*index);
 
                             payload
                                 .aset(delta_retain, yvalue.0.into_inner())
@@ -183,7 +183,7 @@ impl YText {
                         Delta::Deleted(index) => {
                             let payload = RHash::new();
 
-                            let yvalue = YValue::from(index.clone());
+                            let yvalue = YValue::from(*index);
 
                             payload
                                 .aset(delta_delete, yvalue.0.into_inner())
@@ -194,7 +194,7 @@ impl YText {
                     })
                     .partition(Result::is_ok);
 
-                if errors.len() > 0 {
+                if !errors.is_empty() {
                     // todo: make sure we respect errors and let the method fail by
                     //  by returning a Result containing an Error
                 }

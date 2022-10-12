@@ -1,4 +1,7 @@
+extern crate core;
+
 use crate::yarray::YArray;
+use crate::yawareness::{YAwareness, YAwarenessEvent, YAwarenessUpdate};
 use crate::ydoc::YDoc;
 use crate::ymap::YMap;
 use crate::ytext::YText;
@@ -7,10 +10,12 @@ use crate::yxml_element::YXmlElement;
 use crate::yxml_text::YXmlText;
 use magnus::{define_module, function, method, Error, Module, Object};
 
+mod awareness;
 mod utils;
 mod yany;
 mod yarray;
 mod yattrs;
+mod yawareness;
 mod ydoc;
 mod ymap;
 mod ytext;
@@ -471,6 +476,105 @@ fn init() -> Result<(), Error> {
             method!(YXmlText::yxml_text_to_s, 0)
         )
         .expect("cannot define private method: yxml_text_to_s");
+
+    let yawareness = module
+        .define_class("Awareness", Default::default())
+        .expect("cannot define class Y::Awareness");
+    yawareness
+        .define_singleton_method(
+            "new",
+            function!(YAwareness::yawareness_new, 0)
+        )
+        .expect("cannot define singleton method: yawareness_new");
+    yawareness
+        .define_private_method(
+            "yawareness_apply_update",
+            method!(YAwareness::yawareness_apply_update, 1)
+        )
+        .expect("cannot define private method: yawareness_apply_update");
+    yawareness
+        .define_private_method(
+            "yawareness_clean_local_state",
+            method!(YAwareness::yawareness_clean_local_state, 0)
+        )
+        .expect("cannot define private method: yawareness_clean_local_state");
+    yawareness
+        .define_private_method(
+            "yawareness_clients",
+            method!(YAwareness::yawareness_clients, 0)
+        )
+        .expect("cannot define private method: yawareness_clients");
+    yawareness
+        .define_private_method(
+            "yawareness_client_id",
+            method!(YAwareness::yawareness_client_id, 0)
+        )
+        .expect("cannot define private method: yawareness_client_id");
+    yawareness
+        .define_private_method(
+            "yawareness_local_state",
+            method!(YAwareness::yawareness_local_state, 0)
+        )
+        .expect("cannot define private method: yawareness_local_state");
+    yawareness
+        .define_private_method(
+            "yawareness_on_update",
+            method!(YAwareness::yawareness_on_update, 1)
+        )
+        .expect("cannot define private method: yawareness_on_update");
+    yawareness
+        .define_private_method(
+            "yawareness_remove_on_update",
+            method!(YAwareness::yawareness_remove_on_update, 1)
+        )
+        .expect("cannot define private method: yawareness_remove_on_update");
+    yawareness
+        .define_private_method(
+            "yawareness_remove_state",
+            method!(YAwareness::yawareness_remove_state, 1)
+        )
+        .expect("cannot define private method: yawareness_remove_state");
+    yawareness
+        .define_private_method(
+            "yawareness_set_local_state",
+            method!(YAwareness::yawareness_set_local_state, 1)
+        )
+        .expect("cannot define private method: yawareness_set_local_state");
+    yawareness
+        .define_private_method(
+            "yawareness_update",
+            method!(YAwareness::yawareness_update, 0)
+        )
+        .expect("cannot define private method: yawareness_update");
+    yawareness
+        .define_private_method(
+            "yawareness_update_with_clients",
+            method!(YAwareness::yawareness_update_with_clients, 1)
+        )
+        .expect("cannot define private method: yawareness_update_with_clients");
+
+    let yawareness_update = module
+        .define_class("AwarenessUpdate", Default::default())
+        .expect("cannot define class Y:AwarenessUpdate");
+    yawareness_update
+        .define_private_method(
+            "yawareness_update_encode",
+            method!(YAwarenessUpdate::yawareness_update_encode, 0)
+        )
+        .expect("cannot define private method: yawareness_update_encode");
+
+    let yawareness_event = module
+        .define_class("AwarenessEvent", Default::default())
+        .expect("cannot define class Y:AwarenessEvent");
+    yawareness_event
+        .define_method("added", method!(YAwarenessEvent::added, 0))
+        .expect("cannot define private method: added");
+    yawareness_event
+        .define_method("updated", method!(YAwarenessEvent::updated, 0))
+        .expect("cannot define private method: updated");
+    yawareness_event
+        .define_method("removed", method!(YAwarenessEvent::removed, 0))
+        .expect("cannot define private method: removed");
 
     Ok(())
 }

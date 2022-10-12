@@ -14,7 +14,7 @@ unsafe impl Send for YXmlText {}
 
 impl YXmlText {
     pub(crate) fn yxml_text_attributes(&self) -> RHash {
-        RHash::from_iter(self.0.borrow().attributes().into_iter())
+        RHash::from_iter(self.0.borrow().attributes())
     }
     pub(crate) fn yxml_text_format(
         &self,
