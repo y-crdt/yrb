@@ -1,10 +1,22 @@
+require:
+  - "rubocop-performance"
+  - "rubocop-rspec"
+
 AllCops:
   NewCops: enable
   TargetRubyVersion: 2.7
 
+Layout/LineLength:
+  Max: 80
+  Exclude:
+    - y-rb.gemspec
+
 Metrics/BlockLength:
   Exclude:
     - spec/y/*_spec.rb
+
+RSpec/ExampleLength:
+  Max: 10
 
 Style/Documentation:
   Enabled: false
@@ -16,8 +28,3 @@ Style/StringLiterals:
 Style/StringLiteralsInInterpolation:
   Enabled: true
   EnforcedStyle: double_quotes
-
-Layout/LineLength:
-  Max: 80
-  Exclude:
-    - y-rb.gemspec

@@ -167,14 +167,14 @@ RSpec.describe Y::XMLElement do
     it "returns newly created element" do
       node = local_xml << "A"
 
-      expect(node.class).to eq(Y::XMLElement)
+      expect(node.class).to eq(described_class)
     end
 
     it "returns newly created element at index" do
       local_xml[0] = "A"
       node = local_xml[0]
 
-      expect(node.class).to eq(Y::XMLElement)
+      expect(node.class).to eq(described_class)
     end
 
     it "returns newly created text" do

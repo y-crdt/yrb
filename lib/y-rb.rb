@@ -9,6 +9,7 @@ rescue LoadError
 end
 
 require_relative "y/array"
+require_relative "y/awareness"
 require_relative "y/doc"
 require_relative "y/map"
 require_relative "y/text"

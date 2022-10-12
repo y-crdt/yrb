@@ -66,7 +66,7 @@ RSpec.describe Y::Array do
     arr << 1
     arr.slice!(0)
 
-    expect(arr.empty?).to be_truthy
+    expect(arr).to be_empty
   end
 
   it "removes multiple elements" do
@@ -77,7 +77,7 @@ RSpec.describe Y::Array do
     arr << 2
     arr.slice!(0..1)
 
-    expect(arr.empty?).to be_truthy
+    expect(arr).to be_empty
   end
 
   it "removes multiple elements" do

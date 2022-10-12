@@ -15,7 +15,7 @@ unsafe impl Send for YXmlElement {}
 
 impl YXmlElement {
     pub(crate) fn yxml_element_attributes(&self) -> RHash {
-        RHash::from_iter(self.0.borrow().attributes().into_iter())
+        RHash::from_iter(self.0.borrow().attributes())
     }
     pub(crate) fn yxml_element_first_child(&self) -> Option<Value> {
         self.yxml_element_get(0)

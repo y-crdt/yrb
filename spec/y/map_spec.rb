@@ -5,7 +5,7 @@ RSpec.describe Y::Map do
     doc = Y::Doc.new
     map = doc.get_map("my map")
 
-    expect(map).to be_instance_of(Y::Map)
+    expect(map).to be_instance_of(described_class)
   end
 
   it "inserts element to map" do
@@ -23,7 +23,7 @@ RSpec.describe Y::Map do
 
     map[:hello] = "world"
 
-    expect(map.key?(:hello)).to be_truthy
+    expect(map).to be_key(:hello)
   end
 
   it "returns false if key is missing" do
@@ -32,7 +32,7 @@ RSpec.describe Y::Map do
 
     map[:hello] = "world"
 
-    expect(map.key?(:nosuch)).to be_falsey
+    expect(map).not_to be_key(:nosuch)
   end
 
   it "retrieves value" do
@@ -51,7 +51,7 @@ RSpec.describe Y::Map do
     map[:hello] = "world"
     map.delete(:hello)
 
-    expect(map.key?(:hello)).to be_falsey
+    expect(map).not_to be_key(:hello)
   end
 
   it "provides non deleted key as argument in block" do

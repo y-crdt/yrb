@@ -76,7 +76,7 @@ impl YMap {
                         EntryChange::Inserted(v) => {
                             let h = RHash::new();
                             h.aset(
-                                Symbol::new(&key.to_string()),
+                                Symbol::new(key),
                                 *YValue::from(v.clone()).0.borrow()
                             )
                             .expect("cannot add change::inserted");
@@ -100,7 +100,7 @@ impl YMap {
                                 .expect("cannot push change::updated");
 
                             let h = RHash::new();
-                            h.aset(Symbol::new(&key.to_string()), values)
+                            h.aset(Symbol::new(key), values)
                                 .expect("cannot push change::updated");
 
                             let payload = RHash::new();
@@ -115,7 +115,7 @@ impl YMap {
                         EntryChange::Removed(v) => {
                             let h = RHash::new();
                             h.aset(
-                                Symbol::new(&key.to_string()),
+                                Symbol::new(key),
                                 *YValue::from(v.clone()).0.borrow()
                             )
                             .expect("cannot push change::removed");
