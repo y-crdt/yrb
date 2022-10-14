@@ -79,7 +79,7 @@
   <dl>
     <dt>Defined in:</dt>
     <dd>lib/y-rb.rb<span class="defines">,<br />
-  lib/y/doc.rb,<br /> lib/y/map.rb,<br /> lib/y/xml.rb,<br /> lib/y/text.rb,<br /> lib/y/array.rb,<br /> lib/y/version.rb,<br /> lib/y/transaction.rb</span>
+  lib/y/doc.rb,<br /> lib/y/map.rb,<br /> lib/y/xml.rb,<br /> lib/y/text.rb,<br /> lib/y/array.rb,<br /> lib/y/version.rb,<br /> lib/y/awareness.rb,<br /> lib/y/transaction.rb</span>
 </dd>
   </dl>
   
@@ -91,7 +91,7 @@
     
   
     
-      <strong class="classes">Classes:</strong> <span class='object_link'><a href="Y/Array.html" title="Y::Array (class)">Array</a></span>, <span class='object_link'><a href="Y/Doc.html" title="Y::Doc (class)">Doc</a></span>, <span class='object_link'><a href="Y/Map.html" title="Y::Map (class)">Map</a></span>, <span class='object_link'><a href="Y/Text.html" title="Y::Text (class)">Text</a></span>, <span class='object_link'><a href="Y/Transaction.html" title="Y::Transaction (class)">Transaction</a></span>, <span class='object_link'><a href="Y/XMLElement.html" title="Y::XMLElement (class)">XMLElement</a></span>, <span class='object_link'><a href="Y/XMLText.html" title="Y::XMLText (class)">XMLText</a></span>
+      <strong class="classes">Classes:</strong> <span class='object_link'><a href="Y/Array.html" title="Y::Array (class)">Array</a></span>, <span class='object_link'><a href="Y/Awareness.html" title="Y::Awareness (class)">Awareness</a></span>, <span class='object_link'><a href="Y/AwarenessEvent.html" title="Y::AwarenessEvent (class)">AwarenessEvent</a></span>, <span class='object_link'><a href="Y/AwarenessUpdate.html" title="Y::AwarenessUpdate (class)">AwarenessUpdate</a></span>, <span class='object_link'><a href="Y/Doc.html" title="Y::Doc (class)">Doc</a></span>, <span class='object_link'><a href="Y/Map.html" title="Y::Map (class)">Map</a></span>, <span class='object_link'><a href="Y/Text.html" title="Y::Text (class)">Text</a></span>, <span class='object_link'><a href="Y/Transaction.html" title="Y::Transaction (class)">Transaction</a></span>, <span class='object_link'><a href="Y/XMLElement.html" title="Y::XMLElement (class)">XMLElement</a></span>, <span class='object_link'><a href="Y/XMLText.html" title="Y::XMLText (class)">XMLText</a></span>
     
   
 </p>
@@ -107,7 +107,7 @@
         <dt id="VERSION-constant" class="">VERSION =
           
         </dt>
-        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>0.1.7</span><span class='tstring_end'>&quot;</span></span></pre></dd>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>0.2.0</span><span class='tstring_end'>&quot;</span></span></pre></dd>
       
     </dl>
   
@@ -118,12 +118,991 @@
 
 
 
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
 
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#added-instance_method" title="#added (instance method)">#<strong>added</strong>  &#x21d2; Array&lt;Integer&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Added clients.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#removed-instance_method" title="#removed (instance method)">#<strong>removed</strong>  &#x21d2; Array&lt;Integer&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Removed clients.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#updated-instance_method" title="#updated (instance method)">#<strong>updated</strong>  &#x21d2; Array&lt;Integer&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Updated clients.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#yawareness_apply_update-instance_method" title="#yawareness_apply_update (instance method)">#<strong>yawareness_apply_update</strong>(update)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Applies an update.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#yawareness_clean_local_state-instance_method" title="#yawareness_clean_local_state (instance method)">#<strong>yawareness_clean_local_state</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Clears out a state of a current client , effectively marking it as disconnected.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#yawareness_client_id-instance_method" title="#yawareness_client_id (instance method)">#<strong>yawareness_client_id</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns a globally unique client ID of an underlying Doc.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#yawareness_clients-instance_method" title="#yawareness_clients (instance method)">#<strong>yawareness_clients</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns a state map of all of the clients tracked by current Awareness instance.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#yawareness_local_state-instance_method" title="#yawareness_local_state (instance method)">#<strong>yawareness_local_state</strong>  &#x21d2; String|nil </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns a JSON string state representation of a current Awareness instance.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#yawareness_on_update-instance_method" title="#yawareness_on_update (instance method)">#<strong>yawareness_on_update</strong>(callback, &amp;block)  &#x21d2; Integer </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The subscription ID.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#yawareness_remove_on_update-instance_method" title="#yawareness_remove_on_update (instance method)">#<strong>yawareness_remove_on_update</strong>(subscription_id)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#yawareness_remove_state-instance_method" title="#yawareness_remove_state (instance method)">#<strong>yawareness_remove_state</strong>(client_id)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Clears out a state of a given client, effectively marking it as disconnected.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#yawareness_set_local_state-instance_method" title="#yawareness_set_local_state (instance method)">#<strong>yawareness_set_local_state</strong>(state)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Sets a current Awareness instance state to a corresponding JSON string.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#yawareness_update-instance_method" title="#yawareness_update (instance method)">#<strong>yawareness_update</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns a serializable update object which is representation of a current Awareness state.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#yawareness_update_with_clients-instance_method" title="#yawareness_update_with_clients (instance method)">#<strong>yawareness_update_with_clients</strong>(clients)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns a serializable update object which is representation of a current Awareness state.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="added-instance_method">
+  
+    #<strong>added</strong>  &#x21d2; <tt><span class='object_link'><a href="Y/Array.html" title="Y::Array (class)">Array</a></span>&lt;Integer&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns Added clients.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Y/Array.html" title="Y::Array (class)">Array</a></span>&lt;Integer&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Added clients</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 129</span>
+
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="removed-instance_method">
+  
+    #<strong>removed</strong>  &#x21d2; <tt><span class='object_link'><a href="Y/Array.html" title="Y::Array (class)">Array</a></span>&lt;Integer&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns Removed clients.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Y/Array.html" title="Y::Array (class)">Array</a></span>&lt;Integer&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Removed clients</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 135</span>
+
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="updated-instance_method">
+  
+    #<strong>updated</strong>  &#x21d2; <tt><span class='object_link'><a href="Y/Array.html" title="Y::Array (class)">Array</a></span>&lt;Integer&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns Updated clients.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Y/Array.html" title="Y::Array (class)">Array</a></span>&lt;Integer&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Updated clients</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 132</span>
+
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="yawareness_apply_update-instance_method">
+  
+    #<strong>yawareness_apply_update</strong>(update)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Applies an update</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 53</span>
+
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="yawareness_clean_local_state-instance_method">
+  
+    #<strong>yawareness_clean_local_state</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Clears out a state of a current client , effectively marking it as
+disconnected.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 59</span>
+
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="yawareness_client_id-instance_method">
+  
+    #<strong>yawareness_client_id</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns a globally unique client ID of an underlying Doc.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 63</span>
+
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="yawareness_clients-instance_method">
+  
+    #<strong>yawareness_clients</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns a state map of all of the clients
+tracked by current Awareness instance. Those states are identified by
+their corresponding ClientIDs. The associated state is represented and
+replicated to other clients as a JSON string.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 67</span>
+
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="yawareness_local_state-instance_method">
+  
+    #<strong>yawareness_local_state</strong>  &#x21d2; <tt>String|nil</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns a JSON string state representation of a
+current Awareness instance.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String|nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Returns a JSON string state representation of a
+current Awareness instance.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 75</span>
+
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="yawareness_on_update-instance_method">
+  
+    #<strong>yawareness_on_update</strong>(callback, &amp;block)  &#x21d2; <tt>Integer</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns The subscription ID.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>A</span>
+      
+      
+        <span class='type'>(<tt>Proc</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>callback handler for updates</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Integer</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The subscription ID</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 80</span>
+
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="yawareness_remove_on_update-instance_method">
+  
+    #<strong>yawareness_remove_on_update</strong>(subscription_id)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>subscription_id</span>
+      
+      
+        <span class='type'>(<tt>Integer</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The subscription id to remove</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 85</span>
+
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="yawareness_remove_state-instance_method">
+  
+    #<strong>yawareness_remove_state</strong>(client_id)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Clears out a state of a given client, effectively marking it as
+disconnected.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 89</span>
+
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="yawareness_set_local_state-instance_method">
+  
+    #<strong>yawareness_set_local_state</strong>(state)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Sets a current Awareness instance state to a corresponding JSON string.
+This state will be replicated to other clients as part of the
+AwarenessUpdate and it will trigger an event to be emitted if current
+instance was created using [Awareness::with_observer] method.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 97</span>
+
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="yawareness_update-instance_method">
+  
+    #<strong>yawareness_update</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns a serializable update object which is representation of a
+current Awareness state.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 108</span>
+
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="yawareness_update_with_clients-instance_method">
+  
+    #<strong>yawareness_update_with_clients</strong>(clients)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns a serializable update object which is representation of a
+current Awareness state. Unlike [Y::Awareness#update], this method
+variant allows to prepare update only for a subset of known clients.
+These clients must all be known to a current Awareness instance,
+otherwise an error will be returned.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 114</span>
+
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
 
 </div>
 
       <div id="footer">
-  Generated on Mon Oct 10 15:24:56 2022 by
+  Generated on Fri Oct 14 09:54:11 2022 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.28 (ruby-3.0.4).
 </div>
