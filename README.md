@@ -26,11 +26,11 @@ Or install it yourself as:
 
 ### Required RubyGems version
 
-Due to a [bug in RubyGems < 3.3.21](https://github.com/rubygems/rubygems/pull/5852),
-RubyGems most needs to be updated for any Ruby version that shipped before or at
-April 2022. RubyGems does not load the correct platform in cases where e.g. the
-platform is described as`x86_64-linux-musl`, but `x86_64-linux` is fetched
-instead. 
+If you want to use `y-rb` on `x86_64-linux-musl` systems, you most likely need
+to update your system RubyGems due to a
+[bug in RubyGems < 3.3.21](https://github.com/rubygems/rubygems/pull/5852). For
+older RubyGems versions, the platform is described as `x86_64-linux-musl`, but
+`x86_64-linux` is fetched instead. 
 
 ```bash
 gem system --update

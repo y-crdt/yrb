@@ -12,5 +12,6 @@ text << "My name is, my name is, my name is … Slim Shady"
 zero = Y::Doc.new
 update = doc.diff(zero.state)
 
+# transfer could be anything, ActionCable broadcast, HTTP response, …
 transfer update
 ```
