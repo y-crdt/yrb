@@ -13,8 +13,6 @@ cross_platforms = %w[
   x86_64-darwin
   x86_64-linux
   x86_64-linux-musl
-  x64-mingw32
-  x64-mingw-ucrt
 ]
 
 spec = Bundler.load_gemspec("y-rb.gemspec")
@@ -46,11 +44,7 @@ namespace "gem" do
     task plat => "prepare" do
       require "rake_compiler_dock"
 
-      ENV["RCD_IMAGE"] = if plat.include?("-musl")
-                           "eliias/rbsys-x86_64-linux-musl:#{RbSys::VERSION}"
-                         else
-                           "rbsys/#{plat}:#{RbSys::VERSION}"
-                         end
+      ENV["RCD_IMAGE"] = "rbsys/#{plat}:#{RbSys::VERSION}"
 
       RakeCompilerDock.sh <<~SH, platform: plat
         bundle && \

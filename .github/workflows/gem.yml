@@ -19,7 +19,7 @@ jobs:
           - "arm64-darwin"
           - "x86_64-darwin"
           - "x86_64-linux"
-#          - "x86_64-linux-musl"
+          - "x86_64-linux-musl"
     environment: "yrb-deploy"
     steps:
       - uses: actions/checkout@v2
