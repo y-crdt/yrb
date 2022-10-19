@@ -86,11 +86,11 @@ performance of Rust.</p>
 
 <h3 id="required-rubygems-version">Required RubyGems version</h3>
 
-<p>Due to a <a href="https://github.com/rubygems/rubygems/pull/5852">bug in RubyGems &lt; 3.3.21</a>,
-RubyGems most needs to be updated for any Ruby version that shipped before or at
-April 2022. RubyGems does not load the correct platform in cases where e.g. the
-platform is described as<code>x86_64-linux-musl</code>, but <code>x86_64-linux</code> is fetched
-instead. </p>
+<p>If you want to use <code>y-rb</code> on <code>x86_64-linux-musl</code> systems, you most likely need
+to update your system RubyGems due to a
+<a href="https://github.com/rubygems/rubygems/pull/5852">bug in RubyGems &lt; 3.3.21</a>. For
+older RubyGems versions, the platform is described as <code>x86_64-linux-musl</code>, but
+<code>x86_64-linux</code> is fetched instead. </p>
 
 <pre class="code bash"><code class="bash">gem system --update
 </code></pre>
@@ -162,7 +162,7 @@ look as they are. </p>
 </div></div>
 
       <div id="footer">
-  Generated on Wed Oct 19 21:22:57 2022 by
+  Generated on Wed Oct 19 21:23:32 2022 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.28 (ruby-3.0.4).
 </div>
