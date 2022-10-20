@@ -728,8 +728,6 @@
       <pre class="lines">
 
 
-291
-292
 293
 294
 295
@@ -754,10 +752,12 @@
 314
 315
 316
-317</pre>
+317
+318
+319</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 291</span>
+      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 293</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_method_missing'>method_missing</span><span class='lparen'>(</span><span class='id identifier rubyid_method_name'>method_name</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_args'>args</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_is_setter'>is_setter</span> <span class='op'>=</span> <span class='id identifier rubyid_method_name'>method_name</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_end_with?'>end_with?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>=</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
@@ -765,7 +765,7 @@
   <span class='id identifier rubyid_setter'>setter</span> <span class='op'>=</span> <span class='id identifier rubyid_method_name'>method_name</span>
   <span class='id identifier rubyid_setter'>setter</span> <span class='op'>+=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>=</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_is_setter'>is_setter</span>
   <span class='id identifier rubyid_getter'>getter</span> <span class='op'>=</span> <span class='id identifier rubyid_method_name'>method_name</span>
-  <span class='id identifier rubyid_getter'>getter</span> <span class='op'>=</span> <span class='id identifier rubyid_getter'>getter</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_slice'>slice</span><span class='lparen'>(</span><span class='int'>0</span><span class='op'>...</span><span class='op'>-</span><span class='int'>1</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span> <span class='kw'>if</span> <span class='id identifier rubyid_is_setter'>is_setter</span>
+  <span class='id identifier rubyid_getter'>getter</span> <span class='op'>=</span> <span class='id identifier rubyid_getter'>getter</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_slice'>slice</span><span class='lparen'>(</span><span class='int'>0</span><span class='op'>...</span><span class='op'>-</span><span class='int'>1</span><span class='rparen'>)</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_sym'>to_sym</span> <span class='kw'>if</span> <span class='id identifier rubyid_is_setter'>is_setter</span>
 
   <span class='id identifier rubyid_define_singleton_method'>define_singleton_method</span><span class='lparen'>(</span><span class='id identifier rubyid_setter'>setter</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_new_val'>new_val</span><span class='op'>|</span>
     <span class='id identifier rubyid_yxml_element_insert_attribute'>yxml_element_insert_attribute</span><span class='lparen'>(</span><span class='id identifier rubyid_transaction'>transaction</span><span class='comma'>,</span>
@@ -919,14 +919,14 @@
       <pre class="lines">
 
 
-138
-139
 140
 141
-142</pre>
+142
+143
+144</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 138</span>
+      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 140</span>
 
 <span class='kw'>def</span> <span class='op'>&lt;&lt;</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_xml_element'>xml_element</span> <span class='op'>=</span> <span class='id identifier rubyid_yxml_element_push_elem_back'>yxml_element_push_elem_back</span><span class='lparen'>(</span><span class='id identifier rubyid_transaction'>transaction</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
@@ -1023,6 +1023,8 @@
   <div class="discussion">
     <p>Create a node at index</p>
 
+<p>rubocop:disable Lint/Void</p>
+
 
   </div>
 </div>
@@ -1078,14 +1080,14 @@
       <pre class="lines">
 
 
-46
 47
 48
 49
-50</pre>
+50
+51</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 46</span>
+      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 47</span>
 
 <span class='kw'>def</span> <span class='op'>[]=</span><span class='lparen'>(</span><span class='id identifier rubyid_index'>index</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_node'>node</span> <span class='op'>=</span> <span class='id identifier rubyid_yxml_element_insert_element'>yxml_element_insert_element</span><span class='lparen'>(</span><span class='id identifier rubyid_transaction'>transaction</span><span class='comma'>,</span> <span class='id identifier rubyid_index'>index</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
@@ -1190,14 +1192,14 @@
       <pre class="lines">
 
 
-110
-111
 112
 113
-114</pre>
+114
+115
+116</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 110</span>
+      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 112</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_attach'>attach</span><span class='lparen'>(</span><span class='id identifier rubyid_callback'>callback</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='id identifier rubyid_yxml_element_observe'>yxml_element_observe</span><span class='lparen'>(</span><span class='id identifier rubyid_callback'>callback</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_callback'>callback</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
@@ -1251,12 +1253,12 @@
       <pre class="lines">
 
 
-55
-56
-57</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 55</span>
+      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_attrs'>attrs</span>
   <span class='id identifier rubyid_yxml_element_attributes'>yxml_element_attributes</span>
@@ -1306,12 +1308,12 @@
       <pre class="lines">
 
 
-251
-252
-253</pre>
+253
+254
+255</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 251</span>
+      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 253</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_detach'>detach</span><span class='lparen'>(</span><span class='id identifier rubyid_subscription_id'>subscription_id</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_yxml_element_unobserve'>yxml_element_unobserve</span><span class='lparen'>(</span><span class='id identifier rubyid_subscription_id'>subscription_id</span><span class='rparen'>)</span>
@@ -1359,14 +1361,14 @@
       <pre class="lines">
 
 
-64
-65
 66
 67
-68</pre>
+68
+69
+70</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 64</span>
+      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 66</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_first_child'>first_child</span>
   <span class='id identifier rubyid_child'>child</span> <span class='op'>=</span> <span class='id identifier rubyid_yxml_element_first_child'>yxml_element_first_child</span>
@@ -1446,15 +1448,15 @@
       <pre class="lines">
 
 
-77
-78
 79
 80
 81
-82</pre>
+82
+83
+84</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 77</span>
+      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 79</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_insert_text'>insert_text</span><span class='lparen'>(</span><span class='id identifier rubyid_index'>index</span><span class='comma'>,</span> <span class='id identifier rubyid_input'>input</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_text'>text</span> <span class='op'>=</span> <span class='id identifier rubyid_yxml_element_insert_text'>yxml_element_insert_text</span><span class='lparen'>(</span><span class='id identifier rubyid_transaction'>transaction</span><span class='comma'>,</span> <span class='id identifier rubyid_index'>index</span><span class='rparen'>)</span>
@@ -1505,14 +1507,14 @@
       <pre class="lines">
 
 
-87
-88
 89
 90
-91</pre>
+91
+92
+93</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 87</span>
+      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 89</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_next_sibling'>next_sibling</span>
   <span class='id identifier rubyid_node'>node</span> <span class='op'>=</span> <span class='id identifier rubyid_yxml_element_next_sibling'>yxml_element_next_sibling</span>
@@ -1562,14 +1564,14 @@
       <pre class="lines">
 
 
-119
-120
 121
 122
-123</pre>
+123
+124
+125</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 119</span>
+      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 121</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_parent'>parent</span>
   <span class='id identifier rubyid_node'>node</span> <span class='op'>=</span> <span class='id identifier rubyid_yxml_element_parent'>yxml_element_parent</span>
@@ -1619,14 +1621,14 @@
       <pre class="lines">
 
 
-128
-129
 130
 131
-132</pre>
+132
+133
+134</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 128</span>
+      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 130</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_prev_sibling'>prev_sibling</span>
   <span class='id identifier rubyid_node'>node</span> <span class='op'>=</span> <span class='id identifier rubyid_yxml_element_prev_sibling'>yxml_element_prev_sibling</span>
@@ -1695,15 +1697,15 @@
       <pre class="lines">
 
 
-152
-153
 154
 155
 156
-157</pre>
+157
+158
+159</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 152</span>
+      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 154</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_push_text'>push_text</span><span class='lparen'>(</span><span class='id identifier rubyid_str'>str</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_text'>text</span> <span class='op'>=</span> <span class='id identifier rubyid_yxml_element_push_text_back'>yxml_element_push_text_back</span><span class='lparen'>(</span><span class='id identifier rubyid_transaction'>transaction</span><span class='rparen'>)</span>
@@ -1754,12 +1756,12 @@
       <pre class="lines">
 
 
-162
-163
-164</pre>
+164
+165
+166</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 162</span>
+      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 164</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_size'>size</span>
   <span class='id identifier rubyid_yxml_element_size'>yxml_element_size</span>
@@ -1886,8 +1888,6 @@
       <pre class="lines">
 
 
-192
-193
 194
 195
 196
@@ -1923,10 +1923,12 @@
 226
 227
 228
-229</pre>
+229
+230
+231</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 192</span>
+      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 194</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_slice!'>slice!</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_args'>args</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span><span class='period'>.</span><span class='id identifier rubyid_zero?'>zero?</span>
@@ -2009,12 +2011,12 @@
       <pre class="lines">
 
 
-236
-237
-238</pre>
+238
+239
+240</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 236</span>
+      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 238</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_tag'>tag</span>
   <span class='id identifier rubyid_yxml_element_tag'>yxml_element_tag</span>
@@ -2062,12 +2064,12 @@
       <pre class="lines">
 
 
-243
-244
-245</pre>
+245
+246
+247</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 243</span>
+      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 245</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_s'>to_s</span>
   <span class='id identifier rubyid_yxml_element_to_s'>yxml_element_to_s</span>
@@ -2130,14 +2132,14 @@
       <pre class="lines">
 
 
-259
-260
 261
 262
-263</pre>
+263
+264
+265</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 259</span>
+      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 261</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unshift_child'>unshift_child</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_xml_element'>xml_element</span> <span class='op'>=</span> <span class='id identifier rubyid_yxml_element_push_elem_front'>yxml_element_push_elem_front</span><span class='lparen'>(</span><span class='id identifier rubyid_transaction'>transaction</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
@@ -2206,15 +2208,15 @@
       <pre class="lines">
 
 
-271
-272
 273
 274
 275
-276</pre>
+276
+277
+278</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 271</span>
+      <pre class="code"><span class="info file"># File 'lib/y/xml.rb', line 273</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unshift_text'>unshift_text</span><span class='lparen'>(</span><span class='id identifier rubyid_str'>str</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_text'>text</span> <span class='op'>=</span> <span class='id identifier rubyid_yxml_element_push_text_front'>yxml_element_push_text_front</span><span class='lparen'>(</span><span class='id identifier rubyid_transaction'>transaction</span><span class='rparen'>)</span>
@@ -2232,7 +2234,7 @@
 </div>
 
       <div id="footer">
-  Generated on Thu Oct 20 09:16:12 2022 by
+  Generated on Thu Oct 20 14:37:20 2022 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.28 (ruby-3.0.4).
 </div>

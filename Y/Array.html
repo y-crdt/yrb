@@ -87,6 +87,11 @@
   
   
   
+  <dl>
+      <dt>Includes:</dt>
+      <dd>Enumerable</dd>
+  </dl>
+  
   
 
   
@@ -578,7 +583,8 @@ instead.</p>
     </ul>
   
 
-<div id="constructor_details" class="method_details_list">
+
+  <div id="constructor_details" class="method_details_list">
   <h2>Constructor Details</h2>
   
     <div class="method_details first">
@@ -623,14 +629,14 @@ instead.</p>
       <pre class="lines">
 
 
-31
-32
 33
 34
-35</pre>
+35
+36
+37</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 31</span>
+      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 33</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_doc'>doc</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='ivar'>@document</span> <span class='op'>=</span> <span class='id identifier rubyid_doc'>doc</span> <span class='op'>||</span> <span class='const'><span class='object_link'><a href="../Y.html" title="Y (module)">Y</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Doc.html" title="Y::Doc (class)">Doc</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
@@ -691,12 +697,12 @@ instead.</p>
       <pre class="lines">
 
 
-26
-27
-28</pre>
+28
+29
+30</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 26</span>
+      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 28</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_document'>document</span>
   <span class='ivar'>@document</span>
@@ -742,12 +748,12 @@ instead.</p>
       <pre class="lines">
 
 
-56
-57
-58</pre>
+58
+59
+60</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 56</span>
+      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 58</span>
 
 <span class='kw'>def</span> <span class='op'>&lt;&lt;</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_yarray_push_back'>yarray_push_back</span><span class='lparen'>(</span><span class='id identifier rubyid_transaction'>transaction</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
@@ -795,12 +801,12 @@ instead.</p>
       <pre class="lines">
 
 
-40
-41
-42</pre>
+42
+43
+44</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 40</span>
+      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 42</span>
 
 <span class='kw'>def</span> <span class='op'>[]</span><span class='lparen'>(</span><span class='id identifier rubyid_index'>index</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_yarray_get'>yarray_get</span><span class='lparen'>(</span><span class='id identifier rubyid_index'>index</span><span class='rparen'>)</span>
@@ -861,12 +867,12 @@ instead.</p>
       <pre class="lines">
 
 
-49
-50
-51</pre>
+51
+52
+53</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 51</span>
 
 <span class='kw'>def</span> <span class='op'>[]=</span><span class='lparen'>(</span><span class='id identifier rubyid_index'>index</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_yarray_insert'>yarray_insert</span><span class='lparen'>(</span><span class='id identifier rubyid_transaction'>transaction</span><span class='comma'>,</span> <span class='id identifier rubyid_index'>index</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
@@ -958,14 +964,14 @@ instead.</p>
       <pre class="lines">
 
 
-75
-76
 77
 78
-79</pre>
+79
+80
+81</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 75</span>
+      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 77</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_attach'>attach</span><span class='lparen'>(</span><span class='id identifier rubyid_callback'>callback</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='id identifier rubyid_yarray_observe'>yarray_observe</span><span class='lparen'>(</span><span class='id identifier rubyid_callback'>callback</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_callback'>callback</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
@@ -1034,16 +1040,16 @@ instead.</p>
       <pre class="lines">
 
 
-94
-95
 96
 97
 98
 99
-100</pre>
+100
+101
+102</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 94</span>
+      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 96</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_concat'>concat</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_other_arrays'>other_arrays</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_combined'>combined</span> <span class='op'>=</span> <span class='id identifier rubyid_other_arrays'>other_arrays</span><span class='period'>.</span><span class='id identifier rubyid_reduce'>reduce</span><span class='lparen'>(</span><span class='lbracket'>[</span><span class='rbracket'>]</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_values'>values</span><span class='comma'>,</span> <span class='id identifier rubyid_arr'>arr</span><span class='op'>|</span>
@@ -1097,12 +1103,12 @@ instead.</p>
       <pre class="lines">
 
 
-106
-107
-108</pre>
+108
+109
+110</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 106</span>
+      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 108</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_detach'>detach</span><span class='lparen'>(</span><span class='id identifier rubyid_subscription_id'>subscription_id</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_yarray_unobserve'>yarray_unobserve</span><span class='lparen'>(</span><span class='id identifier rubyid_subscription_id'>subscription_id</span><span class='rparen'>)</span>
@@ -1136,12 +1142,12 @@ instead.</p>
       <pre class="lines">
 
 
-111
-112
-113</pre>
+113
+114
+115</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 111</span>
+      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 113</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_each'>each</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_yarray_each'>yarray_each</span><span class='lparen'>(</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -1189,12 +1195,12 @@ instead.</p>
       <pre class="lines">
 
 
-118
-119
-120</pre>
+120
+121
+122</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 118</span>
+      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 120</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_empty?'>empty?</span>
   <span class='id identifier rubyid_size'>size</span><span class='period'>.</span><span class='id identifier rubyid_zero?'>zero?</span>
@@ -1242,12 +1248,12 @@ instead.</p>
       <pre class="lines">
 
 
-125
-126
-127</pre>
+127
+128
+129</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 125</span>
+      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 127</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_first'>first</span>
   <span class='id identifier rubyid_yarray_get'>yarray_get</span><span class='lparen'>(</span><span class='int'>0</span><span class='rparen'>)</span>
@@ -1295,15 +1301,15 @@ instead.</p>
       <pre class="lines">
 
 
-132
-133
 134
 135
 136
-137</pre>
+137
+138
+139</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 132</span>
+      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 134</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_last'>last</span>
   <span class='id identifier rubyid_len'>len</span> <span class='op'>=</span> <span class='id identifier rubyid_yarray_length'>yarray_length</span>
@@ -1362,14 +1368,14 @@ instead.</p>
       <pre class="lines">
 
 
-145
-146
 147
 148
-149</pre>
+149
+150
+151</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 145</span>
+      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 147</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_pop'>pop</span><span class='lparen'>(</span><span class='id identifier rubyid_n'>n</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_len'>len</span> <span class='op'>=</span> <span class='id identifier rubyid_size'>size</span>
@@ -1427,13 +1433,13 @@ instead.</p>
       <pre class="lines">
 
 
-161
-162
 163
-164</pre>
+164
+165
+166</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 161</span>
+      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 163</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_shift'>shift</span><span class='lparen'>(</span><span class='id identifier rubyid_n'>n</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_yarray_remove'>yarray_remove</span><span class='lparen'>(</span><span class='id identifier rubyid_transaction'>transaction</span><span class='comma'>,</span> <span class='int'>0</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_n'>n</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
@@ -1486,12 +1492,12 @@ instead.</p>
       <pre class="lines">
 
 
-171
-172
-173</pre>
+173
+174
+175</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 171</span>
+      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 173</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_size'>size</span>
   <span class='id identifier rubyid_yarray_length'>yarray_length</span>
@@ -1623,8 +1629,6 @@ is not desirable in most situations.</p>
       <pre class="lines">
 
 
-208
-209
 210
 211
 212
@@ -1660,10 +1664,12 @@ is not desirable in most situations.</p>
 242
 243
 244
-245</pre>
+245
+246
+247</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 208</span>
+      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 210</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_slice!'>slice!</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_args'>args</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span><span class='period'>.</span><span class='id identifier rubyid_zero?'>zero?</span>
@@ -1746,12 +1752,12 @@ is not desirable in most situations.</p>
       <pre class="lines">
 
 
-252
-253
-254</pre>
+254
+255
+256</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 252</span>
+      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 254</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_a'>to_a</span>
   <span class='id identifier rubyid_yarray_to_a'>yarray_to_a</span>
@@ -1790,12 +1796,12 @@ is not desirable in most situations.</p>
       <pre class="lines">
 
 
-259
-260
-261</pre>
+261
+262
+263</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 259</span>
+      <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 261</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unshift'>unshift</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_yarray_push_front'>yarray_push_front</span><span class='lparen'>(</span><span class='id identifier rubyid_transaction'>transaction</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
@@ -1810,7 +1816,7 @@ is not desirable in most situations.</p>
 </div>
 
       <div id="footer">
-  Generated on Thu Oct 20 09:16:12 2022 by
+  Generated on Thu Oct 20 14:37:20 2022 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.28 (ruby-3.0.4).
 </div>
