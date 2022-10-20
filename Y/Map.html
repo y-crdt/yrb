@@ -87,6 +87,11 @@
   
   
   
+  <dl>
+      <dt>Includes:</dt>
+      <dd>Enumerable</dd>
+  </dl>
+  
   
 
   
@@ -452,7 +457,8 @@ instead.</p>
     </ul>
   
 
-<div id="constructor_details" class="method_details_list">
+
+  <div id="constructor_details" class="method_details_list">
   <h2>Constructor Details</h2>
   
     <div class="method_details first">
@@ -497,14 +503,14 @@ instead.</p>
       <pre class="lines">
 
 
-29
-30
 31
 32
-33</pre>
+33
+34
+35</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/map.rb', line 29</span>
+      <pre class="code"><span class="info file"># File 'lib/y/map.rb', line 31</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_doc'>doc</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='ivar'>@document</span> <span class='op'>=</span> <span class='id identifier rubyid_doc'>doc</span> <span class='op'>||</span> <span class='const'><span class='object_link'><a href="../Y.html" title="Y (module)">Y</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Doc.html" title="Y::Doc (class)">Doc</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
@@ -565,12 +571,12 @@ instead.</p>
       <pre class="lines">
 
 
-24
-25
-26</pre>
+26
+27
+28</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/map.rb', line 24</span>
+      <pre class="code"><span class="info file"># File 'lib/y/map.rb', line 26</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_document'>document</span>
   <span class='ivar'>@document</span>
@@ -624,12 +630,12 @@ instead.</p>
       <pre class="lines">
 
 
-105
-106
-107</pre>
+107
+108
+109</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/map.rb', line 105</span>
+      <pre class="code"><span class="info file"># File 'lib/y/map.rb', line 107</span>
 
 <span class='kw'>def</span> <span class='op'>[]</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_ymap_get'>ymap_get</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
@@ -663,12 +669,12 @@ instead.</p>
       <pre class="lines">
 
 
-110
-111
-112</pre>
+112
+113
+114</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/map.rb', line 110</span>
+      <pre class="code"><span class="info file"># File 'lib/y/map.rb', line 112</span>
 
 <span class='kw'>def</span> <span class='op'>[]=</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_val'>val</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_ymap_insert'>ymap_insert</span><span class='lparen'>(</span><span class='id identifier rubyid_transaction'>transaction</span><span class='comma'>,</span> <span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_val'>val</span><span class='rparen'>)</span>
@@ -742,14 +748,14 @@ instead.</p>
       <pre class="lines">
 
 
-40
-41
 42
 43
-44</pre>
+44
+45
+46</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/map.rb', line 40</span>
+      <pre class="code"><span class="info file"># File 'lib/y/map.rb', line 42</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_attach'>attach</span><span class='lparen'>(</span><span class='id identifier rubyid_callback'>callback</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='id identifier rubyid_ymap_observe'>ymap_observe</span><span class='lparen'>(</span><span class='id identifier rubyid_callback'>callback</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_callback'>callback</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
@@ -799,13 +805,13 @@ instead.</p>
       <pre class="lines">
 
 
-49
-50
 51
-52</pre>
+52
+53
+54</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/map.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'lib/y/map.rb', line 51</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_clear'>clear</span>
   <span class='id identifier rubyid_ymap_clear'>ymap_clear</span><span class='lparen'>(</span><span class='id identifier rubyid_transaction'>transaction</span><span class='rparen'>)</span>
@@ -880,17 +886,17 @@ instead.</p>
       <pre class="lines">
 
 
-73
-74
 75
 76
 77
 78
 79
-80</pre>
+80
+81
+82</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/map.rb', line 73</span>
+      <pre class="code"><span class="info file"># File 'lib/y/map.rb', line 75</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_value'>value</span> <span class='op'>=</span> <span class='id identifier rubyid_ymap_remove'>ymap_remove</span><span class='lparen'>(</span><span class='id identifier rubyid_transaction'>transaction</span><span class='comma'>,</span> <span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
@@ -945,12 +951,12 @@ instead.</p>
       <pre class="lines">
 
 
-88
-89
-90</pre>
+90
+91
+92</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/map.rb', line 88</span>
+      <pre class="code"><span class="info file"># File 'lib/y/map.rb', line 90</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_detach'>detach</span><span class='lparen'>(</span><span class='id identifier rubyid_subscription_id'>subscription_id</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_ymap_unobserve'>ymap_unobserve</span><span class='lparen'>(</span><span class='id identifier rubyid_subscription_id'>subscription_id</span><span class='rparen'>)</span>
@@ -984,12 +990,12 @@ instead.</p>
       <pre class="lines">
 
 
-93
-94
-95</pre>
+95
+96
+97</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/map.rb', line 93</span>
+      <pre class="code"><span class="info file"># File 'lib/y/map.rb', line 95</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_each'>each</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_ymap_each'>ymap_each</span><span class='lparen'>(</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -1040,12 +1046,12 @@ instead.</p>
       <pre class="lines">
 
 
-98
-99
-100</pre>
+100
+101
+102</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/map.rb', line 98</span>
+      <pre class="code"><span class="info file"># File 'lib/y/map.rb', line 100</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_ymap_contains'>ymap_contains</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
@@ -1093,12 +1099,12 @@ instead.</p>
       <pre class="lines">
 
 
-117
-118
-119</pre>
+119
+120
+121</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/map.rb', line 117</span>
+      <pre class="code"><span class="info file"># File 'lib/y/map.rb', line 119</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_size'>size</span>
   <span class='id identifier rubyid_ymap_size'>ymap_size</span>
@@ -1146,12 +1152,12 @@ instead.</p>
       <pre class="lines">
 
 
-124
-125
-126</pre>
+126
+127
+128</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/map.rb', line 124</span>
+      <pre class="code"><span class="info file"># File 'lib/y/map.rb', line 126</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_h'>to_h</span>
   <span class='id identifier rubyid_ymap_to_h'>ymap_to_h</span>
@@ -1203,12 +1209,12 @@ instead.</p>
       <pre class="lines">
 
 
-131
-132
-133</pre>
+133
+134
+135</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/map.rb', line 131</span>
+      <pre class="code"><span class="info file"># File 'lib/y/map.rb', line 133</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_json'>to_json</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid__args'>_args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_to_h'>to_h</span><span class='period'>.</span><span class='id identifier rubyid_to_json'>to_json</span>
@@ -1223,7 +1229,7 @@ instead.</p>
 </div>
 
       <div id="footer">
-  Generated on Thu Oct 20 14:37:19 2022 by
+  Generated on Thu Oct 20 14:42:26 2022 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.28 (ruby-3.0.4).
 </div>
