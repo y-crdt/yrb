@@ -69,26 +69,28 @@ RSpec.describe Y::Array do
     expect(arr).to be_empty
   end
 
-  it "removes multiple elements" do
-    doc = Y::Doc.new
-    arr = doc.get_array("my array")
+  context "when removing multiple elements" do
+    it "inclusive range removes all elements" do
+      doc = Y::Doc.new
+      arr = doc.get_array("my array")
 
-    arr << 1
-    arr << 2
-    arr.slice!(0..1)
+      arr << 1
+      arr << 2
+      arr.slice!(0..1)
 
-    expect(arr).to be_empty
-  end
+      expect(arr).to be_empty
+    end
 
-  it "removes multiple elements" do
-    doc = Y::Doc.new
-    arr = doc.get_array("my array")
+    it "exclusive range removes all but one elements" do
+      doc = Y::Doc.new
+      arr = doc.get_array("my array")
 
-    arr << 1
-    arr << 2
-    arr.slice!(0...1)
+      arr << 1
+      arr << 2
+      arr.slice!(0...1)
 
-    expect(arr.to_a).to eq([2])
+      expect(arr.to_a).to eq([2])
+    end
   end
 
   it "removes number of elements from position" do
@@ -190,9 +192,7 @@ RSpec.describe Y::Array do
     arr << 1
     arr << 2
 
-    arr.each do |element|
-      expect(element).to eq(1)
-    end
+    expect(arr).to match([1, 2])
   end
 
   context "when syncing documents" do
@@ -212,11 +212,12 @@ RSpec.describe Y::Array do
     end
   end
 
+  # rubocop:disable RSpec/ExampleLength
   context "when changing" do
-    it "invokes callback" do
-      local = Y::Doc.new
-      arr = local.get_array("my array")
+    let(:local) { Y::Doc.new }
+    let(:arr) { local.get_array("my array") }
 
+    it "invokes callback" do
       called = nil
       listener = proc { |changes| called = changes }
 
@@ -237,12 +238,10 @@ RSpec.describe Y::Array do
       )
     end
 
+    # rubocop:disable RSpec/MultipleExpectations
     it "commits automatically" do
-      local = Y::Doc.new
-
       changes = []
 
-      arr = local.get_array("my array")
       arr.attach(->(delta) { changes << delta })
 
       local.transact do
@@ -274,5 +273,7 @@ RSpec.describe Y::Array do
         ]
       )
     end
+    # rubocop:enable RSpec/MultipleExpectations
   end
+  # rubocop:enable RSpec/ExampleLength
 end

@@ -42,7 +42,6 @@ RSpec.describe Y::Doc do
     doc = described_class.new
     text = doc.get_text("my text", "Hello, World!")
 
-    expect(text).to be_instance_of(Y::Text)
     expect(text.to_s).to eql("Hello, World!")
   end
 
@@ -64,7 +63,6 @@ RSpec.describe Y::Doc do
     doc = described_class.new
     xml_text = doc.get_xml_text("my xml text", "Hello, World!")
 
-    expect(xml_text).to be_instance_of(Y::XMLText)
     expect(xml_text.to_s).to eql("Hello, World!")
   end
 
@@ -106,6 +104,7 @@ RSpec.describe Y::Doc do
       expect(remote_text.to_s).to eq(local_text.to_s)
     end
 
+    # rubocop:disable RSpec/ExampleLength
     it "observe a change event on text after applying update" do
       local_doc = described_class.new
       local_text = local_doc.get_text("my text")
@@ -123,8 +122,10 @@ RSpec.describe Y::Doc do
 
       expect(changes).to eq({ insert: "hello" })
     end
+    # rubocop:enable RSpec/ExampleLength
   end
 
+  # rubocop:disable RSpec/MultipleExpectations
   context "when serializing and deserializing full documents" do
     it "encodes and restores full document" do
       doc = described_class.new
@@ -143,5 +144,6 @@ RSpec.describe Y::Doc do
       expect(doc2.get_text("my text").to_s).to eq("Hello, World")
       expect(doc2.get_array("my array").to_a).to match_array([1])
     end
+    # rubocop:enable RSpec/MultipleExpectations
   end
 end

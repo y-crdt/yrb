@@ -20,6 +20,8 @@ module Y
   #
   #   array.to_a == [1, 2, 3, 4, 5] # true
   class Array
+    include Enumerable
+
     # @!attribute [r] document
     #
     # @return [Y::Doc] The document this array belongs to

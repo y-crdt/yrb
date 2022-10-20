@@ -61,6 +61,7 @@ RSpec.describe Y::Map do
     map.delete(:hello) { |key| expect(key).to eq(:hello) }
   end
 
+  # rubocop:disable RSpec/MultipleExpectations
   it "iterates over key-value pairs" do
     doc = Y::Doc.new
     map = doc.get_map("my map")
@@ -71,6 +72,7 @@ RSpec.describe Y::Map do
       expect(value).to eq("world")
     end
   end
+  # rubocop:enable RSpec/MultipleExpectations
 
   it "clears map" do
     doc = Y::Doc.new
@@ -140,6 +142,7 @@ RSpec.describe Y::Map do
     end
   end
 
+  # rubocop:disable RSpec/ExampleLength
   context "when changing" do
     it "invokes callback" do
       local = Y::Doc.new
@@ -164,6 +167,7 @@ RSpec.describe Y::Map do
       )
     end
 
+    # rubocop:disable RSpec/MultipleExpectations
     it "commits automatically" do
       local = Y::Doc.new
 
@@ -205,5 +209,7 @@ RSpec.describe Y::Map do
         [{ inserted: { say: "hello again" } }]
       )
     end
+    # rubocop:enable RSpec/MultipleExpectations
   end
+  # rubocop:enable RSpec/ExampleLength
 end

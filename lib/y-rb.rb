@@ -1,3 +1,4 @@
+# rubocop:disable Naming/FileName
 # frozen_string_literal: true
 
 # load native extension
@@ -19,3 +20,4 @@ require_relative "y/version"
 
 module Y
 end
+# rubocop:enable Naming/FileName

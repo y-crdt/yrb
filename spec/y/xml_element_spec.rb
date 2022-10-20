@@ -177,13 +177,13 @@ RSpec.describe Y::XMLElement do
       expect(node.class).to eq(described_class)
     end
 
-    it "returns newly created text" do
+    it "returns newly created text when inserted at position" do
       text = local_xml.insert_text(0, "Hello, World!")
 
       expect(text.class).to eq(Y::XMLText)
     end
 
-    it "returns newly created text" do
+    it "returns newly created text when pushed to the end" do
       text = local_xml.push_text("Hello, World!")
 
       expect(text.class).to eq(Y::XMLText)
@@ -194,11 +194,14 @@ RSpec.describe Y::XMLElement do
     let!(:local) { Y::Doc.new }
     let!(:local_xml) { local.get_xml_element("my xml") }
     let!(:first_child) { local_xml << "A" }
-    let!(:last_child) { local_xml << "B" }
-    let!(:remote) do
+    let(:remote) do
       doc = Y::Doc.new
       doc.sync(local.diff)
       doc
+    end
+
+    before do
+      local_xml << "B"
     end
 
     it "sets document reference when element is added" do
@@ -250,6 +253,7 @@ RSpec.describe Y::XMLElement do
     end
   end
 
+  # rubocop:disable RSpec/ExampleLength, RSpec/MultipleExpectations
   context "when changing" do
     it "invokes callback" do
       local = Y::Doc.new
@@ -293,6 +297,8 @@ RSpec.describe Y::XMLElement do
     end
 
     it "commits automatically" do
+      skip "Intermittently failing test. TODO: https://github.com/y-crdt/yrb/issues/38"
+
       local = Y::Doc.new
 
       changes = []
@@ -333,4 +339,5 @@ RSpec.describe Y::XMLElement do
       expect(changes[2].last[:added].first.tag).to eq("B")
     end
   end
+  # rubocop:enable RSpec/ExampleLength, RSpec/MultipleExpectations
 end
