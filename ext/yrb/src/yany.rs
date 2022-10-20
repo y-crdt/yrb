@@ -38,7 +38,7 @@ impl TryInto<Value> for YAny {
             Any::Number(v) => Ok(Value::from(v)),
             Any::BigInt(v) => Ok(Value::from(v)),
             Any::String(v) => Ok(Value::from(RString::from(v.borrow()))),
-            Any::Buffer(v) => Ok(Value::from(RString::from_slice(v.borrow())))
+            Any::Buffer(v) => Ok(Value::from(RString::from_slice(v.borrow()))),
         };
     }
 }

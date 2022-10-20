@@ -2,15 +2,11 @@ use crate::{YText, YXmlElement, YXmlText};
 use lib0::any::Any;
 use magnus::r_hash::ForEach::Continue;
 use magnus::value::Qnil;
-use magnus::{
-    class, Float, Integer, RArray, RHash, RString, Symbol, Value, QNIL
-};
+use magnus::{class, Float, Integer, RArray, RHash, RString, Symbol, Value, QNIL};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use yrs::types::Value as YrsValue;
-use yrs::{
-    Text as YrsText, XmlElement as YrsXmlElement, XmlText as YrsXmlText
-};
+use yrs::{Text as YrsText, XmlElement as YrsXmlElement, XmlText as YrsXmlText};
 
 pub(crate) struct YValue(pub(crate) RefCell<Value>);
 
@@ -77,7 +73,7 @@ impl From<YrsText> for YValue {
 impl From<YrsXmlElement> for YValue {
     fn from(value: YrsXmlElement) -> Self {
         YValue(RefCell::from(Value::from(YXmlElement(RefCell::from(
-            value
+            value,
         )))))
     }
 }
@@ -150,10 +146,7 @@ impl From<YrsValue> for YValue {
             //     *yvalue.0
             // }))),
             // YrsValue::YMap(val) => YValue::from(RHash::from_iter(val.iter())),
-            v => panic!(
-                "cannot map complex yrs values to yvalue: {}",
-                v.to_string()
-            )
+            v => panic!("cannot map complex yrs values to yvalue: {}", v.to_string()),
         }
     }
 }
@@ -215,6 +208,7 @@ impl From<YValue> for Any {
     }
 }
 
+#[allow(clippy::from_over_into)]
 impl Into<Value> for YValue {
     fn into(self) -> Value {
         self.0.into_inner()

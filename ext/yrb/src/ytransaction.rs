@@ -16,10 +16,7 @@ pub(crate) struct YTransaction(pub(crate) RefCell<Transaction>);
 unsafe impl Send for YTransaction {}
 
 impl YTransaction {
-    pub(crate) fn ytransaction_apply_update(
-        &self,
-        update: Vec<u8>
-    ) -> Result<(), Error> {
+    pub(crate) fn ytransaction_apply_update(&self, update: Vec<u8>) -> Result<(), Error> {
         return Update::decode_v1(update.as_slice())
             .map(|u| self.0.borrow_mut().apply_update(u))
             .map_err(|_e| Error::runtime_error("cannot apply update"));
@@ -42,10 +39,7 @@ impl YTransaction {
 
         YText(RefCell::new(t))
     }
-    pub(crate) fn ytransaction_get_xml_element(
-        &self,
-        name: String
-    ) -> YXmlElement {
+    pub(crate) fn ytransaction_get_xml_element(&self, name: String) -> YXmlElement {
         let el = self.0.borrow_mut().get_xml_element(&*name);
 
         YXmlElement(RefCell::new(el))

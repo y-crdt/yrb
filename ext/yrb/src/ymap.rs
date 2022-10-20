@@ -21,7 +21,7 @@ impl YMap {
     pub(crate) fn ymap_contains(&self, key: Value) -> bool {
         match indifferent_hash_key(key) {
             None => false,
-            Some(k) => self.0.borrow().contains(&*k)
+            Some(k) => self.0.borrow().contains(&*k),
         }
     }
     pub(crate) fn ymap_each(&self, proc: Proc) {
@@ -42,19 +42,17 @@ impl YMap {
         &self,
         transaction: &YTransaction,
         key: Value,
-        value: Value
+        value: Value,
     ) -> Result<(), Error> {
         match indifferent_hash_key(key) {
             None => Err(Error::runtime_error(
-                "invalid key type, make sure it is either a Symbol or a String"
+                "invalid key type, make sure it is either a Symbol or a String",
             )),
             Some(k) => {
                 let v = Any::from(YValue::from(value));
-                self.0.borrow_mut().insert(
-                    &mut *transaction.0.borrow_mut(),
-                    k,
-                    v
-                );
+                self.0
+                    .borrow_mut()
+                    .insert(&mut *transaction.0.borrow_mut(), k, v);
 
                 Ok(())
             }
@@ -75,20 +73,15 @@ impl YMap {
                     match change {
                         EntryChange::Inserted(v) => {
                             let h = RHash::new();
-                            h.aset(
-                                Symbol::new(key),
-                                *YValue::from(v.clone()).0.borrow()
-                            )
-                            .expect("cannot add change::inserted");
+                            h.aset(Symbol::new(key), *YValue::from(v.clone()).0.borrow())
+                                .expect("cannot add change::inserted");
 
                             let payload = RHash::new();
                             payload
                                 .aset(change_inserted, h)
                                 .expect("cannot add change::inserted");
 
-                            changes
-                                .push(payload)
-                                .expect("cannot push changes::payload");
+                            changes.push(payload).expect("cannot push changes::payload");
                         }
                         EntryChange::Updated(old, new) => {
                             let values = RArray::with_capacity(2);
@@ -108,26 +101,19 @@ impl YMap {
                                 .aset(change_updated, h)
                                 .expect("cannot push change::updated");
 
-                            changes
-                                .push(payload)
-                                .expect("cannot push changes::payload");
+                            changes.push(payload).expect("cannot push changes::payload");
                         }
                         EntryChange::Removed(v) => {
                             let h = RHash::new();
-                            h.aset(
-                                Symbol::new(key),
-                                *YValue::from(v.clone()).0.borrow()
-                            )
-                            .expect("cannot push change::removed");
+                            h.aset(Symbol::new(key), *YValue::from(v.clone()).0.borrow())
+                                .expect("cannot push change::removed");
 
                             let payload = RHash::new();
                             payload
                                 .aset(change_removed, h)
                                 .expect("cannot push change::removed");
 
-                            changes
-                                .push(payload)
-                                .expect("cannot push changes::payload");
+                            changes.push(payload).expect("cannot push changes::payload");
                         }
                     }
                 }
@@ -138,11 +124,7 @@ impl YMap {
             })
             .into()
     }
-    pub(crate) fn ymap_remove(
-        &self,
-        transaction: &YTransaction,
-        key: Value
-    ) -> Option<Value> {
+    pub(crate) fn ymap_remove(&self, transaction: &YTransaction, key: Value) -> Option<Value> {
         indifferent_hash_key(key)
             .map(|k| {
                 self.0
@@ -157,9 +139,10 @@ impl YMap {
     }
     pub(crate) fn ymap_to_h(&self) -> RHash {
         RHash::from_iter(
-            self.0.borrow().iter().map(move |(k, v)| {
-                (k.to_string(), *YValue::from(v).0.borrow())
-            })
+            self.0
+                .borrow()
+                .iter()
+                .map(move |(k, v)| (k.to_string(), *YValue::from(v).0.borrow())),
         )
     }
     pub(crate) fn ymap_unobserve(&self, subscription_id: u32) {

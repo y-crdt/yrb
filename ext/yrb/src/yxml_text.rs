@@ -21,53 +21,38 @@ impl YXmlText {
         transaction: &YTransaction,
         index: u32,
         length: u32,
-        attrs: RHash
+        attrs: RHash,
     ) -> Result<(), Error> {
         map_rhash_to_attrs(attrs).map(|a| {
-            self.0.borrow_mut().format(
-                &mut *transaction.0.borrow_mut(),
-                index,
-                length,
-                a
-            );
+            self.0
+                .borrow_mut()
+                .format(&mut *transaction.0.borrow_mut(), index, length, a);
         })
     }
-    pub(crate) fn yxml_text_get_attribute(
-        &self,
-        name: String
-    ) -> Option<String> {
+    pub(crate) fn yxml_text_get_attribute(&self, name: String) -> Option<String> {
         self.0.borrow().get_attribute(&*name)
     }
-    pub(crate) fn yxml_text_insert(
-        &self,
-        transaction: &YTransaction,
-        index: u32,
-        content: String
-    ) {
-        self.0.borrow_mut().insert(
-            &mut *transaction.0.borrow_mut(),
-            index,
-            &*content
-        )
+    pub(crate) fn yxml_text_insert(&self, transaction: &YTransaction, index: u32, content: String) {
+        self.0
+            .borrow_mut()
+            .insert(&mut *transaction.0.borrow_mut(), index, &*content)
     }
     pub(crate) fn yxml_text_insert_attribute(
         &self,
         transaction: &YTransaction,
         name: String,
-        value: String
+        value: String,
     ) {
-        self.0.borrow_mut().insert_attribute(
-            &mut *transaction.0.borrow_mut(),
-            name,
-            value
-        )
+        self.0
+            .borrow_mut()
+            .insert_attribute(&mut *transaction.0.borrow_mut(), name, value)
     }
     pub(crate) fn yxml_text_insert_embed_with_attributes(
         &self,
         transaction: &YTransaction,
         index: u32,
         content: Value,
-        attrs: RHash
+        attrs: RHash,
     ) -> Result<(), Error> {
         let yvalue = YValue::from(content);
         let avalue = Any::from(yvalue);
@@ -77,7 +62,7 @@ impl YXmlText {
                 &mut *transaction.0.borrow_mut(),
                 index,
                 avalue,
-                a
+                a,
             );
         })
     }
@@ -85,12 +70,12 @@ impl YXmlText {
         &self,
         transaction: &YTransaction,
         index: u32,
-        embed: Value
+        embed: Value,
     ) {
         self.0.borrow_mut().insert_embed(
             &mut *transaction.0.borrow_mut(),
             index,
-            Any::from(YValue::from(embed))
+            Any::from(YValue::from(embed)),
         )
     }
     pub(crate) fn yxml_text_insert_with_attributes(
@@ -98,14 +83,14 @@ impl YXmlText {
         transaction: &YTransaction,
         index: u32,
         content: String,
-        attrs: RHash
+        attrs: RHash,
     ) -> Result<(), Error> {
         map_rhash_to_attrs(attrs).map(|a| {
             self.0.borrow_mut().insert_with_attributes(
                 &mut *transaction.0.borrow_mut(),
                 index,
                 &*content,
-                a
+                a,
             );
         })
     }
@@ -115,7 +100,7 @@ impl YXmlText {
     pub(crate) fn yxml_text_next_sibling(&self) -> Option<Value> {
         self.0.borrow().next_sibling().map(|item| match item {
             Xml::Element(el) => Value::from(YXmlElement(RefCell::from(el))),
-            Xml::Text(text) => Value::from(YXmlText(RefCell::from(text)))
+            Xml::Text(text) => Value::from(YXmlText(RefCell::from(text))),
         })
     }
     pub(crate) fn yxml_text_parent(&self) -> Option<Value> {
@@ -127,14 +112,10 @@ impl YXmlText {
     pub(crate) fn yxml_text_prev_sibling(&self) -> Option<Value> {
         self.0.borrow().prev_sibling().map(|item| match item {
             Xml::Element(el) => Value::from(YXmlElement(RefCell::from(el))),
-            Xml::Text(text) => Value::from(YXmlText(RefCell::from(text)))
+            Xml::Text(text) => Value::from(YXmlText(RefCell::from(text))),
         })
     }
-    pub(crate) fn yxml_text_push(
-        &self,
-        transaction: &YTransaction,
-        content: String
-    ) {
+    pub(crate) fn yxml_text_push(&self, transaction: &YTransaction, content: String) {
         self.0
             .borrow_mut()
             .push(&mut *transaction.0.borrow_mut(), &*content)
@@ -143,13 +124,11 @@ impl YXmlText {
         &self,
         transaction: &YTransaction,
         index: u32,
-        length: u32
+        length: u32,
     ) {
-        self.0.borrow_mut().remove_range(
-            &mut *transaction.0.borrow_mut(),
-            index,
-            length
-        );
+        self.0
+            .borrow_mut()
+            .remove_range(&mut *transaction.0.borrow_mut(), index, length);
     }
     pub(crate) fn yxml_text_to_s(&self) -> String {
         self.0.borrow().to_string()

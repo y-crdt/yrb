@@ -27,7 +27,7 @@ pub struct Awareness {
     doc: Doc,
     states: HashMap<ClientID, String>,
     meta: HashMap<ClientID, MetaClientState>,
-    on_update: Option<EventHandler<Event>>
+    on_update: Option<EventHandler<Event>>,
 }
 
 unsafe impl Send for Awareness {}
@@ -42,14 +42,14 @@ impl Awareness {
             doc,
             on_update: None,
             states: HashMap::new(),
-            meta: HashMap::new()
+            meta: HashMap::new(),
         }
     }
 
     /// Returns a channel receiver for an incoming awareness events. This channel can be cloned.
     pub fn on_update<F>(&mut self, f: F) -> Subscription<Event>
     where
-        F: Fn(&Awareness, &Event) -> () + 'static
+        F: Fn(&Awareness, &Event) + 'static,
     {
         let eh = self.on_update.get_or_insert_with(EventHandler::default);
         eh.subscribe(f)
@@ -91,19 +91,13 @@ impl Awareness {
             Entry::Occupied(mut e) => {
                 e.insert(new);
                 if let Some(eh) = self.on_update.as_ref() {
-                    eh.trigger(
-                        self,
-                        &Event::new(vec![], vec![client_id], vec![])
-                    );
+                    eh.trigger(self, &Event::new(vec![], vec![client_id], vec![]));
                 }
             }
             Entry::Vacant(e) => {
                 e.insert(new);
                 if let Some(eh) = self.on_update.as_ref() {
-                    eh.trigger(
-                        self,
-                        &Event::new(vec![client_id], vec![], vec![])
-                    );
+                    eh.trigger(self, &Event::new(vec![client_id], vec![], vec![]));
                 }
             }
         }
@@ -117,11 +111,7 @@ impl Awareness {
             if prev_state.is_some() {
                 eh.trigger(
                     self,
-                    &Event::new(
-                        Vec::default(),
-                        Vec::default(),
-                        vec![client_id]
-                    )
+                    &Event::new(Vec::default(), Vec::default(), vec![client_id]),
                 );
             }
         }
@@ -159,7 +149,7 @@ impl Awareness {
     /// otherwise a [Error::ClientNotFound] error will be returned.
     pub fn update_with_clients<I: IntoIterator<Item = ClientID>>(
         &self,
-        clients: I
+        clients: I,
     ) -> Result<AwarenessUpdate, Error> {
         let mut res = HashMap::new();
         for client_id in clients {
@@ -183,10 +173,7 @@ impl Awareness {
     ///
     /// If current instance has an observer channel (see: [Awareness::with_observer]), applied
     /// changes will also be emitted as events.
-    pub fn apply_update(
-        &mut self,
-        update: AwarenessUpdate
-    ) -> Result<(), Error> {
+    pub fn apply_update(&mut self, update: AwarenessUpdate) -> Result<(), Error> {
         let now = Instant::now();
 
         let mut added = Vec::new();
@@ -199,9 +186,8 @@ impl Awareness {
             match self.meta.entry(client_id) {
                 Entry::Occupied(mut e) => {
                     let prev = e.get();
-                    let is_removed = prev.clock == clock
-                        && is_null
-                        && self.states.contains_key(&client_id);
+                    let is_removed =
+                        prev.clock == clock && is_null && self.states.contains_key(&client_id);
                     let is_new = prev.clock < clock;
                     if is_new || is_removed {
                         if is_null {
@@ -267,15 +253,16 @@ impl Default for Awareness {
     }
 }
 
+#[allow(clippy::type_complexity)]
 struct EventHandler<T> {
     seq_nr: u32,
-    subscribers: Rc<RefCell<HashMap<u32, Box<dyn Fn(&Awareness, &T) -> ()>>>>
+    subscribers: Rc<RefCell<HashMap<u32, Box<dyn Fn(&Awareness, &T)>>>>,
 }
 
 impl<T> EventHandler<T> {
     pub fn subscribe<F>(&mut self, f: F) -> Subscription<T>
     where
-        F: Fn(&Awareness, &T) -> () + 'static
+        F: Fn(&Awareness, &T) + 'static,
     {
         let subscription_id = self.seq_nr;
         self.seq_nr += 1;
@@ -286,7 +273,7 @@ impl<T> EventHandler<T> {
         }
         Subscription {
             subscription_id,
-            subscribers: Rc::downgrade(&self.subscribers)
+            subscribers: Rc::downgrade(&self.subscribers),
         }
     }
 
@@ -307,18 +294,20 @@ impl<T> Default for EventHandler<T> {
     fn default() -> Self {
         EventHandler {
             seq_nr: 0,
-            subscribers: Rc::new(RefCell::new(HashMap::new()))
+            subscribers: Rc::new(RefCell::new(HashMap::new())),
         }
     }
 }
 
 /// Whenever a new callback is being registered, a [Subscription] is made. Whenever this
 /// subscription a registered callback is cancelled and will not be called any more.
+#[allow(clippy::type_complexity)]
 pub struct Subscription<T> {
     subscription_id: u32,
-    subscribers: Weak<RefCell<HashMap<u32, Box<dyn Fn(&Awareness, &T) -> ()>>>>
+    subscribers: Weak<RefCell<HashMap<u32, Box<dyn Fn(&Awareness, &T)>>>>,
 }
 
+#[allow(clippy::from_over_into)]
 impl<T> Into<SubscriptionId> for Subscription<T> {
     fn into(self) -> SubscriptionId {
         let id = self.subscription_id;
@@ -339,7 +328,7 @@ impl<T> Drop for Subscription<T> {
 /// A structure that represents an encodable state of an [Awareness] struct.
 #[derive(Debug, Eq, PartialEq)]
 pub struct AwarenessUpdate {
-    clients: HashMap<ClientID, AwarenessUpdateEntry>
+    clients: HashMap<ClientID, AwarenessUpdateEntry>,
 }
 
 impl Encode for AwarenessUpdate {
@@ -373,7 +362,7 @@ impl Decode for AwarenessUpdate {
 #[derive(Debug, Eq, PartialEq)]
 pub struct AwarenessUpdateEntry {
     clock: u32,
-    json: String
+    json: String,
 }
 
 /// Errors generated by an [Awareness] struct methods.
@@ -381,20 +370,20 @@ pub struct AwarenessUpdateEntry {
 pub enum Error {
     /// Client ID was not found in [Awareness] metadata.
     #[error("client ID `{0}` not found")]
-    ClientNotFound(ClientID)
+    ClientNotFound(ClientID),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct MetaClientState {
     clock: u32,
-    last_updated: Instant
+    last_updated: Instant,
 }
 
 impl MetaClientState {
     fn new(clock: u32, last_updated: Instant) -> Self {
         MetaClientState {
             clock,
-            last_updated
+            last_updated,
         }
     }
 }
@@ -404,19 +393,15 @@ impl MetaClientState {
 pub struct Event {
     added: Vec<ClientID>,
     updated: Vec<ClientID>,
-    removed: Vec<ClientID>
+    removed: Vec<ClientID>,
 }
 
 impl Event {
-    pub fn new(
-        added: Vec<ClientID>,
-        updated: Vec<ClientID>,
-        removed: Vec<ClientID>
-    ) -> Self {
+    pub fn new(added: Vec<ClientID>, updated: Vec<ClientID>, removed: Vec<ClientID>) -> Self {
         Event {
             added,
             updated,
-            removed
+            removed,
         }
     }
 

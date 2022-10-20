@@ -23,45 +23,39 @@ impl YXmlElement {
     pub(crate) fn yxml_element_get(&self, index: u32) -> Option<Value> {
         self.0.borrow().get(index).map(|node| match node {
             Xml::Element(el) => Value::from(YXmlElement(RefCell::from(el))),
-            Xml::Text(text) => Value::from(YXmlText(RefCell::from(text)))
+            Xml::Text(text) => Value::from(YXmlText(RefCell::from(text))),
         })
     }
-    pub(crate) fn yxml_element_get_attribute(
-        &self,
-        name: String
-    ) -> Option<String> {
+    pub(crate) fn yxml_element_get_attribute(&self, name: String) -> Option<String> {
         self.0.borrow().get_attribute(&*name)
     }
     pub(crate) fn yxml_element_insert_attribute(
         &self,
         transaction: &YTransaction,
         name: String,
-        value: String
+        value: String,
     ) {
-        self.0.borrow_mut().insert_attribute(
-            &mut *transaction.0.borrow_mut(),
-            name,
-            value
-        );
+        self.0
+            .borrow_mut()
+            .insert_attribute(&mut *transaction.0.borrow_mut(), name, value);
     }
     pub(crate) fn yxml_element_insert_element(
         &self,
         transaction: &YTransaction,
         index: u32,
-        name: String
+        name: String,
     ) -> YXmlElement {
-        let element = self.0.borrow_mut().insert_elem(
-            &mut *transaction.0.borrow_mut(),
-            index,
-            name
-        );
+        let element =
+            self.0
+                .borrow_mut()
+                .insert_elem(&mut *transaction.0.borrow_mut(), index, name);
 
         YXmlElement(RefCell::from(element))
     }
     pub(crate) fn yxml_element_insert_text(
         &self,
         transaction: &YTransaction,
-        index: u32
+        index: u32,
     ) -> YXmlText {
         let text = self
             .0
@@ -73,19 +67,18 @@ impl YXmlElement {
     pub(crate) fn yxml_element_next_sibling(&self) -> Option<Value> {
         self.0.borrow().next_sibling().map(|item| match item {
             Xml::Element(el) => Value::from(YXmlElement(RefCell::from(el))),
-            Xml::Text(text) => Value::from(YXmlText(RefCell::from(text)))
+            Xml::Text(text) => Value::from(YXmlText(RefCell::from(text))),
         })
     }
-    pub(crate) fn yxml_element_observe(
-        &self,
-        block: Proc
-    ) -> Result<u32, Error> {
+    pub(crate) fn yxml_element_observe(&self, block: Proc) -> Result<u32, Error> {
         let change_added = Symbol::new("added").to_static();
         let change_retain = Symbol::new("retain").to_static();
         let change_removed = Symbol::new("removed").to_static();
 
-        let subscription_id = self.0.borrow_mut().observe(
-            move |transaction, xml_element_event| {
+        let subscription_id = self
+            .0
+            .borrow_mut()
+            .observe(move |transaction, xml_element_event| {
                 let delta = xml_element_event.delta(transaction);
                 let changes = RArray::with_capacity(delta.len());
 
@@ -103,9 +96,9 @@ impl YXmlElement {
                                 .aset(change_added, RArray::from_vec(values))
                                 .expect("cannot create change::added payload");
 
-                            changes.push(payload).expect(
-                                "cannot push payload to list of changes"
-                            );
+                            changes
+                                .push(payload)
+                                .expect("cannot push payload to list of changes");
                         }
                         Change::Retain(position) => {
                             let payload = RHash::new();
@@ -113,19 +106,19 @@ impl YXmlElement {
                                 .aset(change_retain, *position)
                                 .expect("cannot create change::retain payload");
 
-                            changes.push(payload).expect(
-                                "cannot push payload to list of changes"
-                            );
+                            changes
+                                .push(payload)
+                                .expect("cannot push payload to list of changes");
                         }
                         Change::Removed(position) => {
                             let payload = RHash::new();
-                            payload.aset(change_removed, *position).expect(
-                                "cannot create change::removed payload"
-                            );
+                            payload
+                                .aset(change_removed, *position)
+                                .expect("cannot create change::removed payload");
 
-                            changes.push(payload).expect(
-                                "cannot push payload to list of changes"
-                            );
+                            changes
+                                .push(payload)
+                                .expect("cannot push payload to list of changes");
                         }
                     }
                 }
@@ -133,8 +126,7 @@ impl YXmlElement {
                 block
                     .call::<(RArray,), Value>((changes,))
                     .expect("cannot call block");
-            }
-        );
+            });
 
         Ok(subscription_id.into())
     }
@@ -147,13 +139,13 @@ impl YXmlElement {
     pub(crate) fn yxml_element_prev_sibling(&self) -> Option<Value> {
         self.0.borrow().prev_sibling().map(|item| match item {
             Xml::Element(el) => Value::from(YXmlElement(RefCell::from(el))),
-            Xml::Text(text) => Value::from(YXmlText(RefCell::from(text)))
+            Xml::Text(text) => Value::from(YXmlText(RefCell::from(text))),
         })
     }
     pub(crate) fn yxml_element_push_element_back(
         &self,
         transaction: &YTransaction,
-        name: String
+        name: String,
     ) -> YXmlElement {
         let xml_element = self
             .0
@@ -165,7 +157,7 @@ impl YXmlElement {
     pub(crate) fn yxml_element_push_element_front(
         &self,
         transaction: &YTransaction,
-        name: String
+        name: String,
     ) -> YXmlElement {
         let xml_element = self
             .0
@@ -174,10 +166,7 @@ impl YXmlElement {
 
         YXmlElement(RefCell::from(xml_element))
     }
-    pub(crate) fn yxml_element_push_text_back(
-        &self,
-        transaction: &YTransaction
-    ) -> YXmlText {
+    pub(crate) fn yxml_element_push_text_back(&self, transaction: &YTransaction) -> YXmlText {
         let xml_text = self
             .0
             .borrow_mut()
@@ -185,10 +174,7 @@ impl YXmlElement {
 
         YXmlText(RefCell::from(xml_text))
     }
-    pub(crate) fn yxml_element_push_text_front(
-        &self,
-        transaction: &YTransaction
-    ) -> YXmlText {
+    pub(crate) fn yxml_element_push_text_front(&self, transaction: &YTransaction) -> YXmlText {
         let xml_text = self
             .0
             .borrow_mut()
@@ -196,27 +182,20 @@ impl YXmlElement {
 
         YXmlText(RefCell::from(xml_text))
     }
-    pub(crate) fn yxml_element_remove_attribute(
-        &self,
-        transaction: &YTransaction,
-        name: String
-    ) {
-        self.0.borrow_mut().remove_attribute::<&str>(
-            &mut *transaction.0.borrow_mut(),
-            &name.as_str()
-        );
+    pub(crate) fn yxml_element_remove_attribute(&self, transaction: &YTransaction, name: String) {
+        self.0
+            .borrow_mut()
+            .remove_attribute::<&str>(&mut *transaction.0.borrow_mut(), &name.as_str());
     }
     pub(crate) fn yxml_element_remove_range(
         &self,
         transaction: &YTransaction,
         index: u32,
-        length: u32
+        length: u32,
     ) {
-        self.0.borrow_mut().remove_range(
-            &mut *transaction.0.borrow_mut(),
-            index,
-            length
-        );
+        self.0
+            .borrow_mut()
+            .remove_range(&mut *transaction.0.borrow_mut(), index, length);
     }
     pub(crate) fn yxml_element_size(&self) -> u32 {
         self.0.borrow().len()
