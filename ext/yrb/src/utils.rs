@@ -11,9 +11,7 @@ pub(crate) struct TypeConversionError;
 pub(crate) fn indifferent_hash_key(key: Value) -> Option<String> {
     RString::from_value(key)
         .map(|v| v.to_string().unwrap())
-        .or_else(|| {
-            Symbol::from_value(key).map(|v| v.name().unwrap().to_string())
-        })
+        .or_else(|| Symbol::from_value(key).map(|v| v.name().unwrap().to_string()))
 }
 
 pub(crate) fn map_rhash_to_attrs(hash: RHash) -> Result<Attrs, Error> {

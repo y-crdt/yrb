@@ -21,15 +21,12 @@ impl YText {
         transaction: &YTransaction,
         index: u32,
         length: u32,
-        attrs: RHash
+        attrs: RHash,
     ) -> Result<(), Error> {
         let a = YAttrs::from(attrs);
-        self.0.borrow_mut().format(
-            &mut *transaction.0.borrow_mut(),
-            index,
-            length,
-            a.0
-        );
+        self.0
+            .borrow_mut()
+            .format(&mut *transaction.0.borrow_mut(), index, length, a.0);
 
         Ok(())
     }
@@ -37,13 +34,11 @@ impl YText {
         &self,
         transaction: &YTransaction,
         index: u32,
-        chunk: String
+        chunk: String,
     ) -> Result<(), Error> {
-        self.0.borrow_mut().insert(
-            &mut *transaction.0.borrow_mut(),
-            index,
-            &*chunk
-        );
+        self.0
+            .borrow_mut()
+            .insert(&mut *transaction.0.borrow_mut(), index, &*chunk);
 
         Ok(())
     }
@@ -51,16 +46,14 @@ impl YText {
         &self,
         transaction: &YTransaction,
         index: u32,
-        content: Value
+        content: Value,
     ) -> Result<(), Error> {
         let yvalue = YValue::from(content);
         let avalue = Any::from(yvalue);
 
-        self.0.borrow_mut().insert_embed(
-            &mut *transaction.0.borrow_mut(),
-            index,
-            avalue
-        );
+        self.0
+            .borrow_mut()
+            .insert_embed(&mut *transaction.0.borrow_mut(), index, avalue);
 
         Ok(())
     }
@@ -69,7 +62,7 @@ impl YText {
         transaction: &YTransaction,
         index: u32,
         embed: Value,
-        attrs: RHash
+        attrs: RHash,
     ) -> Result<(), Error> {
         let yvalue = YValue::from(embed);
         let avalue = Any::from(yvalue);
@@ -80,7 +73,7 @@ impl YText {
             &mut *transaction.0.borrow_mut(),
             index,
             avalue,
-            a.0
+            a.0,
         );
 
         Ok(())
@@ -90,7 +83,7 @@ impl YText {
         transaction: &YTransaction,
         index: u32,
         chunk: String,
-        attrs: RHash
+        attrs: RHash,
     ) -> Result<(), Error> {
         let a = YAttrs::from(attrs);
 
@@ -98,7 +91,7 @@ impl YText {
             &mut *transaction.0.borrow_mut(),
             index,
             &*chunk,
-            a.0
+            a.0,
         );
 
         Ok(())
@@ -133,22 +126,14 @@ impl YText {
                                         .into_iter()
                                         .map(|(key, val)| {
                                             let yvalue = YValue::from(val);
-                                            (
-                                                key.to_string(),
-                                                yvalue.0.into_inner()
-                                            )
+                                            (key.to_string(), yvalue.0.into_inner())
                                         })
                                         .collect::<RHash>()
                                         .into(),
-                                    None => None
+                                    None => None,
                                 })
-                                .map(|attrs_hash| {
-                                    attrs_hash
-                                        .map(|v| payload.aset(attributes, v))
-                                })
-                                .map(|_| {
-                                    block.call::<(RHash,), Qnil>((payload,))
-                                })
+                                .map(|attrs_hash| attrs_hash.map(|v| payload.aset(attributes, v)))
+                                .map(|_| block.call::<(RHash,), Qnil>((payload,)))
                         }
                         Delta::Retain(index, attrs) => {
                             let payload = RHash::new();
@@ -163,22 +148,14 @@ impl YText {
                                         .into_iter()
                                         .map(|(key, val)| {
                                             let yvalue = YValue::from(val);
-                                            (
-                                                key.to_string(),
-                                                yvalue.0.into_inner()
-                                            )
+                                            (key.to_string(), yvalue.0.into_inner())
                                         })
                                         .collect::<RHash>()
                                         .into(),
-                                    None => None
+                                    None => None,
                                 })
-                                .map(|attrs_hash| {
-                                    attrs_hash
-                                        .map(|v| payload.aset(attributes, v))
-                                })
-                                .map(|_| {
-                                    block.call::<(RHash,), Qnil>((payload,))
-                                })
+                                .map(|attrs_hash| attrs_hash.map(|v| payload.aset(attributes, v)))
+                                .map(|_| block.call::<(RHash,), Qnil>((payload,)))
                         }
                         Delta::Deleted(index) => {
                             let payload = RHash::new();
@@ -187,9 +164,7 @@ impl YText {
 
                             payload
                                 .aset(delta_delete, yvalue.0.into_inner())
-                                .map(|()| {
-                                    block.call::<(RHash,), Qnil>((payload,))
-                                })
+                                .map(|()| block.call::<(RHash,), Qnil>((payload,)))
                         }
                     })
                     .partition(Result::is_ok);
@@ -212,13 +187,11 @@ impl YText {
         &self,
         transaction: &YTransaction,
         start: u32,
-        length: u32
+        length: u32,
     ) -> Result<(), Error> {
-        self.0.borrow_mut().remove_range(
-            &mut *transaction.0.borrow_mut(),
-            start,
-            length
-        );
+        self.0
+            .borrow_mut()
+            .remove_range(&mut *transaction.0.borrow_mut(), start, length);
 
         Ok(())
     }

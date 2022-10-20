@@ -23,14 +23,12 @@ impl YAwareness {
         Self(RefCell::new(awareness))
     }
 
-    pub(crate) fn yawareness_apply_update(
-        &self,
-        update: &YAwarenessUpdate
-    ) -> Result<(), Error> {
+    pub(crate) fn yawareness_apply_update(&self, update: &YAwarenessUpdate) -> Result<(), Error> {
         update.decode().and_then(|value| {
-            self.0.borrow_mut().apply_update(value).map_err(|_error| {
-                Error::runtime_error("cannot decode awareness update")
-            })
+            self.0
+                .borrow_mut()
+                .apply_update(value)
+                .map_err(|_error| Error::runtime_error("cannot decode awareness update"))
         })
     }
 
@@ -50,10 +48,7 @@ impl YAwareness {
         self.0.borrow().local_state().map(|value| value.to_string())
     }
 
-    pub(crate) fn yawareness_on_update(
-        &self,
-        block: Proc
-    ) -> Result<u32, Error> {
+    pub(crate) fn yawareness_on_update(&self, block: Proc) -> Result<u32, Error> {
         let subscription_id = self
             .0
             .borrow_mut()
@@ -91,15 +86,13 @@ impl YAwareness {
 
     pub(crate) fn yawareness_update_with_clients(
         &self,
-        clients: Vec<ClientID>
+        clients: Vec<ClientID>,
     ) -> Result<YAwarenessUpdate, Error> {
         self.0
             .borrow_mut()
             .update_with_clients(clients)
             .map(YAwarenessUpdate::from)
-            .map_err(|_error| {
-                Error::runtime_error("cannot update awareness with clients")
-            })
+            .map_err(|_error| Error::runtime_error("cannot update awareness with clients"))
     }
 }
 
@@ -117,9 +110,8 @@ unsafe impl Send for YAwarenessUpdate {}
 
 impl YAwarenessUpdate {
     pub(crate) fn decode(&self) -> Result<AwarenessUpdate, Error> {
-        AwarenessUpdate::decode_v1(self.0.borrow()).map_err(|_error| {
-            Error::runtime_error("cannot decode awareness update")
-        })
+        AwarenessUpdate::decode_v1(self.0.borrow())
+            .map_err(|_error| Error::runtime_error("cannot decode awareness update"))
     }
     pub(crate) fn yawareness_update_encode(&self) -> Vec<u8> {
         self.0.to_vec()
