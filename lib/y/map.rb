@@ -18,6 +18,8 @@ module Y
   #   map[:hello] = "world"
   #   puts map[:hello]
   class Map
+    include Enumerable
+
     # @!attribute [r] document
     #
     # @return [Y::Doc] The document this map belongs to
