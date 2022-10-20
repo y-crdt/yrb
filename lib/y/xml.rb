@@ -43,11 +43,13 @@ module Y
     # @param [Integer] index
     # @param [String] name Name of node, e.g. `<p />`
     # @return [Y::XMLElement]
+    # rubocop:disable Lint/Void
     def []=(index, name)
       node = yxml_element_insert_element(transaction, index, name)
       node.document = document
       node
     end
+    # rubocop:enable Lint/Void
 
     # Returns first child in list or nil if no child exists
     #
@@ -294,7 +296,7 @@ module Y
       setter = method_name
       setter += "=" unless is_setter
       getter = method_name
-      getter = getter.to_s.slice(0...-1).to_sym if is_setter
+      getter = getter.to_s.slice(0...-1)&.to_sym if is_setter
 
       define_singleton_method(setter.to_sym) do |new_val|
         yxml_element_insert_attribute(transaction,
@@ -352,7 +354,8 @@ module Y
     # @return [String|nil]
 
     # @!method yxml_element_insert_element(transaction, index, name)
-    #
+    # Insert XML element into this XML element
+    # @!visibility private
     # @param [Y::Transaction] transaction
     # @param [Integer] index
     # @param [String] name

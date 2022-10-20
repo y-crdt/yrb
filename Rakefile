@@ -25,9 +25,9 @@ Rake::ExtensionTask.new("yrb", spec) do |ext|
   ext.cross_compile = true
   ext.cross_platform = cross_platforms
   ext.config_script = ENV["ALTERNATE_CONFIG_SCRIPT"] || "extconf.rb"
-  ext.cross_compiling do |spec|
-    spec.files.reject! { |file| File.fnmatch?("*.tar.gz", file) }
-    spec.dependencies.reject! { |dep| dep.name == "rb-sys" }
+  ext.cross_compiling do |c|
+    c.files.reject! { |file| File.fnmatch?("*.tar.gz", file) }
+    c.dependencies.reject! { |dep| dep.name == "rb-sys" }
   end
 end
 

@@ -6,7 +6,7 @@ RSpec.describe Y::Text do
     text = doc.get_text("my text")
     text << "Hello, World!"
 
-    expect(text.to_s).to eq("Hello, World!")
+    expect(text.size).to eq("Hello, World!".size)
   end
 
   it "formats text" do
@@ -41,9 +41,9 @@ RSpec.describe Y::Text do
   it "inserts Boolean at position" do
     doc = Y::Doc.new
     text = doc.get_text("my text")
-    text.insert(0, true)
+    text.insert(0, "something")
 
-    expect(text.to_s).to eq("")
+    expect(text.to_s).to eq("something")
   end
 
   it "inserts Integer at position" do
@@ -149,6 +149,7 @@ RSpec.describe Y::Text do
     end
   end
 
+  # rubocop:disable RSpec/ExampleLength
   context "when changing" do
     it "invokes callback" do
       local = Y::Doc.new
@@ -169,6 +170,7 @@ RSpec.describe Y::Text do
       expect(called).to eq({ insert: "Hello, World!" })
     end
 
+    # rubocop:disable RSpec/MultipleExpectations
     it "commits automatically" do
       local = Y::Doc.new
 
@@ -200,5 +202,7 @@ RSpec.describe Y::Text do
         ]
       )
     end
+    # rubocop:enable RSpec/MultipleExpectations
   end
+  # rubocop:enable RSpec/ExampleLength
 end

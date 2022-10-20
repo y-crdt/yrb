@@ -48,6 +48,7 @@ module Y
       yawareness_update_with_clients(clients)
     end
 
+    # rubocop:disable Lint/UselessAccessModifier
     private
 
     # @!method yawareness_apply_update(update)
@@ -120,9 +121,11 @@ module Y
     #
     # @param [Array<Integer>]
     # @return [Y::AwarenessUpdate] The update object
+
+    # rubocop:enable Lint/UselessAccessModifier
   end
 
-  # rubocop:disable Lint/EmptyClass
+  # rubocop:disable Lint/UselessAccessModifier
   class AwarenessEvent
     private
 
@@ -135,8 +138,9 @@ module Y
     # @!method removed
     # @return [Array<Integer>] Removed clients
   end
-  # rubocop:enable Lint/EmptyClass
+  # rubocop:enable Lint/UselessAccessModifier
 
+  # rubocop:disable Lint/UselessAccessModifier
   class AwarenessUpdate
     def encode
       yawareness_update_encode
@@ -149,4 +153,5 @@ module Y
     #
     # @return [Array<Integer>] Encoded update
   end
+  # rubocop:enable Lint/UselessAccessModifier
 end

@@ -192,15 +192,18 @@ RSpec.describe Y::XMLText do
   end
 
   context "when traversing elements" do
-    let!(:local) { Y::Doc.new }
-    let!(:local_xml) { local.get_xml_element("my xml") }
-    let!(:first_child) { local_xml << "A" }
-    let!(:first_text) { local_xml.insert_text(1, "my text") }
-    let!(:last_child) { local_xml << "B" }
-    let!(:remote) do
+    let(:local) { Y::Doc.new }
+    let(:remote) do
       doc = Y::Doc.new
       doc.sync(local.diff)
       doc
+    end
+
+    before do
+      local_xml = local.get_xml_element("my xml")
+      local_xml << "A"
+      local_xml.insert_text(1, "my text")
+      local_xml << "B"
     end
 
     it "retrieves next sibling with document reference set" do

@@ -113,7 +113,7 @@ module Y
     # @return [Y::XMLElement]
     def get_xml_element(name)
       xml_element = current_transaction.get_xml_element(name)
-      xml_element.document = self
+      xml_element&.document = self
       xml_element
     end
 

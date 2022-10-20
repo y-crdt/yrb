@@ -115,7 +115,7 @@ module Y
     # - Hash (where the the types of key and values must be supported)
     #
     # @param [Integer] index
-    # @param [String, Float, Array, Hash] value
+    # @param [String, Numeric, Array, Hash] value
     # @param [Hash|nil] attrs
     # @return [void]
     def insert(index, value, attrs = nil)
