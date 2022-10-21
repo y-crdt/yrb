@@ -214,7 +214,7 @@ module Y
     #   Clears out a state of a given client, effectively marking it as
     #   disconnected.
     #
-    # @param [Integer] A Client ID
+    # @param [Integer] client_id A Client ID
     # @return [String|nil] Returns a JSON string state representation of a
     #   current Awareness instance.
 
