@@ -17,8 +17,7 @@ cross_platforms = %w[
 
 spec = Bundler.load_gemspec("y-rb.gemspec")
 
-Gem::PackageTask.new(spec).define
-task "package" => cross_platforms.map { |p| "gem:#{p}" }
+Gem::PackageTask.new(spec)
 
 Rake::ExtensionTask.new("yrb", spec) do |ext|
   ext.source_pattern = "*.{rs,toml}"
@@ -37,9 +36,6 @@ namespace "gem" do
   end
 
   cross_platforms.each do |plat|
-    desc "Build all native binary gems in parallel"
-    multitask "native" => plat
-
     desc "Build the native gem for #{plat}"
     task plat => "prepare" do
       require "rake_compiler_dock"
@@ -48,7 +44,8 @@ namespace "gem" do
 
       RakeCompilerDock.sh <<~SH, platform: plat
         bundle && \
-        RUBY_CC_VERSION="#{cross_rubies.join(":")}" rake native:#{plat} pkg/#{spec.full_name}-#{plat}.gem
+        RUBY_CC_VERSION="#{cross_rubies.join(":")}" \
+        rake native:#{plat} pkg/#{spec.full_name}-#{plat}.gem
       SH
     end
   end
