@@ -99,7 +99,53 @@
   
 </div>
 
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    <p>The Awareness class implements a simple shared state protocol that can be
+used for non-persistent data like awareness information (cursor, username,
+status, ..). Each client can update its own local state and listen to state
+changes of remote clients.</p>
 
+<p>Each client is identified by a unique client id (something we borrow from
+doc.client_id). A client can override its own state by propagating a message
+with an increasing timestamp (clock). If such a message is received, it is
+applied if the known state of that client is older than the new state
+(<code>clock &lt; new_clock</code>). If a client thinks that a remote client is offline,
+it may propagate a message with <code>{ clock, state: null, client }</code>. If such a
+message is received, and the known clock of that client equals the received
+clock, it will clean the state.</p>
+
+<p>Before a client disconnects, it should propagate a null state with an
+updated clock.</p>
+
+<p>Awareness is an integral part of collaborative applications, you can read
+more about the concept here: <a href="https://docs.yjs.dev/getting-started/adding-awareness">https://docs.yjs.dev/getting-started/adding-awareness</a></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <p class="tag_title">Examples:</p>
+    
+      
+        <p class="example_title"><div class='inline'><p>Instantiate awareness instance and encode update for broadcast</p>
+</div></p>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_local_state'>local_state</span> <span class='op'>=</span> <span class='lbrace'>{</span>
+  <span class='label'>editing:</span> <span class='lbrace'>{</span> <span class='label'>field:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>description</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>pos:</span> <span class='int'>0</span> <span class='rbrace'>}</span><span class='comma'>,</span>
+  <span class='label'>name:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Hannes Moser</span><span class='tstring_end'>&quot;</span></span>
+<span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_to_json'>to_json</span>
+
+<span class='id identifier rubyid_awareness'>awareness</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Y.html" title="Y (module)">Y</a></span></span><span class='op'>::</span><span class='const'>Awareness</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
+<span class='id identifier rubyid_awareness'>awareness</span><span class='period'>.</span><span class='id identifier rubyid_local_state'>local_state</span> <span class='op'>=</span> <span class='id identifier rubyid_local_state'>local_state</span>
+<span class='id identifier rubyid_awareness'>awareness</span><span class='period'>.</span><span class='id identifier rubyid_update'>update</span><span class='period'>.</span><span class='id identifier rubyid_encode'>encode</span> <span class='comment'># [1,227,245,175,195,11,1,65,123, …]</span></code></pre>
+    
+  </div>
+
+
+</div>
 
 
 
@@ -117,7 +163,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#apply_update-instance_method" title="#apply_update (instance method)">#<strong>apply_update</strong>(update)  &#x21d2; Object </a>
+      <a href="#apply_update-instance_method" title="#apply_update (instance method)">#<strong>apply_update</strong>(update)  &#x21d2; void </a>
     
 
     
@@ -131,7 +177,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>Applies an incoming update.</p>
+</div></span>
   
 </li>
 
@@ -139,7 +186,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#attach-instance_method" title="#attach (instance method)">#<strong>attach</strong>(callback, &amp;block)  &#x21d2; Object </a>
+      <a href="#attach-instance_method" title="#attach (instance method)">#<strong>attach</strong>(callback, &amp;block)  &#x21d2; Integer </a>
     
 
     
@@ -153,7 +200,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>Subscribes to changes.</p>
+</div></span>
   
 </li>
 
@@ -161,7 +209,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#clean_local_state-instance_method" title="#clean_local_state (instance method)">#<strong>clean_local_state</strong>  &#x21d2; Object </a>
+      <a href="#clean_local_state-instance_method" title="#clean_local_state (instance method)">#<strong>clean_local_state</strong>  &#x21d2; void </a>
     
 
     
@@ -175,7 +223,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>Clears out a state of a current client, effectively marking it as disconnected.</p>
+</div></span>
   
 </li>
 
@@ -183,7 +232,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#client_id-instance_method" title="#client_id (instance method)">#<strong>client_id</strong>  &#x21d2; Object </a>
+      <a href="#client_id-instance_method" title="#client_id (instance method)">#<strong>client_id</strong>  &#x21d2; Integer </a>
     
 
     
@@ -197,7 +246,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>Returns a globally unique client ID of an underlying Doc.</p>
+</div></span>
   
 </li>
 
@@ -205,7 +255,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#clients-instance_method" title="#clients (instance method)">#<strong>clients</strong>  &#x21d2; Object </a>
+      <a href="#clients-instance_method" title="#clients (instance method)">#<strong>clients</strong>  &#x21d2; Hash </a>
     
 
     
@@ -219,7 +269,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>Returns a state map of all of the clients tracked by current Awareness instance.</p>
+</div></span>
   
 </li>
 
@@ -227,7 +278,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#detach-instance_method" title="#detach (instance method)">#<strong>detach</strong>(subscription_id)  &#x21d2; Object </a>
+      <a href="#detach-instance_method" title="#detach (instance method)">#<strong>detach</strong>(subscription_id)  &#x21d2; void </a>
     
 
     
@@ -241,7 +292,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>Unsubscribe from changes.</p>
+</div></span>
   
 </li>
 
@@ -249,7 +301,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#local_state-instance_method" title="#local_state (instance method)">#<strong>local_state</strong>  &#x21d2; Object </a>
+      <a href="#local_state-instance_method" title="#local_state (instance method)">#<strong>local_state</strong>  &#x21d2; String </a>
     
 
     
@@ -263,7 +315,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>Returns a JSON string state representation of a current Awareness instance.</p>
+</div></span>
   
 </li>
 
@@ -271,7 +324,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#local_state=-instance_method" title="#local_state= (instance method)">#<strong>local_state=</strong>(json)  &#x21d2; Object </a>
+      <a href="#local_state=-instance_method" title="#local_state= (instance method)">#<strong>local_state=</strong>(json)  &#x21d2; void </a>
     
 
     
@@ -285,7 +338,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>Sets a current Awareness instance state to a corresponding JSON string.</p>
+</div></span>
   
 </li>
 
@@ -293,7 +347,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#remove_state-instance_method" title="#remove_state (instance method)">#<strong>remove_state</strong>(client_id)  &#x21d2; Object </a>
+      <a href="#remove_state-instance_method" title="#remove_state (instance method)">#<strong>remove_state</strong>(client_id)  &#x21d2; void </a>
     
 
     
@@ -307,7 +361,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>Clears out a state of a given client, effectively marking it as disconnected.</p>
+</div></span>
   
 </li>
 
@@ -315,7 +370,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#update-instance_method" title="#update (instance method)">#<strong>update</strong>  &#x21d2; Object </a>
+      <a href="#update-instance_method" title="#update (instance method)">#<strong>update</strong>  &#x21d2; String </a>
     
 
     
@@ -329,7 +384,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>Returns a serializable update object which is representation of a current Awareness state.</p>
+</div></span>
   
 </li>
 
@@ -337,7 +393,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#update_with_clients-instance_method" title="#update_with_clients (instance method)">#<strong>update_with_clients</strong>(clients)  &#x21d2; Object </a>
+      <a href="#update_with_clients-instance_method" title="#update_with_clients (instance method)">#<strong>update_with_clients</strong>(clients)  &#x21d2; String </a>
     
 
     
@@ -351,7 +407,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>Returns a serializable update object which is representation of a current Awareness state.</p>
+</div></span>
   
 </li>
 
@@ -368,24 +425,69 @@
       <div class="method_details first">
   <h3 class="signature first" id="apply_update-instance_method">
   
-    #<strong>apply_update</strong>(update)  &#x21d2; <tt>Object</tt> 
+    #<strong>apply_update</strong>(update)  &#x21d2; <tt>void</tt> 
   
 
   
 
   
-</h3><table class="source_code">
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p><p>Applies an incoming update. This gets the local awareness instance in
+sync with changes from another client. i.e., updates the state of another
+user in the local awareness instance.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <p class="tag_title">Examples:</p>
+    
+      
+        <p class="example_title"><div class='inline'><p>Apply an incoming update</p>
+</div></p>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_update'>update</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='int'>1</span><span class='comma'>,</span><span class='int'>227</span><span class='comma'>,</span><span class='int'>245</span><span class='comma'>,</span><span class='int'>175</span><span class='comma'>,</span><span class='int'>195</span><span class='comma'>,</span><span class='int'>11</span><span class='comma'>,</span><span class='int'>1</span><span class='comma'>,</span><span class='int'>65</span><span class='comma'>,</span><span class='int'>123</span><span class='comma'>,</span> <span class='id identifier rubyid_…'>…</span><span class='rbracket'>]</span>
+
+<span class='id identifier rubyid_awareness'>awareness</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Y.html" title="Y (module)">Y</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="Y::Awareness (class)">Awareness</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
+<span class='id identifier rubyid_awareness'>awareness</span><span class='period'>.</span><span class='id identifier rubyid_apply_update'>apply_update</span><span class='lparen'>(</span><span class='id identifier rubyid_update'>update</span><span class='rparen'>)</span></code></pre>
+    
+  </div>
+<p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>update</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Array.html" title="Y::Array (class)">Array</a></span>&lt;Integer&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>A binary encoded update</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-5
-6
-7</pre>
+48
+49
+50</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 5</span>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 48</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_apply_update'>apply_update</span><span class='lparen'>(</span><span class='id identifier rubyid_update'>update</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_yawareness_apply_update'>yawareness_apply_update</span><span class='lparen'>(</span><span class='id identifier rubyid_update'>update</span><span class='rparen'>)</span>
@@ -398,26 +500,53 @@
       <div class="method_details ">
   <h3 class="signature " id="attach-instance_method">
   
-    #<strong>attach</strong>(callback, &amp;block)  &#x21d2; <tt>Object</tt> 
+    #<strong>attach</strong>(callback, &amp;block)  &#x21d2; <tt>Integer</tt> 
   
 
   
 
   
-</h3><table class="source_code">
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Subscribes to changes</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Integer</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The subscription ID</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-29
-30
-31
-32
-33</pre>
+126
+127
+128
+129
+130</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 29</span>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 126</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_attach'>attach</span><span class='lparen'>(</span><span class='id identifier rubyid_callback'>callback</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='id identifier rubyid_yawareness_on_update'>yawareness_on_update</span><span class='lparen'>(</span><span class='id identifier rubyid_callback'>callback</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_callback'>callback</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
@@ -432,24 +561,35 @@
       <div class="method_details ">
   <h3 class="signature " id="clean_local_state-instance_method">
   
-    #<strong>clean_local_state</strong>  &#x21d2; <tt>Object</tt> 
+    #<strong>clean_local_state</strong>  &#x21d2; <tt>void</tt> 
   
 
   
 
   
-</h3><table class="source_code">
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p><p>Clears out a state of a current client, effectively marking it as
+disconnected.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-9
-10
-11</pre>
+56
+57
+58</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 9</span>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 56</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_clean_local_state'>clean_local_state</span>
   <span class='id identifier rubyid_yawareness_clean_local_state'>yawareness_clean_local_state</span>
@@ -462,24 +602,51 @@
       <div class="method_details ">
   <h3 class="signature " id="client_id-instance_method">
   
-    #<strong>client_id</strong>  &#x21d2; <tt>Object</tt> 
+    #<strong>client_id</strong>  &#x21d2; <tt>Integer</tt> 
   
 
   
 
   
-</h3><table class="source_code">
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns a globally unique client ID of an underlying Doc.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Integer</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Returns the client_id of the local user</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-13
-14
-15</pre>
+63
+64
+65</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 13</span>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 63</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_client_id'>client_id</span>
   <span class='id identifier rubyid_yawareness_client_id'>yawareness_client_id</span>
@@ -492,24 +659,72 @@
       <div class="method_details ">
   <h3 class="signature " id="clients-instance_method">
   
-    #<strong>clients</strong>  &#x21d2; <tt>Object</tt> 
+    #<strong>clients</strong>  &#x21d2; <tt>Hash</tt> 
   
 
   
 
   
-</h3><table class="source_code">
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns a state map of all of the clients tracked by current Awareness
+instance. Those states are identified by their corresponding ClientIDs.
+The associated state is represented and replicated to other clients as a
+JSON string.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <p class="tag_title">Examples:</p>
+    
+      
+        <p class="example_title"><div class='inline'><p>Instantiate awareness instance and encode update for broadcast</p>
+</div></p>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_local_state'>local_state</span> <span class='op'>=</span> <span class='lbrace'>{</span>
+  <span class='label'>editing:</span> <span class='lbrace'>{</span> <span class='label'>field:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>description</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>pos:</span> <span class='int'>0</span> <span class='rbrace'>}</span><span class='comma'>,</span>
+  <span class='label'>name:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Hannes Moser</span><span class='tstring_end'>&quot;</span></span>
+<span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_to_json'>to_json</span>
+
+<span class='id identifier rubyid_awareness'>awareness</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Y.html" title="Y (module)">Y</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="Y::Awareness (class)">Awareness</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
+<span class='id identifier rubyid_awareness'>awareness</span><span class='period'>.</span><span class='id identifier rubyid_local_state'>local_state</span> <span class='op'>=</span> <span class='id identifier rubyid_local_state'>local_state</span>
+<span class='id identifier rubyid_awareness'>awareness</span><span class='period'>.</span><span class='id identifier rubyid_clients'>clients</span> <span class='comment'># {312134501=&gt;&quot;{\&quot;editing\&quot;:{\&quot;field\&quot;:\&quot;description\&quot;,\&quot;pos\&quot;:0},\&quot;name\&quot;:\&quot;Hannes Moser\&quot;}&quot;}</span></code></pre>
+    
+  </div>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>All clients and their current state</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-17
-18
-19</pre>
+83
+84
+85</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 17</span>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 83</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_clients'>clients</span>
   <span class='id identifier rubyid_yawareness_clients'>yawareness_clients</span>
@@ -522,24 +737,49 @@
       <div class="method_details ">
   <h3 class="signature " id="detach-instance_method">
   
-    #<strong>detach</strong>(subscription_id)  &#x21d2; <tt>Object</tt> 
+    #<strong>detach</strong>(subscription_id)  &#x21d2; <tt>void</tt> 
   
 
   
 
   
-</h3><table class="source_code">
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p><p>Unsubscribe from changes</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>subscription_id</span>
+      
+      
+        <span class='type'>(<tt>Integer</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-35
-36
-37</pre>
+136
+137
+138</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 35</span>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 136</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_detach'>detach</span><span class='lparen'>(</span><span class='id identifier rubyid_subscription_id'>subscription_id</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_yawareness_remove_on_update'>yawareness_remove_on_update</span><span class='lparen'>(</span><span class='id identifier rubyid_subscription_id'>subscription_id</span><span class='rparen'>)</span>
@@ -552,24 +792,70 @@
       <div class="method_details ">
   <h3 class="signature " id="local_state-instance_method">
   
-    #<strong>local_state</strong>  &#x21d2; <tt>Object</tt> 
+    #<strong>local_state</strong>  &#x21d2; <tt>String</tt> 
   
 
   
 
   
-</h3><table class="source_code">
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns a JSON string state representation of a current Awareness
+instance.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <p class="tag_title">Examples:</p>
+    
+      
+        <p class="example_title"><div class='inline'><p>Create local state and inspect it</p>
+</div></p>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_local_state'>local_state</span> <span class='op'>=</span> <span class='lbrace'>{</span>
+  <span class='label'>editing:</span> <span class='lbrace'>{</span> <span class='label'>field:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>description</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>pos:</span> <span class='int'>0</span> <span class='rbrace'>}</span><span class='comma'>,</span>
+  <span class='label'>name:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Hannes Moser</span><span class='tstring_end'>&quot;</span></span>
+<span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_to_json'>to_json</span>
+
+<span class='id identifier rubyid_awareness'>awareness</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Y.html" title="Y (module)">Y</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="Y::Awareness (class)">Awareness</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
+<span class='id identifier rubyid_awareness'>awareness</span><span class='period'>.</span><span class='id identifier rubyid_local_state'>local_state</span> <span class='op'>=</span> <span class='id identifier rubyid_local_state'>local_state</span>
+<span class='id identifier rubyid_local_state'>local_state</span> <span class='comment'># &quot;{\&quot;editing\&quot;:{\&quot;field\&quot;:\&quot;description\&quot;,\&quot;pos\&quot;:0},\&quot;name\&quot;:\&quot;Hannes Moser\&quot;}&quot;</span></code></pre>
+    
+  </div>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The current state of the local client</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-21
-22
-23</pre>
+101
+102
+103</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 21</span>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 101</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_local_state'>local_state</span>
   <span class='id identifier rubyid_yawareness_local_state'>yawareness_local_state</span>
@@ -582,24 +868,53 @@
       <div class="method_details ">
   <h3 class="signature " id="local_state=-instance_method">
   
-    #<strong>local_state=</strong>(json)  &#x21d2; <tt>Object</tt> 
+    #<strong>local_state=</strong>(json)  &#x21d2; <tt>void</tt> 
   
 
   
 
   
-</h3><table class="source_code">
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p><p>Sets a current Awareness instance state to a corresponding JSON string.
+This state will be replicated to other clients as part of the
+AwarenessUpdate.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <p class="tag_title">Examples:</p>
+    
+      
+        <p class="example_title"><div class='inline'><p>Set local state</p>
+</div></p>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_local_state'>local_state</span> <span class='op'>=</span> <span class='lbrace'>{</span>
+  <span class='label'>editing:</span> <span class='lbrace'>{</span> <span class='label'>field:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>description</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>pos:</span> <span class='int'>0</span> <span class='rbrace'>}</span><span class='comma'>,</span>
+  <span class='label'>name:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Hannes Moser</span><span class='tstring_end'>&quot;</span></span>
+<span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_to_json'>to_json</span>
+
+<span class='id identifier rubyid_awareness'>awareness</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Y.html" title="Y (module)">Y</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="Y::Awareness (class)">Awareness</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
+<span class='id identifier rubyid_awareness'>awareness</span><span class='period'>.</span><span class='id identifier rubyid_local_state'>local_state</span> <span class='op'>=</span> <span class='id identifier rubyid_local_state'>local_state</span></code></pre>
+    
+  </div>
+
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-25
-26
-27</pre>
+119
+120
+121</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 25</span>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 119</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_local_state='>local_state=</span><span class='lparen'>(</span><span class='id identifier rubyid_json'>json</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_yawareness_set_local_state'>yawareness_set_local_state</span><span class='lparen'>(</span><span class='id identifier rubyid_json'>json</span><span class='rparen'>)</span>
@@ -612,24 +927,54 @@
       <div class="method_details ">
   <h3 class="signature " id="remove_state-instance_method">
   
-    #<strong>remove_state</strong>(client_id)  &#x21d2; <tt>Object</tt> 
+    #<strong>remove_state</strong>(client_id)  &#x21d2; <tt>void</tt> 
   
 
   
 
   
-</h3><table class="source_code">
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p><p>Clears out a state of a given client, effectively marking it as
+disconnected.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>client_id</span>
+      
+      
+        <span class='type'>(<tt>Integer</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Clears the state for given client_id</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-39
-40
-41</pre>
+145
+146
+147</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 39</span>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 145</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_remove_state'>remove_state</span><span class='lparen'>(</span><span class='id identifier rubyid_client_id'>client_id</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_yawareness_remove_state'>yawareness_remove_state</span><span class='lparen'>(</span><span class='id identifier rubyid_client_id'>client_id</span><span class='rparen'>)</span>
@@ -642,24 +987,52 @@
       <div class="method_details ">
   <h3 class="signature " id="update-instance_method">
   
-    #<strong>update</strong>  &#x21d2; <tt>Object</tt> 
+    #<strong>update</strong>  &#x21d2; <tt>String</tt> 
   
 
   
 
   
-</h3><table class="source_code">
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns a serializable update object which is representation of a current
+Awareness state.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Binary encoded update of this local awareness instance</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-43
-44
-45</pre>
+153
+154
+155</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 43</span>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 153</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_update'>update</span>
   <span class='id identifier rubyid_yawareness_update'>yawareness_update</span>
@@ -672,24 +1045,55 @@
       <div class="method_details ">
   <h3 class="signature " id="update_with_clients-instance_method">
   
-    #<strong>update_with_clients</strong>(clients)  &#x21d2; <tt>Object</tt> 
+    #<strong>update_with_clients</strong>(clients)  &#x21d2; <tt>String</tt> 
   
 
   
 
   
-</h3><table class="source_code">
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns a serializable update object which is representation of a current
+Awareness state. Unlike Awareness::update, this method variant allows to
+prepare update only for a subset of known clients. These clients must all
+be known to a current Awareness instance, otherwise a
+Error::ClientNotFound error will be returned.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Binary encoded update including all given client IDs</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-47
-48
-49</pre>
+164
+165
+166</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 47</span>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 164</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_update_with_clients'>update_with_clients</span><span class='lparen'>(</span><span class='id identifier rubyid_clients'>clients</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_yawareness_update_with_clients'>yawareness_update_with_clients</span><span class='lparen'>(</span><span class='id identifier rubyid_clients'>clients</span><span class='rparen'>)</span>
@@ -704,7 +1108,7 @@
 </div>
 
       <div id="footer">
-  Generated on Thu Oct 20 15:44:21 2022 by
+  Generated on Fri Oct 21 09:35:42 2022 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.28 (ruby-3.0.4).
 </div>
