@@ -1,4 +1,4 @@
-use crate::{YText, YXmlElement, YXmlText};
+use crate::{YMap, YText, YXmlElement, YXmlText};
 use lib0::any::Any;
 use magnus::r_hash::ForEach::Continue;
 use magnus::value::Qnil;
@@ -6,7 +6,10 @@ use magnus::{class, Float, Integer, RArray, RHash, RString, Symbol, Value, QNIL}
 use std::cell::RefCell;
 use std::collections::HashMap;
 use yrs::types::Value as YrsValue;
-use yrs::{Text as YrsText, XmlElement as YrsXmlElement, XmlText as YrsXmlText};
+use yrs::{
+    Array as YrsArray, Map as YrsMap, Text as YrsText, XmlElement as YrsXmlElement,
+    XmlText as YrsXmlText,
+};
 
 pub(crate) struct YValue(pub(crate) RefCell<Value>);
 
@@ -70,6 +73,29 @@ impl From<YrsText> for YValue {
     }
 }
 
+impl From<YrsArray> for YValue {
+    fn from(value: YrsArray) -> Self {
+        let v = value
+            .iter()
+            .map(YValue::from)
+            .map(|v| v.0.into_inner())
+            .collect::<Vec<_>>();
+
+        YValue(RefCell::from(Value::from(RArray::from_vec(v))))
+    }
+}
+
+impl From<YrsMap> for YValue {
+    fn from(value: YrsMap) -> Self {
+        let v = value
+            .iter()
+            .map(|(k, v)| (k.to_string(), YValue::from(v).0.into_inner()))
+            .collect::<HashMap<String, Value>>();
+
+        YValue(RefCell::from(Value::from(RHash::from_iter(v))))
+    }
+}
+
 impl From<YrsXmlElement> for YValue {
     fn from(value: YrsXmlElement) -> Self {
         YValue(RefCell::from(Value::from(YXmlElement(RefCell::from(
@@ -86,6 +112,12 @@ impl From<YrsXmlText> for YValue {
 
 impl From<YText> for YValue {
     fn from(value: YText) -> Self {
+        YValue(RefCell::from(Value::from(value)))
+    }
+}
+
+impl From<YMap> for YValue {
+    fn from(value: YMap) -> Self {
         YValue(RefCell::from(Value::from(value)))
     }
 }
@@ -134,20 +166,10 @@ impl From<Any> for YValue {
     }
 }
 
+#[allow(unconditional_recursion)]
 impl From<YrsValue> for YValue {
     fn from(value: YrsValue) -> Self {
-        match value {
-            YrsValue::Any(val) => YValue::from(val),
-            YrsValue::YText(text) => YValue::from(text),
-            YrsValue::YXmlElement(el) => YValue::from(el),
-            YrsValue::YXmlText(text) => YValue::from(text),
-            // YrsValue::YArray(val) => YValue::from(RArray::from_vec(val.iter().map(|item| {
-            //     let yvalue = YValue::from(item);
-            //     *yvalue.0
-            // }))),
-            // YrsValue::YMap(val) => YValue::from(RHash::from_iter(val.iter())),
-            v => panic!("cannot map complex yrs values to yvalue: {}", v.to_string()),
-        }
+        YValue::from(value)
     }
 }
 

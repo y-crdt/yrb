@@ -14,6 +14,17 @@ pub(crate) fn indifferent_hash_key(key: Value) -> Option<String> {
         .or_else(|| Symbol::from_value(key).map(|v| v.name().unwrap().to_string()))
 }
 
+pub(crate) fn map_attrs_to_rhash(attrs: &Attrs) -> Option<RHash> {
+    attrs
+        .iter()
+        .map(|(key, val)| {
+            let yvalue = YValue::from(val.clone());
+            (key.to_string(), yvalue.0.into_inner())
+        })
+        .collect::<RHash>()
+        .into()
+}
+
 pub(crate) fn map_rhash_to_attrs(hash: RHash) -> Result<Attrs, Error> {
     let mut a: Attrs = Default::default();
 

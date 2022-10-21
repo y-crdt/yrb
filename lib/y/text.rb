@@ -79,6 +79,13 @@ module Y
       ytext_unobserve(subscription_id)
     end
 
+    # Get changes
+    #
+    # @return [Array<Hash>] List of changes
+    def diff
+      ytext_diff(transaction)
+    end
+
     # Checks if text is empty
     #
     # @example Check if text is empty
@@ -278,6 +285,12 @@ module Y
     end
 
     # rubocop:disable Layout/LineLength
+
+    # @!method ytext_diff(transaction)
+    #   Return list of changes
+    #
+    # @param [Y::Transaction] transaction
+    # @return [Array<Hash>]
 
     # @!method ytext_insert(transaction, index, chunk)
     #   Insert into text at position

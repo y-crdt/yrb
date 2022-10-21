@@ -166,7 +166,9 @@ fn init() -> Result<(), Error> {
     let ytext = module
         .define_class("Text", Default::default())
         .expect("cannot define class Y::Text");
-
+    ytext
+        .define_private_method("ytext_diff", method!(YText::ytext_diff, 1))
+        .expect("cannot define private method: ytext_diff");
     ytext
         .define_private_method("ytext_format", method!(YText::ytext_format, 4))
         .expect("cannot define private method: ytext_format");

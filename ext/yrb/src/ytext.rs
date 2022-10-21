@@ -1,12 +1,16 @@
+use crate::utils::map_attrs_to_rhash;
 use crate::yattrs::YAttrs;
 use crate::yvalue::YValue;
 use crate::YTransaction;
 use lib0::any::Any;
 use magnus::block::Proc;
 use magnus::value::Qnil;
-use magnus::{Error, RHash, Symbol, Value};
+use magnus::{Error, RHash, StaticSymbol, Symbol, Value, QNIL};
 use std::cell::RefCell;
-use yrs::types::Delta;
+use std::ops::Deref;
+use yrs::types::text::ChangeKind;
+use yrs::types::Value::{YArray, YMap, YXmlElement, YXmlText};
+use yrs::types::{text::YChange, Delta};
 use yrs::Text;
 
 #[magnus::wrap(class = "Y::Text")]
@@ -16,6 +20,87 @@ pub(crate) struct YText(pub(crate) RefCell<Text>);
 unsafe impl Send for YText {}
 
 impl YText {
+    pub(crate) fn ytext_diff(&self, transaction: &YTransaction) -> Vec<RHash> {
+        let diff_attributes = StaticSymbol::from("attributes");
+        let diff_insert = StaticSymbol::from("insert");
+        let diff_ychange = StaticSymbol::from("ychange");
+
+        let insert_type = StaticSymbol::from("type");
+        let insert_value = StaticSymbol::from("value");
+
+        let insert_type_any = StaticSymbol::from("any");
+        let insert_type_text = StaticSymbol::from("text");
+        let insert_type_array = StaticSymbol::from("array");
+        let insert_type_map = StaticSymbol::from("map");
+        let insert_type_xml_element = StaticSymbol::from("xml_element");
+        let insert_type_xml_text = StaticSymbol::from("xml_text");
+
+        self.0
+            .borrow()
+            .diff(&mut *transaction.0.borrow_mut(), YChange::identity)
+            .iter()
+            .map(move |diff| {
+                let attributes = match &diff.attributes {
+                    Some(attrs) => map_attrs_to_rhash(attrs.deref())
+                        .map(Value::from)
+                        .unwrap_or_else(|| Value::from(QNIL)),
+                    _ => Value::from(QNIL),
+                };
+
+                let (i_type, i_value) = match diff.insert.clone() {
+                    yrs::types::Value::Any(v) => (insert_type_any, YValue::from(v).0.into_inner()),
+                    yrs::types::Value::YText(v) => {
+                        (insert_type_text, YValue::from(v).0.into_inner())
+                    }
+                    YArray(v) => (insert_type_array, YValue::from(v).0.into_inner()),
+                    YMap(v) => (insert_type_map, YValue::from(v).0.into_inner()),
+                    YXmlElement(v) => (insert_type_xml_element, YValue::from(v).0.into_inner()),
+                    YXmlText(v) => (insert_type_xml_text, YValue::from(v).0.into_inner()),
+                };
+                let insert = RHash::new();
+                insert
+                    .aset(insert_type, i_type)
+                    .expect("cannot set insert type");
+                insert
+                    .aset(insert_value, i_value)
+                    .expect("cannot set insert value");
+
+                let ychange = match diff.ychange.clone() {
+                    None => Value::from(QNIL),
+                    Some(yv) => {
+                        let id = RHash::new();
+                        id.aset("client_id", yv.id.client)
+                            .expect("cannot extract client_id");
+                        id.aset("clock", yv.id.clock).expect("cannot extract clock");
+
+                        let added = StaticSymbol::from("added");
+                        let removed = StaticSymbol::from("removed");
+
+                        let kind = match yv.kind {
+                            ChangeKind::Added => added,
+                            ChangeKind::Removed => removed,
+                        };
+
+                        let change = RHash::new();
+                        change.aset("id", id).expect("cannot set id");
+                        change.aset("kind", kind).expect("cannot set kind");
+
+                        Value::from(change)
+                    }
+                };
+
+                let diff = RHash::new();
+                diff.aset(diff_insert, insert).expect("cannot set insert");
+                diff.aset(diff_attributes, attributes)
+                    .expect("cannot set attributes");
+                diff.aset(diff_ychange, ychange)
+                    .expect("cannot set ychange");
+
+                diff
+            })
+            .collect()
+    }
+
     pub(crate) fn ytext_format(
         &self,
         transaction: &YTransaction,

@@ -77,7 +77,7 @@ module Y
     #
     #   awareness = Y::Awareness.new
     #   awareness.local_state = local_state
-    #   awareness.clients # {312134501=>"{\"editing\":{\"field\":\"description\",\"pos\":0},\"name\":\"Hannes Moser\"}"}
+    #   awareness.clients # {312134501=>"{\"editing\":{\"field\":\"des…
     #
     # @return [Hash] All clients and their current state
     def clients
@@ -95,7 +95,7 @@ module Y
     #
     #   awareness = Y::Awareness.new
     #   awareness.local_state = local_state
-    #   local_state # "{\"editing\":{\"field\":\"description\",\"pos\":0},\"name\":\"Hannes Moser\"}"
+    #   local_state # "{\"editing\":{\"field\":\"description\",\"pos\":0}, …
     #
     # @return [String] The current state of the local client
     def local_state

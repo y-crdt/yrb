@@ -1,6 +1,37 @@
 # frozen_string_literal: true
 
 RSpec.describe Y::Text do
+  it "the size of changes matches the actual number of changes" do
+    doc = Y::Doc.new
+    text = doc.get_text("my text")
+
+    text << "Hello, World!"
+
+    changes = text.diff
+
+    expect(changes.size).to eq(1)
+  end
+
+  # rubocop:disable RSpec/ExampleLength
+  it "returns list of changes for text diff" do
+    doc = Y::Doc.new
+    text = doc.get_text("my text")
+
+    text << "Hello, World!"
+
+    changes = text.diff
+
+    expect(changes.first).to match({
+                                     insert: {
+                                       type: :any,
+                                       value: "Hello, World!"
+                                     },
+                                     attributes: nil,
+                                     ychange: nil
+                                   })
+  end
+  # rubocop:enable RSpec/ExampleLength
+
   it "appends string to text" do
     doc = Y::Doc.new
     text = doc.get_text("my text")
