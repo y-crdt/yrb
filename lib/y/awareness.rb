@@ -29,7 +29,7 @@ module Y
   #
   #   awareness = Y::Awareness.new
   #   awareness.local_state = local_state
-  #   awareness.update.encode # [1,227,245,175,195,11,1,65,123, …]
+  #   awareness.diff # [1,227,245,175,195,11,1,65,123, …]
   #
   #
   class Awareness
@@ -41,12 +41,12 @@ module Y
     #   update = [1,227,245,175,195,11,1,65,123, …]
     #
     #   awareness = Y::Awareness.new
-    #   awareness.apply_update(update)
+    #   awareness.sync(update)
     #
-    # @param [Array<Integer>] update A binary encoded update
+    # @param [Array<Integer>] diff A binary encoded update
     # @return [void]
-    def apply_update(update)
-      yawareness_apply_update(update)
+    def sync(diff)
+      yawareness_apply_update(diff)
     end
 
     # Clears out a state of a current client, effectively marking it as
@@ -77,7 +77,7 @@ module Y
     #
     #   awareness = Y::Awareness.new
     #   awareness.local_state = local_state
-    #   awareness.clients # {312134501=>"{\"editing\":{\"field\":\"description\",\"pos\":0},\"name\":\"Hannes Moser\"}"}
+    #   awareness.clients # {312134501=>"{\"editing\":{\"field\":\"descriptio …
     #
     # @return [Hash] All clients and their current state
     def clients
@@ -95,7 +95,7 @@ module Y
     #
     #   awareness = Y::Awareness.new
     #   awareness.local_state = local_state
-    #   local_state # "{\"editing\":{\"field\":\"description\",\"pos\":0},\"name\":\"Hannes Moser\"}"
+    #   local_state # "{\"editing\":{\"field\":\"description\",\"pos\":0}, …
     #
     # @return [String] The current state of the local client
     def local_state
@@ -149,8 +149,8 @@ module Y
     # Returns a serializable update object which is representation of a current
     # Awareness state.
     #
-    # @return [String] Binary encoded update of this local awareness instance
-    def update
+    # @return [::Array<Integer>] Binary encoded update of the local instance
+    def diff
       yawareness_update
     end
 
@@ -160,8 +160,9 @@ module Y
     # be known to a current Awareness instance, otherwise a
     # Error::ClientNotFound error will be returned.
     #
+    # @param [::Array<Integer>] clients A list of client IDs
     # @return [String] Binary encoded update including all given client IDs
-    def update_with_clients(clients)
+    def diff_with_clients(*clients)
       yawareness_update_with_clients(clients)
     end
 
@@ -242,8 +243,8 @@ module Y
     #   These clients must all be known to a current Awareness instance,
     #   otherwise an error will be returned.
     #
-    # @param [Array<Integer>]
-    # @return [Y::AwarenessUpdate] The update object
+    # @param [::Array<Integer>] clients
+    # @return [::Array<Integer>] A serialized (binary encoded) update object
 
     # rubocop:enable Lint/UselessAccessModifier
   end
@@ -253,28 +254,13 @@ module Y
     private
 
     # @!method added
-    # @return [Array<Integer>] Added clients
+    # @return [::Array<Integer>] Added clients
 
     # @!method updated
-    # @return [Array<Integer>] Updated clients
+    # @return [::Array<Integer>] Updated clients
 
     # @!method removed
-    # @return [Array<Integer>] Removed clients
-  end
-  # rubocop:enable Lint/UselessAccessModifier
-
-  # rubocop:disable Lint/UselessAccessModifier
-  class AwarenessUpdate
-    def encode
-      yawareness_update_encode
-    end
-
-    private
-
-    # @!method yawareness_update_encode
-    #   Encode the awareness state for simple transport
-    #
-    # @return [Array<Integer>] Encoded update
+    # @return [::Array<Integer>] Removed clients
   end
   # rubocop:enable Lint/UselessAccessModifier
 end

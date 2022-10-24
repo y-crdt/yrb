@@ -1,7 +1,7 @@
 extern crate core;
 
 use crate::yarray::YArray;
-use crate::yawareness::{YAwareness, YAwarenessEvent, YAwarenessUpdate};
+use crate::yawareness::{YAwareness, YAwarenessEvent};
 use crate::ydoc::YDoc;
 use crate::ymap::YMap;
 use crate::ytext::YText;
@@ -487,16 +487,6 @@ fn init() -> Result<(), Error> {
             method!(YAwareness::yawareness_update_with_clients, 1),
         )
         .expect("cannot define private method: yawareness_update_with_clients");
-
-    let yawareness_update = module
-        .define_class("AwarenessUpdate", Default::default())
-        .expect("cannot define class Y:AwarenessUpdate");
-    yawareness_update
-        .define_private_method(
-            "yawareness_update_encode",
-            method!(YAwarenessUpdate::yawareness_update_encode, 0),
-        )
-        .expect("cannot define private method: yawareness_update_encode");
 
     let yawareness_event = module
         .define_class("AwarenessEvent", Default::default())
