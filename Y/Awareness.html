@@ -140,7 +140,7 @@ more about the concept here: <a href="https://docs.yjs.dev/getting-started/addin
 
 <span class='id identifier rubyid_awareness'>awareness</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Y.html" title="Y (module)">Y</a></span></span><span class='op'>::</span><span class='const'>Awareness</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
 <span class='id identifier rubyid_awareness'>awareness</span><span class='period'>.</span><span class='id identifier rubyid_local_state'>local_state</span> <span class='op'>=</span> <span class='id identifier rubyid_local_state'>local_state</span>
-<span class='id identifier rubyid_awareness'>awareness</span><span class='period'>.</span><span class='id identifier rubyid_update'>update</span><span class='period'>.</span><span class='id identifier rubyid_encode'>encode</span> <span class='comment'># [1,227,245,175,195,11,1,65,123, …]</span></code></pre>
+<span class='id identifier rubyid_awareness'>awareness</span><span class='period'>.</span><span class='id identifier rubyid_diff'>diff</span> <span class='comment'># [1,227,245,175,195,11,1,65,123, …]</span></code></pre>
     
   </div>
 
@@ -159,29 +159,6 @@ more about the concept here: <a href="https://docs.yjs.dev/getting-started/addin
     </h2>
 
     <ul class="summary">
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#apply_update-instance_method" title="#apply_update (instance method)">#<strong>apply_update</strong>(update)  &#x21d2; void </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Applies an incoming update.</p>
-</div></span>
-  
-</li>
-
       
         <li class="public ">
   <span class="summary_signature">
@@ -301,6 +278,52 @@ more about the concept here: <a href="https://docs.yjs.dev/getting-started/addin
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#diff-instance_method" title="#diff (instance method)">#<strong>diff</strong>  &#x21d2; ::Array&lt;Integer&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns a serializable update object which is representation of a current Awareness state.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#diff_with_clients-instance_method" title="#diff_with_clients (instance method)">#<strong>diff_with_clients</strong>(*clients)  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns a serializable update object which is representation of a current Awareness state.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#local_state-instance_method" title="#local_state (instance method)">#<strong>local_state</strong>  &#x21d2; String </a>
     
 
@@ -370,7 +393,7 @@ more about the concept here: <a href="https://docs.yjs.dev/getting-started/addin
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#update-instance_method" title="#update (instance method)">#<strong>update</strong>  &#x21d2; String </a>
+      <a href="#sync-instance_method" title="#sync (instance method)">#<strong>sync</strong>(diff)  &#x21d2; void </a>
     
 
     
@@ -384,30 +407,7 @@ more about the concept here: <a href="https://docs.yjs.dev/getting-started/addin
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Returns a serializable update object which is representation of a current Awareness state.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#update_with_clients-instance_method" title="#update_with_clients (instance method)">#<strong>update_with_clients</strong>(clients)  &#x21d2; String </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Returns a serializable update object which is representation of a current Awareness state.</p>
+    <span class="summary_desc"><div class='inline'><p>Applies an incoming update.</p>
 </div></span>
   
 </li>
@@ -423,82 +423,7 @@ more about the concept here: <a href="https://docs.yjs.dev/getting-started/addin
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="apply_update-instance_method">
-  
-    #<strong>apply_update</strong>(update)  &#x21d2; <tt>void</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p class="note returns_void">This method returns an undefined value.</p><p>Applies an incoming update. This gets the local awareness instance in
-sync with changes from another client. i.e., updates the state of another
-user in the local awareness instance.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-  <div class="examples">
-    <p class="tag_title">Examples:</p>
-    
-      
-        <p class="example_title"><div class='inline'><p>Apply an incoming update</p>
-</div></p>
-      
-      <pre class="example code"><code><span class='id identifier rubyid_update'>update</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='int'>1</span><span class='comma'>,</span><span class='int'>227</span><span class='comma'>,</span><span class='int'>245</span><span class='comma'>,</span><span class='int'>175</span><span class='comma'>,</span><span class='int'>195</span><span class='comma'>,</span><span class='int'>11</span><span class='comma'>,</span><span class='int'>1</span><span class='comma'>,</span><span class='int'>65</span><span class='comma'>,</span><span class='int'>123</span><span class='comma'>,</span> <span class='id identifier rubyid_…'>…</span><span class='rbracket'>]</span>
-
-<span class='id identifier rubyid_awareness'>awareness</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Y.html" title="Y (module)">Y</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="Y::Awareness (class)">Awareness</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
-<span class='id identifier rubyid_awareness'>awareness</span><span class='period'>.</span><span class='id identifier rubyid_apply_update'>apply_update</span><span class='lparen'>(</span><span class='id identifier rubyid_update'>update</span><span class='rparen'>)</span></code></pre>
-    
-  </div>
-<p class="tag_title">Parameters:</p>
-<ul class="param">
-  
-    <li>
-      
-        <span class='name'>update</span>
-      
-      
-        <span class='type'>(<tt><span class='object_link'><a href="Array.html" title="Y::Array (class)">Array</a></span>&lt;Integer&gt;</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>A binary encoded update</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-48
-49
-50</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 48</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_apply_update'>apply_update</span><span class='lparen'>(</span><span class='id identifier rubyid_update'>update</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_yawareness_apply_update'>yawareness_apply_update</span><span class='lparen'>(</span><span class='id identifier rubyid_update'>update</span><span class='rparen'>)</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="attach-instance_method">
+  <h3 class="signature first" id="attach-instance_method">
   
     #<strong>attach</strong>(callback, &amp;block)  &#x21d2; <tt>Integer</tt> 
   
@@ -691,7 +616,7 @@ JSON string.</p>
 
 <span class='id identifier rubyid_awareness'>awareness</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Y.html" title="Y (module)">Y</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="Y::Awareness (class)">Awareness</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
 <span class='id identifier rubyid_awareness'>awareness</span><span class='period'>.</span><span class='id identifier rubyid_local_state'>local_state</span> <span class='op'>=</span> <span class='id identifier rubyid_local_state'>local_state</span>
-<span class='id identifier rubyid_awareness'>awareness</span><span class='period'>.</span><span class='id identifier rubyid_clients'>clients</span> <span class='comment'># {312134501=&gt;&quot;{\&quot;editing\&quot;:{\&quot;field\&quot;:\&quot;description\&quot;,\&quot;pos\&quot;:0},\&quot;name\&quot;:\&quot;Hannes Moser\&quot;}&quot;}</span></code></pre>
+<span class='id identifier rubyid_awareness'>awareness</span><span class='period'>.</span><span class='id identifier rubyid_clients'>clients</span> <span class='comment'># {312134501=&gt;&quot;{\&quot;editing\&quot;:{\&quot;field\&quot;:\&quot;descriptio …</span></code></pre>
     
   </div>
 
@@ -790,6 +715,144 @@ JSON string.</p>
 </div>
     
       <div class="method_details ">
+  <h3 class="signature " id="diff-instance_method">
+  
+    #<strong>diff</strong>  &#x21d2; <tt>::Array&lt;Integer&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns a serializable update object which is representation of a current
+Awareness state.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>::Array&lt;Integer&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Binary encoded update of the local instance</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+153
+154
+155</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 153</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_diff'>diff</span>
+  <span class='id identifier rubyid_yawareness_update'>yawareness_update</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="diff_with_clients-instance_method">
+  
+    #<strong>diff_with_clients</strong>(*clients)  &#x21d2; <tt>String</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns a serializable update object which is representation of a current
+Awareness state. Unlike Awareness::update, this method variant allows to
+prepare update only for a subset of known clients. These clients must all
+be known to a current Awareness instance, otherwise a
+Error::ClientNotFound error will be returned.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>clients</span>
+      
+      
+        <span class='type'>(<tt>::Array&lt;Integer&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>A list of client IDs</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Binary encoded update including all given client IDs</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+165
+166
+167</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 165</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_diff_with_clients'>diff_with_clients</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_clients'>clients</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_yawareness_update_with_clients'>yawareness_update_with_clients</span><span class='lparen'>(</span><span class='id identifier rubyid_clients'>clients</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
   <h3 class="signature " id="local_state-instance_method">
   
     #<strong>local_state</strong>  &#x21d2; <tt>String</tt> 
@@ -822,7 +885,7 @@ instance.</p>
 
 <span class='id identifier rubyid_awareness'>awareness</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Y.html" title="Y (module)">Y</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="Y::Awareness (class)">Awareness</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
 <span class='id identifier rubyid_awareness'>awareness</span><span class='period'>.</span><span class='id identifier rubyid_local_state'>local_state</span> <span class='op'>=</span> <span class='id identifier rubyid_local_state'>local_state</span>
-<span class='id identifier rubyid_local_state'>local_state</span> <span class='comment'># &quot;{\&quot;editing\&quot;:{\&quot;field\&quot;:\&quot;description\&quot;,\&quot;pos\&quot;:0},\&quot;name\&quot;:\&quot;Hannes Moser\&quot;}&quot;</span></code></pre>
+<span class='id identifier rubyid_local_state'>local_state</span> <span class='comment'># &quot;{\&quot;editing\&quot;:{\&quot;field\&quot;:\&quot;description\&quot;,\&quot;pos\&quot;:0}, …</span></code></pre>
     
   </div>
 
@@ -985,9 +1048,9 @@ disconnected.</p>
 </div>
     
       <div class="method_details ">
-  <h3 class="signature " id="update-instance_method">
+  <h3 class="signature " id="sync-instance_method">
   
-    #<strong>update</strong>  &#x21d2; <tt>String</tt> 
+    #<strong>sync</strong>(diff)  &#x21d2; <tt>void</tt> 
   
 
   
@@ -995,92 +1058,48 @@ disconnected.</p>
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Returns a serializable update object which is representation of a current
-Awareness state.</p>
+    <p class="note returns_void">This method returns an undefined value.</p><p>Applies an incoming update. This gets the local awareness instance in
+sync with changes from another client. i.e., updates the state of another
+user in the local awareness instance.</p>
 
 
   </div>
 </div>
 <div class="tags">
   
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>String</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>Binary encoded update of this local awareness instance</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-153
-154
-155</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 153</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_update'>update</span>
-  <span class='id identifier rubyid_yawareness_update'>yawareness_update</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
+  <div class="examples">
+    <p class="tag_title">Examples:</p>
     
-      <div class="method_details ">
-  <h3 class="signature " id="update_with_clients-instance_method">
-  
-    #<strong>update_with_clients</strong>(clients)  &#x21d2; <tt>String</tt> 
-  
+      
+        <p class="example_title"><div class='inline'><p>Apply an incoming update</p>
+</div></p>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_update'>update</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='int'>1</span><span class='comma'>,</span><span class='int'>227</span><span class='comma'>,</span><span class='int'>245</span><span class='comma'>,</span><span class='int'>175</span><span class='comma'>,</span><span class='int'>195</span><span class='comma'>,</span><span class='int'>11</span><span class='comma'>,</span><span class='int'>1</span><span class='comma'>,</span><span class='int'>65</span><span class='comma'>,</span><span class='int'>123</span><span class='comma'>,</span> <span class='id identifier rubyid_…'>…</span><span class='rbracket'>]</span>
 
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Returns a serializable update object which is representation of a current
-Awareness state. Unlike Awareness::update, this method variant allows to
-prepare update only for a subset of known clients. These clients must all
-be known to a current Awareness instance, otherwise a
-Error::ClientNotFound error will be returned.</p>
-
-
+<span class='id identifier rubyid_awareness'>awareness</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Y.html" title="Y (module)">Y</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="Y::Awareness (class)">Awareness</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
+<span class='id identifier rubyid_awareness'>awareness</span><span class='period'>.</span><span class='id identifier rubyid_sync'>sync</span><span class='lparen'>(</span><span class='id identifier rubyid_update'>update</span><span class='rparen'>)</span></code></pre>
+    
   </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
+<p class="tag_title">Parameters:</p>
+<ul class="param">
   
     <li>
       
+        <span class='name'>diff</span>
       
-        <span class='type'>(<tt>String</tt>)</span>
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Array.html" title="Y::Array (class)">Array</a></span>&lt;Integer&gt;</tt>)</span>
       
       
       
         &mdash;
-        <div class='inline'><p>Binary encoded update including all given client IDs</p>
+        <div class='inline'><p>A binary encoded update</p>
 </div>
       
     </li>
   
 </ul>
+
 
 </div><table class="source_code">
   <tr>
@@ -1088,15 +1107,15 @@ Error::ClientNotFound error will be returned.</p>
       <pre class="lines">
 
 
-164
-165
-166</pre>
+48
+49
+50</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 164</span>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 48</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_update_with_clients'>update_with_clients</span><span class='lparen'>(</span><span class='id identifier rubyid_clients'>clients</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_yawareness_update_with_clients'>yawareness_update_with_clients</span><span class='lparen'>(</span><span class='id identifier rubyid_clients'>clients</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_sync'>sync</span><span class='lparen'>(</span><span class='id identifier rubyid_diff'>diff</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_yawareness_apply_update'>yawareness_apply_update</span><span class='lparen'>(</span><span class='id identifier rubyid_diff'>diff</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1108,7 +1127,7 @@ Error::ClientNotFound error will be returned.</p>
 </div>
 
       <div id="footer">
-  Generated on Fri Oct 21 09:41:00 2022 by
+  Generated on Mon Oct 24 09:47:56 2022 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.28 (ruby-3.0.4).
 </div>
