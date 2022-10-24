@@ -23,13 +23,15 @@ impl YAwareness {
         Self(RefCell::new(awareness))
     }
 
-    pub(crate) fn yawareness_apply_update(&self, update: &YAwarenessUpdate) -> Result<(), Error> {
-        update.decode().and_then(|value| {
-            self.0
-                .borrow_mut()
-                .apply_update(value)
-                .map_err(|_error| Error::runtime_error("cannot decode awareness update"))
-        })
+    pub(crate) fn yawareness_apply_update(&self, update: Vec<u8>) -> Result<(), Error> {
+        AwarenessUpdate::decode_v1(update.as_slice())
+            .map_err(|_error| Error::runtime_error("cannot decode update"))
+            .and_then(|value| {
+                self.0
+                    .borrow_mut()
+                    .apply_update(value)
+                    .map_err(|_error| Error::runtime_error("cannot apply awareness update"))
+            })
     }
 
     pub(crate) fn yawareness_clean_local_state(&self) {
@@ -76,57 +78,31 @@ impl YAwareness {
         self.0.borrow_mut().set_local_state(json)
     }
 
-    pub(crate) fn yawareness_update(&self) -> Result<YAwarenessUpdate, Error> {
+    pub(crate) fn yawareness_update(&self) -> Result<Vec<u8>, Error> {
         self.0
             .borrow_mut()
             .update()
-            .map(YAwarenessUpdate::from)
-            .map_err(|_error| Error::runtime_error("cannot update awareness"))
+            .map(|update| update.encode_v1())
+            .map_err(|_error| Error::runtime_error("cannot create update for current state"))
     }
 
     pub(crate) fn yawareness_update_with_clients(
         &self,
         clients: Vec<ClientID>,
-    ) -> Result<YAwarenessUpdate, Error> {
+    ) -> Result<Vec<u8>, Error> {
         self.0
             .borrow_mut()
             .update_with_clients(clients)
-            .map(YAwarenessUpdate::from)
-            .map_err(|_error| Error::runtime_error("cannot update awareness with clients"))
+            .map(|update| update.encode_v1())
+            .map_err(|_error| {
+                Error::runtime_error("cannot create update for current state and given clients")
+            })
     }
 }
 
 impl From<Awareness> for YAwareness {
     fn from(value: Awareness) -> Self {
         Self(RefCell::from(value))
-    }
-}
-
-#[magnus::wrap(class = "Y::AwarenessUpdate")]
-pub(crate) struct YAwarenessUpdate(pub(crate) Vec<u8>);
-
-/// SAFETY: This is safe because we only access this data when the GVL is held.
-unsafe impl Send for YAwarenessUpdate {}
-
-impl YAwarenessUpdate {
-    pub(crate) fn decode(&self) -> Result<AwarenessUpdate, Error> {
-        AwarenessUpdate::decode_v1(self.0.borrow())
-            .map_err(|_error| Error::runtime_error("cannot decode awareness update"))
-    }
-    pub(crate) fn yawareness_update_encode(&self) -> Vec<u8> {
-        self.0.to_vec()
-    }
-}
-
-impl From<AwarenessUpdate> for YAwarenessUpdate {
-    fn from(value: AwarenessUpdate) -> Self {
-        YAwarenessUpdate(value.encode_v1())
-    }
-}
-
-impl From<Vec<u8>> for YAwarenessUpdate {
-    fn from(value: Vec<u8>) -> Self {
-        YAwarenessUpdate(value)
     }
 }
 
