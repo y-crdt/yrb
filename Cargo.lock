@@ -157,9 +157,9 @@ checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
 
 [[package]]
 name = "lib0"
-version = "0.12.0"
+version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "db088f7d98d549ba85e37d4d1909f7fbef5ec215938b8cc74c68758197867390"
+checksum = "43a4d1318cbf1ad281d3c0c41ea6984f349be2d3a3c9366409a5b5938cc9c9f0"
 dependencies = [
  "thiserror",
 ]
@@ -515,7 +515,7 @@ checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
 
 [[package]]
 name = "yrb"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "lib0",
  "magnus",
@@ -525,9 +525,9 @@ dependencies = [
 
 [[package]]
 name = "yrs"
-version = "0.12.0"
+version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fd3ce14710ed995855c5fb6df36934678d5d6bcbbd093aa5c15fb2e860b2d4e1"
+checksum = "c3f736809f3b68e63ec05994a064cba6f46db94c09e95827497c3da82586c761"
 dependencies = [
  "lib0",
  "rand",
