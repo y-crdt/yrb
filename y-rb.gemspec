@@ -38,7 +38,7 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency "rake", "~> 13.0"
 
-  spec.add_dependency "rb_sys", "~> 0.9.32"
+  spec.add_dependency "rb_sys", "~> 0.9.35"
 
   spec.add_development_dependency "rake-compiler", "~> 1.2.0"
   spec.add_development_dependency "rake-compiler-dock", "~> 1.2.2"

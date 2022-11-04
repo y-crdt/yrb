@@ -8,12 +8,13 @@ repository = "https://github.com/y-crdt/yrb"
 
 [dependencies]
 lib0 = "0.12.2" # must match yrs version
-magnus = { git = "https://github.com/matsadler/magnus", rev = "cc852bfa31992d882d42509b1165eb5f67f9dc2c" } # waiting for release with full rb-sys backend
+magnus = { git = "https://github.com/matsadler/magnus", rev = "4c9857cecabec2df6cc230763560815520de20b7"} # waiting for release with full rb-sys backend
+rb-sys = { version = "~0.9.35", features = ["link-ruby"] }
 thiserror = "1.0.37"
 yrs = "0.12.2"
 
 [dev-dependencies]
-magnus = { git = "https://github.com/matsadler/magnus", rev = "cc852bfa31992d882d42509b1165eb5f67f9dc2c", features = ["embed"] } # waiting for release with full rb-sys backend
+magnus = { git = "https://github.com/matsadler/magnus", rev = "4c9857cecabec2df6cc230763560815520de20b7", features = ["embed"] } # waiting for release with full rb-sys backend
 
 [lib]
 name = "yrb"
