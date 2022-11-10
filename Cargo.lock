@@ -157,9 +157,9 @@ checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
 
 [[package]]
 name = "lib0"
-version = "0.12.1"
+version = "0.12.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "43a4d1318cbf1ad281d3c0c41ea6984f349be2d3a3c9366409a5b5938cc9c9f0"
+checksum = "988e5aa573db0f1f3fe56b635484cd96a880afd102404250e4703738cda66c6b"
 dependencies = [
  "thiserror",
 ]
