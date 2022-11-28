@@ -40,10 +40,10 @@ RSpec.describe Y::XMLText do
     xml_text = doc.get_xml_text("my text")
     xml_text << "Hello, World!"
 
-    attrs = { format: "bold" }
+    attrs = { "format" => "bold" }
     xml_text.format(7, 6, attrs)
 
-    expect(xml_text.to_s).to eq("Hello, World!")
+    expect(xml_text.to_s).to eq("Hello, <format>World!</format>")
   end
 
   it "inserts string at position" do
@@ -61,7 +61,7 @@ RSpec.describe Y::XMLText do
     attrs = { format: "bold" }
     xml_text.insert(0, "Hello, World!", attrs)
 
-    expect(xml_text.to_s).to eq("Hello, World!")
+    expect(xml_text.to_s).to eq("<format>Hello, World!</format>")
   end
 
   it "inserts Boolean at position" do
@@ -70,7 +70,7 @@ RSpec.describe Y::XMLText do
 
     xml_text.insert(0, true)
 
-    expect(xml_text.to_s).to eq("")
+    expect(xml_text.to_s).to eq("true")
   end
 
   it "inserts Integer at position" do
@@ -79,7 +79,7 @@ RSpec.describe Y::XMLText do
 
     xml_text.insert(0, 42)
 
-    expect(xml_text.to_s).to eq("")
+    expect(xml_text.to_s).to eq("42")
   end
 
   it "inserts Float at position" do
@@ -88,7 +88,7 @@ RSpec.describe Y::XMLText do
 
     xml_text.insert(0, 1.2)
 
-    expect(xml_text.to_s).to eq("")
+    expect(xml_text.to_s).to eq("1.2")
   end
 
   it "inserts Array at position" do
@@ -97,7 +97,7 @@ RSpec.describe Y::XMLText do
 
     xml_text.insert(0, [1, 2, 3])
 
-    expect(xml_text.to_s).to eq("")
+    expect(xml_text.to_s).to eq("[1, 2, 3]")
   end
 
   it "inserts Hash at position" do
@@ -106,7 +106,7 @@ RSpec.describe Y::XMLText do
 
     xml_text.insert(0, { hello: "World" })
 
-    expect(xml_text.to_s).to eq("")
+    expect(xml_text.to_s).to eq("{hello: World}")
   end
 
   it "inserts embed at position with attributes" do
@@ -116,7 +116,7 @@ RSpec.describe Y::XMLText do
     attrs = { format: "bold" }
     xml_text.insert(0, { hello: "World" }, attrs)
 
-    expect(xml_text.to_s).to eq("")
+    expect(xml_text.to_s).to eq("<format>{hello: World}</format>")
   end
 
   it "returns length of text" do

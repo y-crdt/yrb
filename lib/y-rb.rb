@@ -3,7 +3,7 @@
 
 # load native extension
 begin
-  ruby_version = /(\d+\.\d+)/.match(::RUBY_VERSION)
+  ruby_version = /(\d+\.\d+)/.match(RUBY_VERSION)
   require_relative "#{ruby_version}/yrb"
 rescue LoadError
   require "yrb"

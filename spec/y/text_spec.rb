@@ -160,11 +160,12 @@ RSpec.describe Y::Text do
 
       subscription_id = text.attach(listener)
 
-      text << "Hello, Wörld!"
-      text.slice! 8, 1
-      text.insert 8, "o"
+      local.transact do
+        text << "Hello, Wörld!"
+        text.slice! 8, 1
+        text.insert 8, "o"
+      end
 
-      text.document.current_transaction.commit
       text.detach(subscription_id)
 
       expect(called).to eq({ insert: "Hello, World!" })

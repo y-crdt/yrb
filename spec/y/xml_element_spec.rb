@@ -3,25 +3,25 @@
 RSpec.describe Y::XMLElement do
   it "creates new XMLElement" do
     doc = Y::Doc.new
-    xml_element = doc.get_xml_element("my xml")
+    xml_element = doc.get_xml_element("root")
 
-    expect(xml_element.to_s).to eq("<UNDEFINED></UNDEFINED>")
+    expect(xml_element.to_s).to eq("<root></root>")
   end
 
   it "inserts new node at index" do
     doc = Y::Doc.new
-    xml_element = doc.get_xml_element("my xml")
-    xml_element[0] = "root"
+    xml_element = doc.get_xml_element("root")
+    xml_element[0] = "firstNode"
 
-    expect(xml_element.to_s).to eq("<UNDEFINED><root></root></UNDEFINED>")
+    expect(xml_element.to_s).to eq("<root><firstNode></firstNode></root>")
   end
 
   it "retrieve node from index" do
     doc = Y::Doc.new
-    xml_element = doc.get_xml_element("my xml")
-    xml_element[0] = "root"
+    xml_element = doc.get_xml_element("root")
+    xml_element[0] = "firstNode"
 
-    expect(xml_element[0].to_s).to eq("<root></root>")
+    expect(xml_element[0].to_s).to eq("<firstNode></firstNode>")
   end
 
   it "retrieve attrs" do
@@ -50,10 +50,10 @@ RSpec.describe Y::XMLElement do
 
   it "inserts text into element at position" do
     doc = Y::Doc.new
-    xml_element = doc.get_xml_element("my xml")
+    xml_element = doc.get_xml_element("root")
     xml_element.insert_text(0)
 
-    expect(xml_element.to_s).to eq("<UNDEFINED></UNDEFINED>")
+    expect(xml_element.to_s).to eq("<root></root>")
   end
 
   it "retrieves adjacent element or text (next)" do
@@ -102,10 +102,10 @@ RSpec.describe Y::XMLElement do
 
   it "creates and inserts new text as last child of this element" do
     doc = Y::Doc.new
-    xml_element = doc.get_xml_element("my xml")
+    xml_element = doc.get_xml_element("root")
     xml_element.push_text
 
-    expect(xml_element.to_s).to eq("<UNDEFINED></UNDEFINED>")
+    expect(xml_element.to_s).to eq("<root></root>")
   end
 
   it "returns size of child list" do
@@ -119,11 +119,11 @@ RSpec.describe Y::XMLElement do
 
   it "returns string representation of element" do
     doc = Y::Doc.new
-    xml_element = doc.get_xml_element("my xml")
+    xml_element = doc.get_xml_element("root")
     a = xml_element << "A"
     a << "B"
 
-    expect(xml_element.to_s).to eq("<UNDEFINED><A><B></B></A></UNDEFINED>")
+    expect(xml_element.to_s).to eq("<root><A><B></B></A></root>")
   end
 
   it "adds child to the front of the child list" do
@@ -137,26 +137,26 @@ RSpec.describe Y::XMLElement do
 
   it "creates and inserts new text as first child of this element" do
     doc = Y::Doc.new
-    xml_element = doc.get_xml_element("my xml")
+    xml_element = doc.get_xml_element("root")
     xml_element.unshift_text
 
-    expect(xml_element.to_s).to eq("<UNDEFINED></UNDEFINED>")
+    expect(xml_element.to_s).to eq("<root></root>")
   end
 
   context "when syncing documents" do
     it "updates remote xml from local xml" do
       local = Y::Doc.new
-      local_xml = local.get_xml_element("my xml")
+      local_xml = local.get_xml_element("root")
       a = local_xml << "A"
       a << "B"
 
       remote = Y::Doc.new
-      remote_xml = remote.get_xml_element("my xml")
+      remote_xml = remote.get_xml_element("root")
 
       update = local.diff(remote.state)
       remote.sync(update)
 
-      expect(remote_xml.to_s).to eq("<UNDEFINED><A><B></B></A></UNDEFINED>")
+      expect(remote_xml.to_s).to eq("<root><A><B></B></A></root>")
     end
   end
 
@@ -264,10 +264,11 @@ RSpec.describe Y::XMLElement do
 
       subscription_id = xml_element.attach(listener)
 
-      xml_element << "A"
-      xml_element << "B"
+      local.transact do
+        xml_element << "A"
+        xml_element << "B"
+      end
 
-      local.commit
       xml_element.detach(subscription_id)
 
       expect(called.first[:added].size).to eq(2)
@@ -285,10 +286,11 @@ RSpec.describe Y::XMLElement do
         called = changes
       end
 
-      xml_element << "A"
-      xml_element << "B"
+      local.transact do
+        xml_element << "A"
+        xml_element << "B"
+      end
 
-      local.commit
       xml_element.detach(subscription_id)
 
       expect(called.first[:added].size).to eq(2)
@@ -303,7 +305,7 @@ RSpec.describe Y::XMLElement do
 
       changes = []
 
-      xml_element = local.get_xml_element("my xml element")
+      xml_element = local.get_xml_element("root")
       xml_element.attach(proc { |delta| changes << delta })
 
       local.transact do
@@ -321,7 +323,7 @@ RSpec.describe Y::XMLElement do
       end
 
       expect(xml_element.to_s).to eq(
-        "<UNDEFINED><A></A><B></B><C></C></UNDEFINED>"
+        "<root><A></A><B></B><C></C></root>"
       )
       expect(changes.size).to eq(3)
 

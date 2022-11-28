@@ -21,7 +21,7 @@ module Y
 
     # Create a new XMLElement instance
     #
-    # @param [Y::Doc] doc
+    # @param doc [Y::Doc]
     def initialize(doc = nil)
       @document = doc || Y::Doc.new
 
@@ -30,22 +30,24 @@ module Y
 
     # Retrieve node at index
     #
-    # @param [Integer] index
+    # @param index [Integer]
     # @return [Y::XMLElement|nil]
     def [](index)
-      node = yxml_element_get(index)
+      node = document.current_transaction { |tx| yxml_element_get(tx, index) }
       node&.document = document
       node
     end
 
     # Create a node at index
     #
-    # @param [Integer] index
-    # @param [String] name Name of node, e.g. `<p />`
+    # @param index [Integer]
+    # @param name [String] Name of node, e.g. `<p />`
     # @return [Y::XMLElement]
     # rubocop:disable Lint/Void
     def []=(index, name)
-      node = yxml_element_insert_element(transaction, index, name)
+      node = document.current_transaction do |tx|
+        yxml_element_insert_element(tx, index, name)
+      end
       node.document = document
       node
     end
@@ -55,7 +57,7 @@ module Y
     #
     # @return [Hash]
     def attrs
-      yxml_element_attributes
+      document.current_transaction { |tx| yxml_element_attributes(tx) }
     end
 
     alias attributes attrs
@@ -64,7 +66,7 @@ module Y
     #
     # @return [Y::XMLElement]
     def first_child
-      child = yxml_element_first_child
+      child = document.current_transaction { |tx| yxml_element_first_child(tx) }
       child&.document = document
       child
     end
@@ -73,13 +75,14 @@ module Y
     #
     # Optional input is pushed to the text if provided
     #
-    # @param [Integer] index
-    # @param [String|nil] input
+    # @param index [Integer]
+    # @param input [String|nil]
     # @return [Y::XMLText]
-    def insert_text(index, input = nil)
-      text = yxml_element_insert_text(transaction, index)
+    def insert_text(index, input = "")
+      text = document.current_transaction do |tx|
+        yxml_element_insert_text(tx, index, input)
+      end
       text.document = document
-      text << input unless input.nil?
       text
     end
 
@@ -87,7 +90,7 @@ module Y
     #
     # @return [Y::XMLElement|Y::XMLText|nil]
     def next_sibling
-      node = yxml_element_next_sibling
+      node = document.current_transaction { |tx| yxml_element_next_sibling(tx) }
       node&.document = document
       node
     end
@@ -106,8 +109,8 @@ module Y
     #   xml_element = doc.get_xml_element("my xml element")
     #   xml_element.attach { |changes| … }
     #
-    # @param [Proc] callback
-    # @param [Block] block
+    # @param callback [Proc]
+    # @param block [Block]
     # @return [Integer] The subscription ID
     def attach(callback = nil, &block)
       return yxml_element_observe(callback) unless callback.nil?
@@ -128,17 +131,19 @@ module Y
     #
     # @return [Y::XMLElement|Y::XMLText|nil]
     def prev_sibling
-      node = yxml_element_prev_sibling
+      node = document.current_transaction { |tx| yxml_element_prev_sibling(tx) }
       node&.document = document
       node
     end
 
     # Creates a new child an inserts at the end of the children list
     #
-    # @param [String] name
+    # @param name [String]
     # @return [Y::XMLElement]
     def <<(name)
-      xml_element = yxml_element_push_elem_back(transaction, name)
+      xml_element = document.current_transaction do |tx|
+        yxml_element_push_element_back(tx, name)
+      end
       xml_element.document = document
       xml_element
     end
@@ -149,12 +154,13 @@ module Y
     #
     # The optional str argument initializes the text node with its value
     #
-    # @param [String] str
+    # @param str [String]
     # @return [Y::XMLText]
-    def push_text(str = nil)
-      text = yxml_element_push_text_back(transaction)
+    def push_text(str = "")
+      text = document.current_transaction do |tx|
+        yxml_element_push_text_back(tx, str)
+      end
       text.document = document
-      text << str unless str.nil?
       text
     end
 
@@ -162,7 +168,7 @@ module Y
     #
     # @return [Integer]
     def size
-      yxml_element_size
+      document.current_transaction { |tx| yxml_element_size(tx) }
     end
 
     # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
@@ -192,42 +198,44 @@ module Y
     #
     # @return [void]
     def slice!(*args)
-      if args.size.zero?
-        raise ArgumentError,
-              "Provide one of `index`, `range`, `start, length` as arguments"
-      end
+      document.current_transaction do |tx| # rubocop:disable Metrics/BlockLength
+        if args.size.zero?
+          raise ArgumentError,
+                "Provide one of `index`, `range`, `start, length` as arguments"
+        end
 
-      if args.size == 1
-        arg = args.first
+        if args.size == 1
+          arg = args.first
 
-        if arg.is_a?(Range)
-          if arg.exclude_end?
-            yxml_element_remove_range(transaction, arg.first,
-                                      arg.last - arg.first)
+          if arg.is_a?(Range)
+            if arg.exclude_end?
+              yxml_element_remove_range(tx, arg.first,
+                                        arg.last - arg.first)
+            end
+            unless arg.exclude_end?
+              yxml_element_remove_range(tx, arg.first,
+                                        arg.last + 1 - arg.first)
+            end
+            return nil
           end
-          unless arg.exclude_end?
-            yxml_element_remove_range(transaction, arg.first,
-                                      arg.last + 1 - arg.first)
+
+          if arg.is_a?(Numeric)
+            yxml_element_remove_range(tx, arg.to_int, 1)
+            return nil
           end
-          return nil
         end
 
-        if arg.is_a?(Numeric)
-          yxml_element_remove_range(transaction, arg.to_int, 1)
-          return nil
+        if args.size == 2
+          first, second = args
+
+          if first.is_a?(Numeric) && second.is_a?(Numeric)
+            yxml_element_remove_range(tx, first, second)
+            return nil
+          end
         end
+
+        raise ArgumentError, "Please check your arguments, can't slice."
       end
-
-      if args.size == 2
-        first, second = args
-
-        if first.is_a?(Numeric) && second.is_a?(Numeric)
-          yxml_element_remove_range(transaction, first, second)
-          return nil
-        end
-      end
-
-      raise ArgumentError, "Please check your arguments, can't slice."
     end
 
     # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
@@ -243,12 +251,12 @@ module Y
     #
     # @return [String]
     def to_s
-      yxml_element_to_s
+      document.current_transaction { |tx| yxml_element_to_s(tx) }
     end
 
     # Detach a listener
     #
-    # @param [Integer] subscription_id
+    # @param subscription_id [Integer]
     # @return [void]
     def detach(subscription_id)
       yxml_element_unobserve(subscription_id)
@@ -256,10 +264,12 @@ module Y
 
     # Creates a new node and puts it in front of the child list
     #
-    # @param [String] name
+    # @param name [String]
     # @return [Y::XMLElement]
     def unshift_child(name)
-      xml_element = yxml_element_push_elem_front(transaction, name)
+      xml_element = document.current_transaction do |tx|
+        yxml_element_push_element_front(tx, name)
+      end
       xml_element.document = document
       xml_element
     end
@@ -268,12 +278,13 @@ module Y
     #
     # The optional str argument initializes the text node with its value
     #
-    # @param [String] str
+    # @param str [String]
     # @return [Y::XMLText]
-    def unshift_text(str = nil)
-      text = yxml_element_push_text_front(transaction)
+    def unshift_text(str = "")
+      text = document.current_transaction do |tx|
+        yxml_element_push_text_front(tx, str)
+      end
       text.document = document
-      text << args.first unless str.nil?
       text
     end
 
@@ -299,15 +310,20 @@ module Y
       getter = getter.to_s.slice(0...-1)&.to_sym if is_setter
 
       define_singleton_method(setter.to_sym) do |new_val|
-        yxml_element_insert_attribute(transaction,
-                                      method_name.to_s
-                                                 .delete_suffix("=")
-                                                 .delete_prefix("attr_"),
-                                      new_val)
+        document.current_transaction do |tx|
+          yxml_element_insert_attribute(tx,
+                                        method_name.to_s
+                                                   .delete_suffix("=")
+                                                   .delete_prefix("attr_"),
+                                        new_val)
+        end
       end
 
       define_singleton_method(getter) do
-        yxml_element_get_attribute(method_name.to_s.delete_prefix("attr_"))
+        document.current_transaction do |tx|
+          yxml_element_get_attribute(tx,
+                                     method_name.to_s.delete_prefix("attr_"))
+        end
       end
 
       if is_setter
@@ -326,131 +342,131 @@ module Y
       method_name.to_s.start_with?("attr_") || super
     end
 
-    private
-
     # @!method yxml_element_attributes
     #
     # @return [Hash]
 
-    # @!method yxml_element_first_child
+    # @!method yxml_element_first_child(tx)
     #
+    # @param tx [Y::Transaction]
     # @return [Y::XMLElement|Y::XMLText]
 
-    # @!method yxml_element_get_attribute(name)
+    # @!method yxml_element_get_attribute(tx, name)
     #
-    # @param [String] name
+    # @param tx [Y::Transaction]
+    # @param name [String]
     # @return [String|nil]
 
-    # @!method yxml_element_get(index)
+    # @!method yxml_element_get(tx, index)
     #
-    # @param [Integer] index
+    # @param tx [Y::Transaction]
+    # @param index [Integer]
     # @return [Y::XMLElement|Y::XMLText|nil]
 
-    # @!method yxml_element_insert_attribute(transaction, name, value)
+    # @!method yxml_element_insert_attribute(tx, name, value)
     #
-    # @param [Y::Transaction] transaction
-    # @param [String] name
-    # @param [String] value
+    # @param tx [Y::Transaction]
+    # @param name [String]
+    # @param value [String]
     # @return [String|nil]
 
-    # @!method yxml_element_insert_element(transaction, index, name)
+    # @!method yxml_element_insert_element(tx, index, name)
     # Insert XML element into this XML element
+    #
     # @!visibility private
-    # @param [Y::Transaction] transaction
-    # @param [Integer] index
-    # @param [String] name
+    # @param tx [Y::Transaction]
+    # @param index [Integer]
+    # @param name [String]
     # @return [Y::XMLElement]
 
-    # @!method yxml_element_insert_text(transaction, index)
+    # @!method yxml_element_insert_text(tx, index, text)
     #
-    # @param [Y::Transaction] transaction
-    # @param [Integer] index
+    # @param tx [Y::Transaction]
+    # @param index [Integer]
+    # @param text [String]
     # @return [Y::XMLText]
 
-    # @!method yxml_element_next_sibling()
+    # @!method yxml_element_next_sibling(tx)
     #
+    # @param tx [Y::Transaction]
     # @return [Y::XMLElement|XMLText|nil]
 
     # @!method yxml_element_observe(callback)
     #
-    # @param [Proc] callback
+    # @param callback [Proc]
     # @return [Integer] The subscription ID
 
     # @!method yxml_element_parent()
     #
     # @return [Y::XMLElement|nil]
 
-    # @!method yxml_element_prev_sibling()
+    # @!method yxml_element_prev_sibling(tx)
     #
+    # @param tx [Y::Transaction]
     # @return [Y::XMLElement|XMLText|nil]
 
-    # @!method yxml_element_push_elem_back(transaction, name)
+    # @!method yxml_element_push_element_back(tx, name)
     #
-    # @param [Y::Transaction] transaction
-    # @param [String] name
+    # @param tx [Y::Transaction]
+    # @param name [String]
     # @return [Y::XMLElement]
 
-    # @!method yxml_element_push_elem_front(transaction, name)
+    # @!method yxml_element_push_element_front(tx, name)
     #
-    # @param [Y::Transaction] transaction
-    # @param [String] name
+    # @param tx [Y::Transaction]
+    # @param name [String]
     # @return [Y::XMLElement]
 
-    # @!method yxml_element_push_text_back(transaction)
+    # @!method yxml_element_push_text_back(tx, text)
     #
-    # @param [Y::Transaction] transaction
+    # @param tx [Y::Transaction]
+    # @param text [string]
     # @return [Y::XMLText]
 
-    # @!method yxml_element_push_text_front(transaction)
+    # @!method yxml_element_push_text_front(tx, text)
     #
-    # @param [Y::Transaction] transaction
+    # @param tx [Y::Transaction]
+    # @param text [string]
     # @return [Y::XMLText]
 
-    # @!method yxml_element_remove_attribute(transaction, name)
+    # @!method yxml_element_remove_attribute(tx, name)
     #
-    # @param [Y::Transaction] transaction
-    # @param [String] name
+    # @param tx [Y::Transaction]
+    # @param name [String] name
+    # @return [void]
+
+    # @!method yxml_element_remove_range(tx, index, length)
+    #
+    # @param tx [Y::Transaction]
+    # @param index [Integer]
+    # @param length [Integer]
     #
     # @return [void]
 
-    # @!method yxml_element_remove_range(transaction, index, length)
+    # @!method yxml_element_size(tx)
     #
-    # @param [Y::Transaction] transaction
-    # @param [Integer] index
-    # @param [Integer] length
-    #
-    # @return [void]
-
-    # @!method yxml_element_size()
-    #
+    # @param tx [Y::Transaction]
     # @return [Integer]
 
-    # @!method yxml_element_tag()
+    # @!method yxml_element_tag
     #
     # @return [String]
 
-    # @!method yxml_element_to_s()
+    # @!method yxml_element_to_s(tx)
     #
+    # @param tx [Y::Transaction]
     # @return [String]
 
     # @!method yxml_element_unobserve(subscription_id)
     #
-    # @param [Integer] subscription_id
+    # @param subscription_id [Integer]
     # @return [void]
-
-    # A reference to the current active transaction of the document this element
-    # belongs to.
-    #
-    # @return [Y::Transaction] A transaction object
-    def transaction
-      document.current_transaction
-    end
   end
 
   # A XMLText
   #
   # Someone should not instantiate a text directly, but use
-  # {Y::Doc#get_text_element}, {Y::XMLElement#insert_text},
+  # {Y::Doc#get_xml_text}, {Y::XMLElement#insert_text},
   # {Y::XMLElement#push_text}, {Y::XMLElement#unshift_text} instead.
   #
   # The XMLText API is similar to {Y::Text}, but adds a few methods to make it
@@ -469,7 +485,7 @@ module Y
 
     # Create a new XMLText instance
     #
-    # @param [Y::Doc] doc
+    # @param doc [Y::Doc]
     def initialize(doc = nil)
       @document = doc || Y::Doc.new
 
@@ -478,17 +494,17 @@ module Y
 
     # Push a string to the end of the text node
     #
-    # @param [String] str
+    # @param str [String]
     # @return {void}
     def <<(str)
-      yxml_text_push(transaction, str)
+      document.current_transaction { |tx| yxml_text_push(tx, str) }
     end
 
     alias push <<
 
     # Attach a listener to get notified about changes
     #
-    # @param [Proc] callback
+    # @param callback [Proc]
     # @return [Integer] subscription_id
     def attach(callback = nil, &block)
       yxml_text_observe(callback) unless callback.nil?
@@ -499,12 +515,12 @@ module Y
     #
     # @return [Hash]
     def attrs
-      yxml_text_attributes
+      document.current_transaction { |tx| yxml_text_attributes(tx) }
     end
 
     # Detach a listener
     #
-    # @param [Integer] subscription_id
+    # @param subscription_id [Integer]
     # @return [void]
     def detach(subscription_id)
       yxml_text_unobserve(subscription_id)
@@ -512,15 +528,17 @@ module Y
 
     # Format text
     #
-    # @param [Integer] index
-    # @param [Integer] length
-    # @param [Hash] attrs
+    # @param index [Integer]
+    # @param length [Integer]
+    # @param attrs [Hash]
     # @return [void]
     def format(index, length, attrs)
-      yxml_text_format(transaction, index, length, attrs)
+      document.current_transaction do |tx|
+        yxml_text_format(tx, index, length, attrs)
+      end
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable Metrics/MethodLength
 
     # Insert a value at position and with optional attributes. This method is
     # similar to [String#insert](https://ruby-doc.org/core-3.1.2/String.html),
@@ -542,42 +560,44 @@ module Y
     # - Array (where element types must be supported)
     # - Hash (where the the types of key and values must be supported)
     #
-    # @param [Integer] index
-    # @param [String, Float, Array, Hash, Boolean] value
-    # @param [Hash|nil] attrs
+    # @param index [Integer]
+    # @param value [String, Float, Integer, Array, Hash, Boolean]
+    # @param attrs [Hash|nil]
     # @return [void]
     def insert(index, value, attrs = nil)
-      if value.is_a?(String)
-        yxml_text_insert(transaction, index, value) if attrs.nil?
-        unless attrs.nil?
-          yxml_text_insert_with_attrs(transaction, index, value,
-                                      attrs)
+      document.current_transaction do |tx|
+        if value.is_a?(String)
+          yxml_text_insert(tx, index, value) if attrs.nil?
+          unless attrs.nil?
+            yxml_text_insert_with_attrs(tx, index, value,
+                                        attrs)
+          end
+
+          return nil
         end
 
-        return nil
-      end
+        if can_insert?(value)
+          yxml_text_insert_embed(tx, index, value) if attrs.nil?
+          unless attrs.nil?
+            yxml_text_insert_embed_with_attrs(tx, index, value,
+                                              attrs)
+          end
 
-      if can_insert?(value)
-        yxml_text_insert_embed(transaction, index, value) if attrs.nil?
-        unless attrs.nil?
-          yxml_text_insert_embed_with_attrs(transaction, index, value,
-                                            attrs)
+          return nil
         end
 
-        return nil
+        raise ArgumentError,
+              "Can't insert value. `#{value.class.name}` isn't supported."
       end
-
-      raise ArgumentError,
-            "Can't insert value. `#{value.class.name}` isn't supported."
     end
 
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:enable Metrics/MethodLength
 
     # Return length of string
     #
     # @return [void]
     def length
-      yxml_text_length
+      document.current_transaction { |tx| yxml_text_length(tx) }
     end
 
     alias size length
@@ -586,7 +606,7 @@ module Y
     #
     # @return [Y::XMLElement|Y::XMLText|nil]
     def next_sibling
-      node = yxml_text_next_sibling
+      node = document.current_transaction { |tx| yxml_text_next_sibling(tx) }
       node.document = document
       node
     end
@@ -604,7 +624,7 @@ module Y
     #
     # @return [Y::XMLElement|Y::XMLText|nil]
     def prev_sibling
-      node = yxml_text_prev_sibling
+      node = document.current_transaction { |tx| yxml_text_prev_sibling(tx) }
       node&.document = document
       node
     end
@@ -661,35 +681,37 @@ module Y
     #
     # @return [void]
     def slice!(*args)
-      if args.size.zero?
-        raise ArgumentError,
-              "Provide one of `index`, `range`, `start, length` as arguments"
-      end
-
-      if args.size == 1
-        arg = args.first
-
-        if arg.is_a?(Range)
-          yxml_text_remove_range(transaction, arg.first, arg.last - arg.first)
-          return nil
+      document.current_transaction do |tx|
+        if args.size.zero?
+          raise ArgumentError,
+                "Provide one of `index`, `range`, `start, length` as arguments"
         end
 
-        if arg.is_a?(Numeric)
-          yxml_text_remove_range(transaction, arg.to_int, 1)
-          return nil
+        if args.size == 1
+          arg = args.first
+
+          if arg.is_a?(Range)
+            yxml_text_remove_range(tx, arg.first, arg.last - arg.first)
+            return nil
+          end
+
+          if arg.is_a?(Numeric)
+            yxml_text_remove_range(tx, arg.to_int, 1)
+            return nil
+          end
         end
-      end
 
-      if args.size == 2
-        first, second = args
+        if args.size == 2
+          first, second = args
 
-        if first.is_a?(Numeric) && second.is_a?(Numeric)
-          yxml_text_remove_range(transaction, first, second)
-          return nil
+          if first.is_a?(Numeric) && second.is_a?(Numeric)
+            yxml_text_remove_range(tx, first, second)
+            return nil
+          end
         end
-      end
 
-      raise ArgumentError, "Please check your arguments, can't slice."
+        raise ArgumentError, "Please check your arguments, can't slice."
+      end
     end
 
     # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
@@ -698,7 +720,7 @@ module Y
     #
     # @return [String]
     def to_s
-      yxml_text_to_s
+      document.current_transaction { |tx| yxml_text_to_s(tx) }
     end
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
@@ -723,15 +745,19 @@ module Y
       getter = getter.to_s.slice(0...-1).to_sym if is_setter
 
       define_singleton_method(setter.to_sym) do |new_val|
-        yxml_text_insert_attribute(transaction,
-                                   method_name.to_s
-                                              .delete_suffix("=")
-                                              .delete_prefix("attr_"),
-                                   new_val)
+        document.current_transaction do |tx|
+          yxml_text_insert_attribute(tx,
+                                     method_name.to_s
+                                                .delete_suffix("=")
+                                                .delete_prefix("attr_"),
+                                     new_val)
+        end
       end
 
       define_singleton_method(getter) do
-        yxml_text_get_attribute(method_name.to_s.delete_prefix("attr_"))
+        document.current_transaction do |tx|
+          yxml_text_get_attribute(tx, method_name.to_s.delete_prefix("attr_"))
+        end
       end
 
       if is_setter
@@ -765,105 +791,111 @@ module Y
     #
     # @return [Hash]
 
-    # @!method yxml_text_format(transaction, index, length, attrs)
+    # @!method yxml_text_format(tx, index, length, attrs)
     #
-    # @param [Integer] index
-    # @param [Integer] length
-    # @param [Hash] attrs
+    # @param tx [Y::Transaction]
+    # @param index [Integer]
+    # @param length [Integer]
+    # @param attrs [Hash]
     # @return [void]
 
-    # @!method yxml_text_get_attribute(name)
+    # @!method yxml_text_get_attribute(tx, name)
     #
-    # @param [String] name
+    # @param tx [Y::Transaction]
+    # @param name [String]
     # @return [String|nil]
 
-    # @!method yxml_text_insert(transaction, index, str)
+    # @!method yxml_text_insert(tx, index, str)
     #
-    # @param [Y::Transaction] transaction
-    # @param [Integer] index
-    # @param [String] str
+    # @param tx [Y::Transaction]
+    # @param index [Integer]
+    # @param str [String]
     # @return [void]
 
-    # @!method yxml_text_insert_attribute(transaction, name, value)
+    # @!method yxml_text_insert_attribute(tx, name, value)
     #
-    # @param [Y::Transaction] transaction
-    # @param [String] name
-    # @param [String] value
+    # @param tx [Y::Transaction]
+    # @param name [String] name
+    # @param value [String] value
     # @return [void]
 
-    # @!method yxml_text_insert_with_attrs(transaction, index, value, attrs)
+    # @!method yxml_text_insert_with_attrs(tx, index, value, attrs)
     #
-    # @param [Y::Transaction] transaction
-    # @param [Integer] index
-    # @param [String] value
-    # @param [Hash] attrs
+    # @param tx [Y::Transaction]
+    # @param index [Integer]
+    # @param value [String]
+    # @param attrs [Hash]
     # @return [void]
 
-    # @!method yxml_text_insert_embed(transaction, index, value)
+    # @!method yxml_text_insert_embed(tx, index, value)
     #
-    # @param [Y::Transaction] transaction
-    # @param [Integer] index
-    # @param [String] value
+    # @param tx [Y::Transaction]
+    # @param index [Integer]
+    # @param value [String]
     # @return [void]
 
-    # @!method yxml_text_insert_embed_with_attrs(txn, index, value, attrs)
+    # @!method yxml_text_insert_embed_with_attrs(tx, index, value, attrs)
     #
-    # @param [Y::Transaction] txn
-    # @param [Integer] index
-    # @param [true|false|Float|Integer|Array|Hash] value
-    # @param [Hash] attrs
+    # @param tx [Y::Transaction]
+    # @param index [Integer]
+    # @param value [true|false|Float|Integer|Array|Hash]
+    # @param attrs [Hash]
     # @return [void]
 
-    # @!method yxml_text_length
+    # @!method yxml_text_length(tx)
     #
+    # @param tx [Y::Transaction]
     # @return [Integer]
 
-    # @!method yxml_text_next_sibling
+    # @!method yxml_text_next_sibling(tx)
     #
+    # @param tx [Y::Transaction]
     # @return [Y::XMLElement|Y::XMLText|nil]
 
     # @!method yxml_text_observe(callback)
     #
-    # @param [Proc] callback
+    # @param callback [Proc]
     # @return [Integer] A subscription ID
 
     # @!method yxml_text_parent
     #
     # @return [Y::XMLElement|nil]
 
-    # @!method yxml_text_prev_sibling
+    # @!method yxml_text_prev_sibling(tx)
     #
+    # @param tx [Y::Transaction]
     # @return [Y::XMLElement|Y::XMLText|nil]
 
-    # @!method yxml_text_push(transaction, str)
+    # @!method yxml_text_push(tx, str)
     #
-    # @param [Y::Transaction] transaction
-    # @param [String] str
+    # @param tx [Y::Transaction]
+    # @param str [String]
     # @return [void]
 
-    # @!method yxml_text_remove_range(transaction, index, length)
+    # @!method yxml_text_remove_range(tx, index, length)
     #
-    # @param [Y::Transaction] transaction
-    # @param [Integer] index
-    # @param [Integer] length
+    # @param tx [Y::Transaction]
+    # @param index [Integer]
+    # @param length [Integer]
     # @return [void]
 
-    # @!method yxml_text_to_s()
+    # @!method yxml_text_to_s(tx)
     #
+    # @param tx [Y::Transaction]
     # @return [void]
 
     # @!method yxml_text_unobserve(subscription_id)
     #
-    # @param [Integer] subscription_id
+    # @param subscription_id [Integer]
     # @return [void]
+  end
 
-    # A reference to the current active transaction of the document this text
-    # belongs to.
+  # @!visibility private
+  class XMLFragment
+    # @!attribute [r] document
     #
-    # @return [Y::Transaction] A transaction object
-    def transaction
-      document.current_transaction
-    end
+    # @return [Y::Doc] The document this array belongs to
+    attr_accessor :document
   end
 
   # rubocop:enable Metrics/ClassLength

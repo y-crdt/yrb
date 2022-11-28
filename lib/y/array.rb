@@ -19,7 +19,7 @@ module Y
   #   array.concat([3, 4, 5])
   #
   #   array.to_a == [1, 2, 3, 4, 5] # true
-  class Array
+  class Array # rubocop:disable Metrics/ClassLength
     include Enumerable
 
     # @!attribute [r] document
@@ -29,7 +29,7 @@ module Y
 
     # Create a new array instance
     #
-    # @param [Y::Doc] doc
+    # @param doc [Y::Doc]
     def initialize(doc = nil)
       @document = doc || Y::Doc.new
 
@@ -38,25 +38,26 @@ module Y
 
     # Retrieves element at position
     #
-    # @return [Object]
+    # @return [true|false|Float|Integer|String|Array|Hash]
     def [](index)
-      yarray_get(index)
+      document.current_transaction { |tx| yarray_get(tx, index) }
     end
 
     # Inserts value at position
     #
-    # @param [Integer] index
-    # @param [true|false|Float|Integer|String|Array|Hash] value
+    # @param index [Integer]
+    # @param value [true|false|Float|Integer|String|Array|Hash]
     # @return [void]
     def []=(index, value)
-      yarray_insert(transaction, index, value)
+      document.current_transaction { |tx| yarray_insert(tx, index, value) }
     end
 
     # Adds an element to the end of the array
     #
+    # @param value [true|false|Float|Integer|String|::Array|Hash]
     # @return [void]
     def <<(value)
-      yarray_push_back(transaction, value)
+      document.current_transaction { |tx| yarray_push_back(tx, value) }
     end
 
     # Attach listener to array changes
@@ -65,19 +66,18 @@ module Y
     #   local = Y::Doc.new
     #
     #   arr = local.get_array("my array")
-    #   arr.attach(->(delta) { pp delta })
+    #   arr.attach { |delta| pp delta }
     #
     #   local.transact do
     #     arr << 1
     #   end
     #
-    # @param [Proc] callback
-    # @param [Block] block
+    # @param block [Block]
     # @return [Integer]
-    def attach(callback, &block)
-      return yarray_observe(callback) unless callback.nil?
+    def attach(&block)
+      raise "provide block" unless block
 
-      yarray_observe(block.to_proc) unless block.nil?
+      yarray_observe(block.to_proc)
     end
 
     # Adds to array all elements from each Array in `other_arrays`.
@@ -91,19 +91,21 @@ module Y
     #
     #   arr.to_a == [1, 2, 3] # true
     #
-    # @param [Array<Array<Object>>] other_arrays
+    # @param other_arrays [Array<Array<Object>>]
     # @return [void]
     def concat(*other_arrays)
-      combined = other_arrays.reduce([]) do |values, arr|
-        values.concat(arr) if arr.is_a?(::Array)
-      end
+      document.current_transaction do |tx|
+        combined = other_arrays.reduce([]) do |values, arr|
+          values.concat(arr) if arr.is_a?(::Array)
+        end
 
-      yarray_insert_range(transaction, size, combined)
+        yarray_insert_range(tx, yarray_length(tx), combined)
+      end
     end
 
     # Detach listener
     #
-    # @param [Integer] subscription_id
+    # @param subscription_id [Integer]
     # @return [void]
     def detach(subscription_id)
       yarray_unobserve(subscription_id)
@@ -111,7 +113,7 @@ module Y
 
     # @return [void]
     def each(&block)
-      yarray_each(block)
+      document.current_transaction { |tx| yarray_each(tx, &block) }
     end
 
     # Check if the array is empty
@@ -123,31 +125,35 @@ module Y
 
     # Returns first element in array if there is at least one
     #
-    # @return [Object|nil]
+    # @return [true|false|Float|Integer|String|::Array|Hash|nil]
     def first
-      yarray_get(0)
+      document.current_transaction { |tx| yarray_get(tx, 0) }
     end
 
     # Returns last element in array if there is at least one element
     #
-    # @return [Object|nil]
+    # @return [true|false|Float|Integer|String|::Array|Hash|nil]
     def last
-      len = yarray_length
-      return yarray_get(yarray_length - 1) if len.positive?
+      document.current_transaction do |tx|
+        len = yarray_length(tx)
+        return yarray_get(tx, len - 1) if len.positive?
 
-      nil
+        nil
+      end
     end
 
     # rubocop:disable Naming/MethodParameterName
 
     # Removes last (n) element(s) from array
     #
-    # @param [Integer|nil] n Number of elements to remove
+    # @param n [Integer|nil] Number of elements to remove
     # @return [void]
     def pop(n = nil)
-      len = size
-      yarray_remove(transaction, len - 1) if n.nil?
-      yarray_remove_range(transaction, len - n, n) unless n.nil?
+      document.current_transaction do |tx|
+        len = yarray_length(tx)
+        yarray_remove(tx, len - 1) if n.nil?
+        yarray_remove_range(tx, len - n, n) unless n.nil?
+      end
     end
 
     # rubocop:enable Naming/MethodParameterName
@@ -158,11 +164,14 @@ module Y
 
     # Removes first (n) element(s) from array
     #
-    # @param [Integer|nil] n Number of elements to remove
+    # @param n [Integer|nil] Number of elements to remove
     # @return [void]
     def shift(n = nil)
-      yarray_remove(transaction, 0) if n.nil?
-      yarray_remove_range(transaction, 0, n) unless nil?
+      document.current_transaction do |tx|
+        yarray_remove(tx, 0) if n.nil?
+
+        yarray_remove_range(tx, 0, n) unless nil?
+      end
     end
 
     # rubocop:enable Naming/MethodParameterName
@@ -171,7 +180,7 @@ module Y
     #
     # @return [Integer]
     def size
-      yarray_length
+      document.current_transaction { |tx| yarray_length(tx) }
     end
 
     alias length size
@@ -208,147 +217,152 @@ module Y
     #
     # @return [void]
     def slice!(*args)
-      if args.size.zero?
-        raise ArgumentError,
-              "Provide one of `index`, `range`, `start, length` as arguments"
-      end
+      document.current_transaction do |tx| # rubocop:disable Metrics/BlockLength
+        if args.size.zero?
+          raise ArgumentError,
+                "Provide one of `index`, `range`, `start, length` as arguments"
+        end
 
-      if args.size == 1
-        arg = args.first
+        if args.size == 1
+          arg = args.first
 
-        if arg.is_a?(Range)
-          if arg.exclude_end?
-            yarray_remove_range(transaction, arg.first,
-                                arg.last - arg.first)
+          if arg.is_a?(Range)
+            if arg.exclude_end?
+              yarray_remove_range(tx, arg.first,
+                                  arg.last - arg.first)
+            end
+            unless arg.exclude_end?
+              yarray_remove_range(tx, arg.first,
+                                  arg.last + 1 - arg.first)
+            end
+            return nil
           end
-          unless arg.exclude_end?
-            yarray_remove_range(transaction, arg.first,
-                                arg.last + 1 - arg.first)
+
+          if arg.is_a?(Numeric)
+            yarray_remove(tx, arg.to_int)
+            return nil
           end
-          return nil
         end
 
-        if arg.is_a?(Numeric)
-          yarray_remove(transaction, arg.to_int)
-          return nil
+        if args.size == 2
+          first, second = args
+
+          if first.is_a?(Numeric) && second.is_a?(Numeric)
+            yarray_remove_range(tx, first, second)
+            return nil
+          end
         end
+
+        raise ArgumentError, "Please check your arguments, can't slice."
       end
-
-      if args.size == 2
-        first, second = args
-
-        if first.is_a?(Numeric) && second.is_a?(Numeric)
-          yarray_remove_range(transaction, first, second)
-          return nil
-        end
-      end
-
-      raise ArgumentError, "Please check your arguments, can't slice."
     end
 
     # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
     # Convert this array to a Ruby Array
     #
-    # @return [Array<Object>]
+    # @return [Array<true|false|Float|Integer|String|::Array|Hash>]
     def to_a
-      yarray_to_a
+      document.current_transaction { |tx| yarray_to_a(tx) }
     end
 
     # Adds an element to the beginning of the array
     #
     # @return [void]
     def unshift(value)
-      yarray_push_front(transaction, value)
+      document.current_transaction { |tx| yarray_push_front(tx, value) }
     end
 
     alias prepend unshift
-
-    private
 
     # @!method yarray_each(proc)
     #   Iterates over all elements in Array by calling the provided proc
     #   with the value as argument.
     #
-    # @param [Proc<Object>] proc A proc that is called for every element
+    # @param proc [Proc<Object>] A proc that is called for every element
+    # @!visibility private
 
-    # @!method yarray_get(index)
+    # @!method yarray_get(transaction, index)
     #   Retrieves content as specified index
     #
-    # @param [Integer] index
+    # @param index [Integer]
     # @return [Object]
+    # @!visibility private
 
     # @!method yarray_insert(transaction, index, content)
     #   Inserts content at specified index
     #
-    # @param [Y::Transaction] transaction
-    # @param [Integer] index
-    # @param [Boolean, Float, Integer, Array, Hash, Text] content
+    # @param transaction [Y::Transaction]
+    # @param index [Integer]
+    # @param content [Boolean, Float, Integer, Array, Hash, Text]
     # @return [void]
+    # @!visibility private
 
     # @!method yarray_insert_range(transaction, index, arr)
     #   Inserts all elements of a given array at specified index
     #
-    # @param [Y::Transaction] transaction
-    # @param [Integer] index
-    # @param [Array<Boolean, Float, Integer, Array, Hash, Text>] arr
+    # @param transaction [Y::Transaction]
+    # @param index [Integer]
+    # @param arr [Array<Boolean|Float|Integer|Array|Hash|Text>]
     # @return [void]
+    # @!visibility private
 
-    # @!method yarray_length
+    # @!method yarray_length(transaction)
     #   Returns length of array
     #
+    # @param transaction [Y::Transaction]
     # @return [Integer] Length of array
+    # @!visibility private
 
     # @!method yarray_push_back(transaction, value)
     #   Adds an element to the end of the array
     #
-    # @param [Y::Transaction] transaction
-    # @param [Object] value
+    # @param transaction [Y::Transaction]
+    # @param value [Object]
     # @return [void]
+    # @!visibility private
 
     # @!method yarray_push_front(transaction, value)
     #   Adds an element to the front of the array
     #
-    # @param [Y::Transaction] transaction
-    # @param [Object] value
+    # @param transaction [Y::Transaction]
+    # @param value [Object]
     # @return [void]
+    # @!visibility private
 
-    # @!method yarray_observe(callback)
+    # @!method yarray_observe(proc)
     #
-    # @param [Proc] callback
+    # @param proc [Proc]
     # @return [Integer]
+    # @!visibility private
 
     # @!method yarray_remove(transaction, index)
     #   Removes a single element from array at index
     #
-    # @param [Y::Transaction] transaction
-    # @param [Integer] index
+    # @param transaction [Y::Transaction]
+    # @param index [Integer]
     # @return [void]
+    # @!visibility private
 
     # @!method yarray_remove_range(transaction, index, length)
     #   Removes a range of elements from array
     #
-    # @param [Y::Transaction] transaction
-    # @param [Integer] index
-    # @param [Integer] length
+    # @param transaction [Y::Transaction]
+    # @param index [Integer]
+    # @param length [Integer]
     # @return [void]
+    # @!visibility private
 
-    # @!method yarray_to_a
+    # @!method yarray_to_a(transaction)
     #   Transforms the array into a Ruby array
-    #
+    # @param transaction [Y::Transaction]
     # @return [Array]
+    # @!visibility private
 
     # @!method yarray_unobserve(subscription_id)
     #
-    # @param [Integer] subscription_id
+    # @param subscription_id [Integer]
     # @return [void]
-
-    # A reference to the current active transaction of the document this map
-    # belongs to.
-    #
-    # @return [Y::Transaction] A transaction object
-    def transaction
-      document.current_transaction
-    end
+    # @!visibility private
   end
 end

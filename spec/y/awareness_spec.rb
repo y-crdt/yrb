@@ -80,4 +80,18 @@ RSpec.describe Y::Awareness do
 
     expect(event).to be_instance_of(Y::AwarenessEvent)
   end
+
+  context "when syncing multiple client states" do
+    it "merges state of all clients" do
+      client_a = described_class.new
+      client_a.local_state = { name: "User A" }.to_json
+
+      client_b = described_class.new
+      client_b.local_state = { name: "User B" }.to_json
+
+      client_a.sync(client_b.diff)
+
+      expect(client_a.clients.size).to eq(2)
+    end
+  end
 end

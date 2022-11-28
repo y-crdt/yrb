@@ -27,7 +27,7 @@ module Y
 
     # Create a new map instance
     #
-    # @param [Y::Doc] doc
+    # @param doc [Y::Doc]
     def initialize(doc = nil)
       @document = doc || Y::Doc.new
 
@@ -36,8 +36,8 @@ module Y
 
     # Attach a listener to get notified about any changes to the map
     #
-    # @param [Proc] callback
-    # @param [Block] block
+    # @param callback [Proc]
+    # @param block [Block]
     # @return [Integer]
     def attach(callback, &block)
       return ymap_observe(callback) unless callback.nil?
@@ -49,7 +49,7 @@ module Y
     #
     # @return [Self]
     def clear
-      ymap_clear(transaction)
+      document.current_transaction { |tx| ymap_clear(tx) }
       self
     end
 
@@ -70,10 +70,10 @@ module Y
     #   m.delete(:nosuch) { |key| "Key #{key} not found" }# => "Key nosuch not found"
     #   m # => {}
     #
-    # @param [String, Symbol] key
+    # @param key [String|Symbol]
     # @return [void]
     def delete(key)
-      value = ymap_remove(transaction, key)
+      value = document.current_transaction { |tx| ymap_remove(tx, key) }
       if block_given? && key?(key)
         yield key
       else
@@ -85,7 +85,7 @@ module Y
 
     # Detach listener
     #
-    # @param [Integer] subscription_id
+    # @param subscription_id [Integer]
     # @return [void]
     def detach(subscription_id)
       ymap_unobserve(subscription_id)
@@ -93,38 +93,38 @@ module Y
 
     # @return [void]
     def each(&block)
-      ymap_each(block)
+      document.current_transaction { |tx| ymap_each(tx, block) }
     end
 
     # @return [true|false]
     def key?(key)
-      ymap_contains(key)
+      document.current_transaction { |tx| ymap_contains(tx, key) }
     end
 
     alias has_key? key?
 
     # @return [Object]
     def [](key)
-      ymap_get(key)
+      document.current_transaction { |tx| ymap_get(tx, key) }
     end
 
     # @return [void]
     def []=(key, val)
-      ymap_insert(transaction, key, val)
+      document.current_transaction { |tx| ymap_insert(tx, key, val) }
     end
 
     # Returns size of map
     #
     # @return [Integer]
     def size
-      ymap_size
+      document.current_transaction { |tx| ymap_size(tx) }
     end
 
     # Returns a Hash representation of this map
     #
     # @return [Hash]
     def to_h
-      ymap_to_h
+      document.current_transaction { |tx| ymap_to_h(tx) }
     end
 
     # Returns a JSON representation of map
@@ -134,69 +134,66 @@ module Y
       to_h.to_json
     end
 
-    private
-
-    # @!method ymap_clear()
+    # @!method ymap_clear(tx)
     #   Removes all key-value pairs from Map
+    #
+    # @param tx [Y::Transaction]
 
-    # @!method ymap_contains(key)
+    # @!method ymap_contains(tx, key)
     #   Check if a certain key is in the Map
     #
-    # @param [String|Symbol] key
+    # @param tx [Y::Transaction]
+    # @param key [String|Symbol]
     # @return [Boolean] True, if and only if the key exists
 
-    # @!method ymap_each(proc)
+    # @!method ymap_each(tx, proc)
     #   Iterates over all key-value pairs in Map by calling the provided proc
     #   with the key and the value as arguments.
     #
-    # @param [Proc<String, Any>] proc A proc that is called for every element
+    # @param tx [Y::Transaction]
+    # @param proc [Proc<String|Any>] A proc that is called for every element
 
-    # @!method ymap_get(key)
+    # @!method ymap_get(tx, key)
     #   Returns stored value for key or nil if none is present
     #
-    # @param [String|Symbol] key
-    # @return [Any|Nil] Value or nil
+    # @param tx [Y::Transaction]
+    # @param key [String|Symbol]
+    # @return [Object|nil] Value or nil
 
-    # @!method ymap_insert(transaction, key, value)
+    # @!method ymap_insert(tx, key, value)
     #   Insert value for key. In case the key already exists, the previous value
     #   will be overwritten.
     #
-    # @param [Y::Transaction] transaction
-    # @param [String|Symbol] key
-    # @param [Any] value
+    # @param tx [Y::Transaction]
+    # @param key [String|Symbol]
+    # @param value [Object]
 
     # @!method ymap_observe(callback)
     #
-    # @param [Proc] callback
+    # @param callback [Proc]
     # @return [Integer]
 
-    # @!method ymap_remove(transaction, key)
+    # @!method ymap_remove(tx, key)
     #   Removes key-value pair from Map if key exists.
     #
-    # @param [Y::Transaction] transaction
-    # @param [String|Symbol] key
+    # @param tx [Y::Transaction]
+    # @param key [String|Symbol]
 
-    # @!method ymap_size()
+    # @!method ymap_size(tx)
     #   Returns number of key-value pairs stored in map
     #
+    # @param tx [Y::Transaction]
     # @return [Integer] Number of key-value pairs
 
-    # @!method ymap_to_h()
+    # @!method ymap_to_h(tx)
     #   Returns a Hash representation of the Map
     #
+    # @param tx [Y::Transaction]
     # @return [Hash] Hash representation of Map
 
     # @!method ymap_unobserve(subscription_id)
     #
-    # @param [Integer] subscription_id
+    # @param subscription_id [Integer]
     # @return [void]
-
-    # A reference to the current active transaction of the document this map
-    # belongs to.
-    #
-    # @return [Y::Transaction] A transaction object
-    def transaction
-      document.current_transaction
-    end
   end
 end

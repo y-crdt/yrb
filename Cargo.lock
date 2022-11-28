@@ -12,6 +12,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "atomic_refcell"
+version = "0.1.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "73b5e5f48b927f04e952dedc932f31995a65a0bf65ec971c74436e51bf6e970d"
+
+[[package]]
 name = "bindgen"
 version = "0.60.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -69,47 +75,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "darling"
-version = "0.13.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a01d95850c592940db9b8194bc39f4bc0e89dee5c4265e4b1807c34a9aba453c"
-dependencies = [
- "darling_core",
- "darling_macro",
-]
-
-[[package]]
-name = "darling_core"
-version = "0.13.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "859d65a907b6852c9361e3185c862aae7fafd2887876799fa55f5f99dc40d610"
-dependencies = [
- "fnv",
- "ident_case",
- "proc-macro2",
- "quote",
- "strsim",
- "syn",
-]
-
-[[package]]
-name = "darling_macro"
-version = "0.13.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9c972679f83bdf9c42bd905396b6c3588a843a17f0f16dfcfa3e2c5d57441835"
-dependencies = [
- "darling_core",
- "quote",
- "syn",
-]
-
-[[package]]
-name = "fnv"
-version = "1.0.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3f9eec918d3f24069decb9af1554cad7c880e2da24a9afd88aca000531ab82c1"
-
-[[package]]
 name = "getrandom"
 version = "0.1.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -127,12 +92,6 @@ name = "glob"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9b919933a397b79c37e33b77bb2aa3dc8eb6e165ad809e58ff75bc7db2e34574"
-
-[[package]]
-name = "ident_case"
-version = "1.0.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b9e0384b61958566e926dc50660321d12159025e767c18e043daf26b70104c39"
 
 [[package]]
 name = "js-sys"
@@ -157,9 +116,9 @@ checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
 
 [[package]]
 name = "lib0"
-version = "0.12.2"
+version = "0.14.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "988e5aa573db0f1f3fe56b635484cd96a880afd102404250e4703738cda66c6b"
+checksum = "a97806db2c8ef7cc3a66ee6418aa6b85b4b131d6a904ecfae15f981533d6bf2c"
 dependencies = [
  "thiserror",
 ]
@@ -181,15 +140,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "linkify"
-version = "0.9.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "96dd5884008358112bc66093362197c7248ece00d46624e2cf71e50029f8cff5"
-dependencies = [
- "memchr",
-]
-
-[[package]]
 name = "log"
 version = "0.4.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -200,19 +150,21 @@ dependencies = [
 
 [[package]]
 name = "magnus"
-version = "0.3.2"
-source = "git+https://github.com/matsadler/magnus?rev=cc852bfa31992d882d42509b1165eb5f67f9dc2c#cc852bfa31992d882d42509b1165eb5f67f9dc2c"
+version = "0.4.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c7d904f55da4e2b0ac7f133257af80580ff4ca17bcca67f51ea06be46aa634ac"
 dependencies = [
  "magnus-macros",
  "rb-sys",
+ "rb-sys-env",
 ]
 
 [[package]]
 name = "magnus-macros"
-version = "0.1.0"
-source = "git+https://github.com/matsadler/magnus?rev=cc852bfa31992d882d42509b1165eb5f67f9dc2c#cc852bfa31992d882d42509b1165eb5f67f9dc2c"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "acc8ba6908cb0f67a4e75cb48fc81a1f0e6a6dd1501936e0c9e2c7c8f9f18e05"
 dependencies = [
- "darling",
  "proc-macro2",
  "quote",
  "syn",
@@ -319,24 +271,29 @@ dependencies = [
 
 [[package]]
 name = "rb-sys"
-version = "0.9.31"
+version = "0.9.49"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bfc41b26ea88da6100f538d31467941e41ab0c002999d687315e67d3b371b796"
+checksum = "6df5f8e7b8d1cd952d55b64a074eb934f4873e3ab5279169f37050a1c613e76d"
 dependencies = [
- "bindgen",
- "linkify",
  "rb-sys-build",
 ]
 
 [[package]]
 name = "rb-sys-build"
-version = "0.9.31"
+version = "0.9.49"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "79be4233eabd2bf9e19eb8116391aeaf4b89b87a7ab38e0ded44de9158006e46"
+checksum = "359e695380c266e614250dcb6bf5c39a8fd5dc5177efa4a369a0881435aff481"
 dependencies = [
+ "bindgen",
  "regex",
  "shell-words",
 ]
+
+[[package]]
+name = "rb-sys-env"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "74c38752410925faeb82c400c06ba2fd9ee6aa8f719dd33994c9e53f5242d25f"
 
 [[package]]
 name = "regex"
@@ -387,12 +344,6 @@ name = "smallvec"
 version = "1.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2fd0db749597d91ff862fd1d55ea87f7855a744a8425a64695b6fca237d1dad1"
-
-[[package]]
-name = "strsim"
-version = "0.10.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
 
 [[package]]
 name = "syn"
@@ -515,7 +466,7 @@ checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
 
 [[package]]
 name = "yrb"
-version = "0.3.2"
+version = "0.4.0"
 dependencies = [
  "lib0",
  "magnus",
@@ -525,11 +476,13 @@ dependencies = [
 
 [[package]]
 name = "yrs"
-version = "0.12.2"
+version = "0.14.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a232e4e529a06548e97270e6ec00afd5f14dae517b8df3c2a1a3f3a4558b7326"
+checksum = "70956c211f07cd4667ef3397ee8b78a00700707fc5f22ed64ae48771d8b1d348"
 dependencies = [
+ "atomic_refcell",
  "lib0",
  "rand",
  "smallstr",
+ "thiserror",
 ]

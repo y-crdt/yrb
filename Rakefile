@@ -13,6 +13,8 @@ cross_platforms = %w[
   x86_64-darwin
   x86_64-linux
   x86_64-linux-musl
+  x64-mingw32
+  x64-mingw-ucrt
 ]
 
 spec = Bundler.load_gemspec("y-rb.gemspec")

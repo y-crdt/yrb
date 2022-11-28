@@ -6,7 +6,10 @@ use magnus::{class, Float, Integer, RArray, RHash, RString, Symbol, Value, QNIL}
 use std::cell::RefCell;
 use std::collections::HashMap;
 use yrs::types::Value as YrsValue;
-use yrs::{Text as YrsText, XmlElement as YrsXmlElement, XmlText as YrsXmlText};
+use yrs::{
+    Array, Map, TextRef as YrsText, Transact, XmlElementRef as YrsXmlElement,
+    XmlTextRef as YrsXmlText,
+};
 
 pub(crate) struct YValue(pub(crate) RefCell<Value>);
 
@@ -141,12 +144,28 @@ impl From<YrsValue> for YValue {
             YrsValue::YText(text) => YValue::from(text),
             YrsValue::YXmlElement(el) => YValue::from(el),
             YrsValue::YXmlText(text) => YValue::from(text),
-            // YrsValue::YArray(val) => YValue::from(RArray::from_vec(val.iter().map(|item| {
-            //     let yvalue = YValue::from(item);
-            //     *yvalue.0
-            // }))),
-            // YrsValue::YMap(val) => YValue::from(RHash::from_iter(val.iter())),
-            v => panic!("cannot map complex yrs values to yvalue: {}", v.to_string()),
+            YrsValue::YArray(val) => {
+                let tx = val.transact();
+                let arr = RArray::from_vec(
+                    val.iter(&tx)
+                        .map(|item| {
+                            let yvalue = YValue::from(item);
+                            yvalue.0.into_inner()
+                        })
+                        .collect(),
+                );
+                YValue::from(arr)
+            }
+            YrsValue::YMap(val) => {
+                let tx = val.transact();
+                let iter = val.iter(&tx).map(|(key, val)| {
+                    let val = YValue::from(val);
+                    let val = val.0.into_inner();
+                    (key, val)
+                });
+                YValue::from(RHash::from_iter(iter))
+            }
+            v => panic!("cannot map complex yrs values to yvalue: {:?}", v),
         }
     }
 }
