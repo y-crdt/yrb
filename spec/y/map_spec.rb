@@ -153,10 +153,11 @@ RSpec.describe Y::Map do
 
       subscription_id = map.attach(listener)
 
-      map[:hello] = "world"
-      map[:say] = "goodbye"
+      local.transact do
+        map[:hello] = "world"
+        map[:say] = "goodbye"
+      end
 
-      local.commit
       map.detach(subscription_id)
 
       expect(called).to match_array(

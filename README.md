@@ -1,4 +1,8 @@
-# Yrb
+<p align="center">
+  <img alt="Yrb" src="./docs/assets/logo.png" width="300" />
+</p>
+
+---
 
 Yrb is a Ruby binding for Y-CRDT. It provides distributed data types that enable
 real-time collaboration between devices. Yrb can sync data with any other

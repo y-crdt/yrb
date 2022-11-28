@@ -13,10 +13,10 @@ module Y
       super()
     end
 
-    # Applies the binary encoded update for this document. This will bring the
+    # Applies the encoded update on this document. This will bring the
     # the document to the same state as the one the update is from.
     #
-    # @param [::Array<Integer>] update
+    # @param update [::Array<Integer>]
     # @return [void]
     def apply(update)
       ytransaction_apply_update(update)
@@ -31,7 +31,7 @@ module Y
 
     # Create or get array type
     #
-    # @param [String] name
+    # @param name [String]
     # @return [Y::Array]
     def get_array(name)
       array = ytransaction_get_array(name)
@@ -41,7 +41,7 @@ module Y
 
     # Create or get map type
     #
-    # @param [String] name
+    # @param name [String]
     # @return [Y::Map]
     def get_map(name)
       map = ytransaction_get_map(name)
@@ -51,7 +51,7 @@ module Y
 
     # Create or get text type
     #
-    # @param [String] name
+    # @param name [String]
     # @return [Y::Text]
     def get_text(name)
       text = ytransaction_get_text(name)
@@ -61,7 +61,7 @@ module Y
 
     # Create or get XMLElement type
     #
-    # @param [String] name
+    # @param name [String]
     # @return [Y::XMLElement]
     def get_xml_element(name)
       xml_element = ytransaction_get_xml_element(name)
@@ -69,9 +69,19 @@ module Y
       xml_element
     end
 
+    # Create or get XMLFragment type
+    #
+    # @param name [String]
+    # @return [Y::XMLFragment]
+    def get_xml_fragment(name)
+      xml_fragment = ytransaction_get_xml_fragment(name)
+      xml_fragment.document = document
+      xml_fragment
+    end
+
     # Create or get XMLText type
     #
-    # @param [String] name
+    # @param name [String]
     # @return [Y::XMLText]
     def get_xml_text(name)
       xml_text = ytransaction_get_xml_text(name)
@@ -89,7 +99,7 @@ module Y
     # @!method ytransaction_apply_update(update)
     #   Returns or creates an array by name
     #
-    # @param [::Array<Integer>] update
+    # @param update [::Array<Integer>]
     # @return [void]
     # @!visibility private
 
@@ -101,36 +111,44 @@ module Y
     # @!method ytransaction_get_array(name)
     #   Returns or creates an array by name
     #
-    # @param [String] name Name of the array structure to retrieve or create
+    # @param name [String] Name of the array structure to retrieve or create
     # @return [Y::Array] Array structure
     # @!visibility private
 
     # @!method ytransaction_get_map(name)
     #   Returns or creates a map structure by name
     #
-    # @param [String] name Name of the map structure to retrieve or create
+    # @param name [String] Name of the map structure to retrieve or create
     # @return [Y::Map] Map structure
     # @!visibility private
 
     # @!method ytransaction_get_text(name)
     #   Returns or creates a text structure by name
     #
-    # @param [String] name Name of the text structure to retrieve or create
+    # @param name [String] Name of the text structure to retrieve or create
     # @return [Y::Text] Text structure
     # @!visibility private
 
     # @!method ytransaction_get_xml_element(name)
     #   Returns or creates a XML structure by name
     #
-    # @param [String] name Name of the XML element structure to retrieve or
+    # @param name [String] Name of the XML element structure to retrieve or
     #     create
     # @return [Y::XMLElement] XMLElement structure
+    # @!visibility private
+
+    # @!method ytransaction_get_xml_fragment(name)
+    #   Returns or creates a XML fragment
+    #
+    # @param name [String] Name of the XML fragment to retrieve or
+    #     create by
+    # @return [Y::XMLFragment] XMLFragment structure
     # @!visibility private
 
     # @!method ytransaction_get_xml_text(name)
     #   Returns or creates a XML structure by name
     #
-    # @param [String] name Name of the XML element structure to retrieve or
+    # @param name [String] Name of the XML element structure to retrieve or
     #     create
     # @return [Y::XMLElement] XMLElement structure
     # @!visibility private

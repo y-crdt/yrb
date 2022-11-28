@@ -202,8 +202,8 @@ RSpec.describe Y::Array do
       local_arr = local.get_array("my array")
       local_arr << "world"
 
+      diff = local.diff
       remote = Y::Doc.new
-      diff = local.diff(remote.state)
       remote.sync(diff)
 
       remote_arr = remote.get_array("my array")
@@ -219,9 +219,8 @@ RSpec.describe Y::Array do
 
     it "invokes callback" do
       called = nil
-      listener = proc { |changes| called = changes }
 
-      subscription_id = arr.attach(listener)
+      subscription_id = arr.attach { |changes| called = changes }
 
       arr << 1
       arr << 2
@@ -233,7 +232,8 @@ RSpec.describe Y::Array do
 
       expect(called).to eq(
         [
-          { added: [1, 3] }
+          { retain: 1 },
+          { added: [3] }
         ]
       )
     end
@@ -242,7 +242,7 @@ RSpec.describe Y::Array do
     it "commits automatically" do
       changes = []
 
-      arr.attach(->(delta) { changes << delta })
+      arr.attach { |delta| changes << delta }
 
       local.transact do
         arr << 1

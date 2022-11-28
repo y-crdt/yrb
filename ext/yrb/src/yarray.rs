@@ -1,37 +1,50 @@
+use crate::ytransaction::YTransaction;
 use crate::yvalue::YValue;
-use crate::YTransaction;
 use lib0::any::Any;
 use magnus::block::Proc;
 use magnus::value::Qnil;
 use magnus::{Error, RArray, RHash, Symbol, Value};
 use std::cell::RefCell;
 use yrs::types::Change;
-use yrs::Array;
+use yrs::{Array, ArrayRef, Observable};
 
 #[magnus::wrap(class = "Y::Array")]
-pub(crate) struct YArray(pub(crate) RefCell<Array>);
+pub(crate) struct YArray(pub(crate) RefCell<ArrayRef>);
 
 /// SAFETY: This is safe because we only access this data when the GVL is held.
 unsafe impl Send for YArray {}
 
 impl YArray {
-    pub(crate) fn yarray_each(&self, block: Proc) {
-        self.0.borrow_mut().iter().for_each(|val| {
+    pub(crate) fn yarray_each(&self, transaction: &YTransaction, block: Proc) -> Result<(), Error> {
+        let tx = transaction.transaction();
+        let tx = tx.as_ref().unwrap();
+
+        let arr = self.0.borrow();
+        arr.iter(tx).for_each(|val| {
             let yvalue = YValue::from(val);
             let args = (yvalue.into(),);
             let _ = block.call::<(Value,), Qnil>(args);
         });
+
+        Ok(())
     }
-    pub(crate) fn yarray_get(&self, index: u32) -> Value {
-        let v = self.0.borrow().get(index).unwrap();
+    pub(crate) fn yarray_get(&self, transaction: &YTransaction, index: u32) -> Value {
+        let tx = transaction.transaction();
+        let tx = tx.as_ref().unwrap();
+
+        let arr = self.0.borrow();
+        let v = arr.get(tx, index).unwrap();
         YValue::from(v).into()
     }
     pub(crate) fn yarray_insert(&self, transaction: &YTransaction, index: u32, value: Value) {
         let yvalue = YValue::from(value);
         let avalue = Any::from(yvalue);
-        self.0
-            .borrow_mut()
-            .insert(&mut *transaction.0.borrow_mut(), index, avalue);
+
+        let mut tx = transaction.transaction();
+        let tx = tx.as_mut().unwrap();
+
+        let arr = self.0.borrow_mut();
+        arr.insert(tx, index, avalue);
     }
     pub(crate) fn yarray_insert_range(
         &self,
@@ -39,18 +52,24 @@ impl YArray {
         index: u32,
         values: RArray,
     ) {
-        let arr: Vec<Any> = values
+        let arr = self.0.borrow_mut();
+        let mut tx = transaction.transaction();
+        let tx = tx.as_mut().unwrap();
+
+        let add_values: Vec<Any> = values
             .each()
             .into_iter()
             .map(|value| YValue::from(value.unwrap()).into())
             .collect();
 
-        self.0
-            .borrow_mut()
-            .insert_range(&mut *transaction.0.borrow_mut(), index, arr);
+        arr.insert_range(tx, index, add_values)
     }
-    pub(crate) fn yarray_length(&self) -> u32 {
-        return self.0.borrow().len();
+    pub(crate) fn yarray_length(&self, transaction: &YTransaction) -> u32 {
+        let arr = self.0.borrow();
+        let tx = transaction.transaction();
+        let tx = tx.as_ref().unwrap();
+
+        arr.len(tx)
     }
     pub(crate) fn yarray_observe(&self, block: Proc) -> Result<u32, Error> {
         let change_added = Symbol::new("added").to_static();
@@ -111,32 +130,42 @@ impl YArray {
     pub(crate) fn yarray_push_back(&self, transaction: &YTransaction, value: Value) {
         let yvalue = YValue::from(value);
         let avalue = Any::from(yvalue);
-        self.0
-            .borrow_mut()
-            .push_back(&mut *transaction.0.borrow_mut(), avalue)
+        let mut tx = transaction.transaction();
+        let tx = tx.as_mut().unwrap();
+
+        self.0.borrow_mut().push_back(tx, avalue);
     }
     pub(crate) fn yarray_push_front(&self, transaction: &YTransaction, value: Value) {
         let yvalue = YValue::from(value);
         let avalue = Any::from(yvalue);
-        self.0
-            .borrow_mut()
-            .push_front(&mut *transaction.0.borrow_mut(), avalue)
+
+        let mut tx = transaction.transaction();
+        let tx = tx.as_mut().unwrap();
+
+        let arr = self.0.borrow_mut();
+        arr.push_front(tx, avalue)
     }
     pub(crate) fn yarray_remove(&self, transaction: &YTransaction, index: u32) {
-        self.0
-            .borrow_mut()
-            .remove(&mut transaction.0.borrow_mut(), index)
+        let mut tx = transaction.transaction();
+        let tx = tx.as_mut().unwrap();
+
+        let arr = self.0.borrow_mut();
+        arr.remove(tx, index)
     }
     pub(crate) fn yarray_remove_range(&self, transaction: &YTransaction, index: u32, len: u32) {
-        self.0
-            .borrow_mut()
-            .remove_range(&mut transaction.0.borrow_mut(), index, len)
+        let mut tx = transaction.transaction();
+        let tx = tx.as_mut().unwrap();
+
+        let arr = self.0.borrow_mut();
+        arr.remove_range(tx, index, len)
     }
-    pub(crate) fn yarray_to_a(&self) -> RArray {
-        let arr = self
-            .0
-            .borrow_mut()
-            .iter()
+    pub(crate) fn yarray_to_a(&self, transaction: &YTransaction) -> RArray {
+        let arr = self.0.borrow();
+        let tx = transaction.transaction();
+        let tx = tx.as_ref().unwrap();
+
+        let arr = arr
+            .iter(tx)
             .map(|v| YValue::from(v).into())
             .collect::<Vec<Value>>();
 
@@ -144,5 +173,11 @@ impl YArray {
     }
     pub(crate) fn yarray_unobserve(&self, subscription_id: u32) {
         self.0.borrow_mut().unobserve(subscription_id);
+    }
+}
+
+impl From<ArrayRef> for YArray {
+    fn from(v: ArrayRef) -> Self {
+        YArray(RefCell::from(v))
     }
 }

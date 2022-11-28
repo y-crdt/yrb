@@ -25,7 +25,7 @@ module Y
 
     # Create a new text instance
     #
-    # @param [Y::Doc] doc
+    # @param doc [Y::Doc]
     def initialize(doc = nil)
       @document = doc || Y::Doc.new
 
@@ -34,9 +34,10 @@ module Y
 
     # Appends a string at the end of the text
     #
+    # @param str [String]
     # @return [void]
     def <<(str)
-      ytext_push(transaction, str)
+      document.current_transaction { |tx| ytext_push(tx, str) }
     end
 
     # Attach listener to text changes
@@ -62,8 +63,8 @@ module Y
     #   # todo: required, otherwise segfault
     #   local.commit
     #
-    # @param [Proc] callback
-    # @param [Block] block
+    # @param callback [Proc]
+    # @param block [Block]
     # @return [Integer]
     def attach(callback, &block)
       return ytext_observe(callback) unless callback.nil?
@@ -73,7 +74,7 @@ module Y
 
     # Detach listener
     #
-    # @param [Integer] subscription_id
+    # @param subscription_id [Integer]
     # @return [void]
     def detach(subscription_id)
       ytext_unobserve(subscription_id)
@@ -92,7 +93,7 @@ module Y
       length.zero?
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable Metrics/MethodLength
 
     # Insert a value at position and with optional attributes. This method is
     # similar to [String#insert](https://ruby-doc.org/core-3.1.2/String.html),
@@ -114,32 +115,34 @@ module Y
     # - Array (where element types must be supported)
     # - Hash (where the the types of key and values must be supported)
     #
-    # @param [Integer] index
-    # @param [String, Numeric, Array, Hash] value
-    # @param [Hash|nil] attrs
+    # @param index [Integer]
+    # @param value [String|Numeric|Array|Hash]
+    # @param attrs [Hash|nil]
     # @return [void]
     def insert(index, value, attrs = nil)
-      if value.is_a?(String)
-        ytext_insert(transaction, index, value) if attrs.nil?
-        unless attrs.nil?
-          ytext_insert_with_attributes(transaction, index, value, attrs)
+      document.current_transaction do |tx|
+        if value.is_a?(String)
+          ytext_insert(tx, index, value) if attrs.nil?
+          unless attrs.nil?
+            ytext_insert_with_attributes(tx, index, value, attrs)
+          end
+          return nil
         end
-        return nil
-      end
 
-      if can_insert?(value)
-        ytext_insert_embed(transaction, index, value) if attrs.nil?
-        unless attrs.nil?
-          ytext_insert_embed_with_attributes(transaction, index, value, attrs)
+        if can_insert?(value)
+          ytext_insert_embed(tx, index, value) if attrs.nil?
+          unless attrs.nil?
+            ytext_insert_embed_with_attributes(tx, index, value, attrs)
+          end
+          return nil
         end
-        return nil
-      end
 
-      raise ArgumentError,
-            "Can't insert value. `#{value.class.name}` isn't supported."
+        raise ArgumentError,
+              "Can't insert value. `#{value.class.name}` isn't supported."
+      end
     end
 
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:enable Metrics/MethodLength
 
     # Applies formatting to text
     #
@@ -150,19 +153,21 @@ module Y
     #   attrs = {format: "bold"}
     #   text.format(0, 2, attrs)
     #
-    # @param [Integer] index
-    # @param [Integer] length
-    # @param [Hash] attrs
+    # @param index [Integer]
+    # @param length [Integer]
+    # @param attrs [Hash]
     # @return [void]
     def format(index, length, attrs)
-      ytext_format(transaction, index, length, attrs)
+      document.current_transaction do |tx|
+        ytext_format(tx, index, length, attrs)
+      end
     end
 
     # Returns length of text
     #
     # @return [Integer] Length of text
     def length
-      ytext_length
+      document.current_transaction { |tx| ytext_length(tx) }
     end
 
     alias size length
@@ -219,35 +224,37 @@ module Y
     #
     # @return [void]
     def slice!(*args)
-      if args.size.zero?
-        raise ArgumentError,
-              "Provide one of `index`, `range`, `start, length` as arguments"
-      end
-
-      if args.size == 1
-        arg = args.first
-
-        if arg.is_a?(Range)
-          ytext_remove_range(transaction, arg.first, arg.last - arg.first)
-          return nil
+      document.current_transaction do |tx|
+        if args.size.zero?
+          raise ArgumentError,
+                "Provide one of `index`, `range`, `start, length` as arguments"
         end
 
-        if arg.is_a?(Numeric)
-          ytext_remove_range(transaction, arg.to_int, 1)
-          return nil
+        if args.size == 1
+          arg = args.first
+
+          if arg.is_a?(Range)
+            ytext_remove_range(tx, arg.first, arg.last - arg.first)
+            return nil
+          end
+
+          if arg.is_a?(Numeric)
+            ytext_remove_range(tx, arg.to_int, 1)
+            return nil
+          end
         end
-      end
 
-      if args.size == 2
-        start, length = args
+        if args.size == 2
+          start, length = args
 
-        if start.is_a?(Numeric) && length.is_a?(Numeric)
-          ytext_remove_range(transaction, start, length)
-          return nil
+          if start.is_a?(Numeric) && length.is_a?(Numeric)
+            ytext_remove_range(tx, start, length)
+            return nil
+          end
         end
-      end
 
-      raise ArgumentError, "Please check your arguments, can't slice."
+        raise ArgumentError, "Please check your arguments, can't slice."
+      end
     end
 
     # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
@@ -263,7 +270,7 @@ module Y
     #
     # @return [String]
     def to_s
-      ytext_to_s
+      document.current_transaction { |tx| ytext_to_s(tx) }
     end
 
     private
@@ -277,75 +284,74 @@ module Y
         value.is_a?(Hash)
     end
 
-    # rubocop:disable Layout/LineLength
-
-    # @!method ytext_insert(transaction, index, chunk)
+    # @!method ytext_insert(tx, index, chunk)
     #   Insert into text at position
     #
-    # @param [Y::Transaction] transaction
-    # @param [Integer] index
-    # @param [String] chunk
+    # @param transaction [Y::Transaction]
+    # @param index [Integer]
+    # @param chunk [String]
     # @return [nil]
 
-    # @!method ytext_insert_embed(transaction, index, content)
+    # @!method ytext_insert_embed(tx, index, content)
     #   Insert into text at position
     #
-    # @param [Y::Transaction] transaction
-    # @param [Integer] index
-    # @param [Y::Text, Y::Array, Y::Map] content
+    # @param tx [Y::Transaction]
+    # @param index [Integer]
+    # @param content [Y::Text|Y::Array|Y::Map]
     # @return [nil]
 
-    # @!method ytext_insert_embed_with_attributes(transaction, index, embed, attrs)
+    # @!method ytext_insert_embed_with_attributes(tx, index, embed, attrs)
     #   Insert into text at position
     #
-    # @param [Y::Transaction] transaction
-    # @param [Integer] index
-    # @param [Y::Text, Y::Array, Y::Map] embed
-    # @param [Hash] attrs
+    # @param tx [Y::Transaction]
+    # @param index [Integer]
+    # @param embed [Y::Text, Y::Array, Y::Map]
+    # @param attrs [Hash]
     # @return [nil]
 
-    # @!method ytext_insert_with_attributes(transaction, index, chunk, attrs)
+    # @!method ytext_insert_with_attributes(tx, index, chunk, attrs)
     #   Insert into text at position
     #
-    # @param [Y::Transaction] transaction
-    # @param [Integer] index
-    # @param [String] chunk
-    # @param [Hash] attrs
+    # @param tx [Y::Transaction]
+    # @param index [Integer]
+    # @param chunk [String]
+    # @param attrs [Hash]
     # @return [nil]
 
-    # @!method ytext_push(transaction, value)
+    # @!method ytext_push(tx, value)
     #   Returns length of text
     #
-    # @param [Y::Transaction] transaction
-    # @param [String] value
+    # @param tx [Y::Transaction]
+    # @param value [String]
     # @return [nil]
 
-    # @!method ytext_remove_range(transaction, index, length)
+    # @!method ytext_remove_range(tx, index, length)
     #   Removes a range from text
     #
-    # @param [Y::Transaction] transaction
-    # @param [Integer] index
-    # @param [Integer] length
+    # @param tx [Y::Transaction]
+    # @param index [Integer]
+    # @param length [Integer]
     # @return [nil]
 
-    # @!method ytext_format(transaction, index, length, attrs)
+    # @!method ytext_format(tx, index, length, attrs)
     #   Formats a text range
     #
-    # @param [Y::Transaction] transaction
-    # @param [Integer] index
-    # @param [Integer] length
-    # @param [Hash] attrs
+    # @param tx [Y::Transaction]
+    # @param index [Integer]
+    # @param length [Integer]
+    # @param attrs [Hash]
     # @return [nil]
 
-    # @!method ytext_length()
+    # @!method ytext_length(tx)
     #   Returns length of text
     #
+    # @param tx [Y::Transaction]
     # @return [Integer]
 
     # @!method ytext_observe(proc)
     #   Observe text changes
     #
-    # @param [Proc] proc
+    # @param proc [Proc]
     # @return [Integer]
 
     # @!method ytext_to_s()
@@ -356,17 +362,7 @@ module Y
     # @!method ytext_unobserve(subscription_id)
     #   Detach listener
     #
-    # @param [Integer] subscription_id
+    # @param subscription_id [Integer]
     # @return [void]
-
-    # rubocop:enable Layout/LineLength
-
-    # A reference to the current active transaction of the document this map
-    # belongs to.
-    #
-    # @return [Y::Transaction] A transaction object
-    def transaction
-      document.current_transaction
-    end
   end
 end

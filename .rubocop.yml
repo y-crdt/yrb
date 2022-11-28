@@ -10,6 +10,7 @@ Layout/LineLength:
   Max: 80
   Exclude:
     - y-rb.gemspec
+    - spec/y/bugs_spec.rb
 
 Metrics/BlockLength:
   Exclude:
@@ -17,6 +18,12 @@ Metrics/BlockLength:
 
 RSpec/ExampleLength:
   Max: 10
+  Exclude:
+    - spec/y/bugs_spec.rb
+
+RSpec/NoExpectationExample:
+  Exclude:
+    - spec/y/bugs_spec.rb
 
 Style/Documentation:
   Enabled: false

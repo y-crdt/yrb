@@ -6,35 +6,47 @@ use magnus::block::Proc;
 use magnus::{Error, RArray, RHash, Symbol, Value};
 use std::cell::RefCell;
 use yrs::types::{EntryChange, Value as YrsValue};
-use yrs::Map;
+use yrs::{Map, MapRef, Observable};
 
 #[magnus::wrap(class = "Y::Map")]
-pub(crate) struct YMap(pub(crate) RefCell<Map>);
+pub(crate) struct YMap(pub(crate) RefCell<MapRef>);
 
 /// SAFETY: This is safe because we only access this data when the GVL is held.
 unsafe impl Send for YMap {}
 
 impl YMap {
     pub(crate) fn ymap_clear(&self, transaction: &YTransaction) {
-        self.0.borrow_mut().clear(&mut *transaction.0.borrow_mut());
+        let mut tx = transaction.transaction();
+        let tx = tx.as_mut().unwrap();
+
+        self.0.borrow_mut().clear(tx)
     }
-    pub(crate) fn ymap_contains(&self, key: Value) -> bool {
+    pub(crate) fn ymap_contains(&self, transaction: &YTransaction, key: Value) -> bool {
+        let tx = transaction.transaction();
+        let tx = tx.as_ref().unwrap();
+
         match indifferent_hash_key(key) {
             None => false,
-            Some(k) => self.0.borrow().contains(&*k),
+            Some(k) => self.0.borrow().contains(tx, k.as_str()),
         }
     }
-    pub(crate) fn ymap_each(&self, proc: Proc) {
-        self.0.borrow().iter().for_each(|(key, val)| {
+    pub(crate) fn ymap_each(&self, transaction: &YTransaction, proc: Proc) {
+        let tx = transaction.transaction();
+        let tx = tx.as_ref().unwrap();
+
+        self.0.borrow().iter(tx).for_each(|(key, val)| {
             let k = key.to_string();
             let v = *YValue::from(val).0.borrow();
             proc.call::<(String, Value), Value>((k, v))
                 .expect("cannot iterate map");
-        });
+        })
     }
-    pub(crate) fn ymap_get(&self, key: Value) -> Option<Value> {
+    pub(crate) fn ymap_get(&self, transaction: &YTransaction, key: Value) -> Option<Value> {
+        let tx = transaction.transaction();
+        let tx = tx.as_ref().unwrap();
+
         indifferent_hash_key(key)
-            .map(|k| self.0.borrow().get(&*k))
+            .map(|k| self.0.borrow().get(tx, k.as_str()))
             .map(|v| v.unwrap_or(YrsValue::Any(Any::Undefined)))
             .map(|v| *YValue::from(v).0.borrow())
     }
@@ -44,15 +56,16 @@ impl YMap {
         key: Value,
         value: Value,
     ) -> Result<(), Error> {
+        let mut tx = transaction.transaction();
+        let tx = tx.as_mut().unwrap();
+
         match indifferent_hash_key(key) {
             None => Err(Error::runtime_error(
-                "invalid key type, make sure it is either a Symbol or a String",
+                "invalid key type, make sure it is either of type Symbol or String",
             )),
             Some(k) => {
                 let v = Any::from(YValue::from(value));
-                self.0
-                    .borrow_mut()
-                    .insert(&mut *transaction.0.borrow_mut(), k, v);
+                self.0.borrow_mut().insert(tx, k, v);
 
                 Ok(())
             }
@@ -62,7 +75,6 @@ impl YMap {
         let change_inserted = Symbol::new("inserted").as_static();
         let change_updated = Symbol::new("updated").as_static();
         let change_removed = Symbol::new("removed").as_static();
-
         self.0
             .borrow_mut()
             .observe(move |transaction, map_event| {
@@ -125,27 +137,38 @@ impl YMap {
             .into()
     }
     pub(crate) fn ymap_remove(&self, transaction: &YTransaction, key: Value) -> Option<Value> {
+        let mut tx = transaction.transaction();
+        let tx = tx.as_mut().unwrap();
+
         indifferent_hash_key(key)
-            .map(|k| {
-                self.0
-                    .borrow()
-                    .remove(&mut *transaction.0.borrow_mut(), &*k)
-            })
+            .map(|k| self.0.borrow().remove(tx, k.as_str()))
             .map(|v| v.unwrap_or(YrsValue::Any(Any::Undefined)))
             .map(|v| *YValue::from(v).0.borrow())
     }
-    pub(crate) fn ymap_size(&self) -> u32 {
-        self.0.borrow().len()
+    pub(crate) fn ymap_size(&self, transaction: &YTransaction) -> u32 {
+        let tx = transaction.transaction();
+        let tx = tx.as_ref().unwrap();
+
+        self.0.borrow().len(tx)
     }
-    pub(crate) fn ymap_to_h(&self) -> RHash {
+    pub(crate) fn ymap_to_h(&self, transaction: &YTransaction) -> RHash {
+        let tx = transaction.transaction();
+        let tx = tx.as_ref().unwrap();
+
         RHash::from_iter(
             self.0
                 .borrow()
-                .iter()
+                .iter(tx)
                 .map(move |(k, v)| (k.to_string(), *YValue::from(v).0.borrow())),
         )
     }
     pub(crate) fn ymap_unobserve(&self, subscription_id: u32) {
         self.0.borrow_mut().unobserve(subscription_id);
+    }
+}
+
+impl From<MapRef> for YMap {
+    fn from(v: MapRef) -> Self {
+        YMap(RefCell::from(v))
     }
 }

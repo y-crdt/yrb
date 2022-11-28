@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 RSpec.describe Y::Doc do
-  it "returns a transaction" do
+  it "creates a transaction" do
     doc = described_class.new
+    transaction = doc.current_transaction { |tx| tx }
 
-    expect(doc.current_transaction).to be_instance_of(Y::Transaction)
+    expect(transaction).to be_instance_of(Y::Transaction)
   end
 
   it "returns diff" do

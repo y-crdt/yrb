@@ -31,7 +31,19 @@ module Y
   #   awareness.local_state = local_state
   #   awareness.diff # [1,227,245,175,195,11,1,65,123, …]
   #
+  # @example Two connected clients
+  #   local_state_a = { name: "User A" }.to_json
   #
+  #   client_a = Y::Awareness.new
+  #   client_a.local_state = local_state
+  #
+  #   local_state_b = { name: "User B" }.to_json
+  #
+  #   client_b = Y::Awareness.new
+  #   client_b.local_state = local_state_b
+  #
+  #   client_a.sync(client_b.diff)
+  #   client_a.clients # {1242157267=>"{\"name\":\"User A\"}", 2401067547=>…
   class Awareness
     # Applies an incoming update. This gets the local awareness instance in
     # sync with changes from another client. i.e., updates the state of another
@@ -43,7 +55,7 @@ module Y
     #   awareness = Y::Awareness.new
     #   awareness.sync(update)
     #
-    # @param [Array<Integer>] diff A binary encoded update
+    # @param diff [Array<Integer>] A binary encoded update
     # @return [void]
     def sync(diff)
       yawareness_apply_update(diff)
@@ -131,7 +143,7 @@ module Y
 
     # Unsubscribe from changes
     #
-    # @param [Integer] subscription_id
+    # @param subscription_id [Integer]
     # @return [void]
     def detach(subscription_id)
       yawareness_remove_on_update(subscription_id)
@@ -140,7 +152,7 @@ module Y
     # Clears out a state of a given client, effectively marking it as
     # disconnected.
     #
-    # @param [Integer] client_id Clears the state for given client_id
+    # @param client_id [Integer] Clears the state for given client_id
     # @return [void]
     def remove_state(client_id)
       yawareness_remove_state(client_id)
@@ -160,7 +172,7 @@ module Y
     # be known to a current Awareness instance, otherwise a
     # Error::ClientNotFound error will be returned.
     #
-    # @param [::Array<Integer>] clients A list of client IDs
+    # @param clients [::Array<Integer>] A list of client IDs
     # @return [String] Binary encoded update including all given client IDs
     def diff_with_clients(*clients)
       yawareness_update_with_clients(clients)
@@ -172,22 +184,26 @@ module Y
     # @!method yawareness_apply_update(update)
     #   Applies an update
     #
-    # @param [Y::AwarenessUpdate] A structure that represents an encodable state
+    # @param A [Y::AwarenessUpdate] Structure that represents an encodable state
     #   of an Awareness struct.
+    # @!visibility private
 
     # @!method yawareness_apply_update(update)
     #   Applies an update
     #
-    # @param [Y::AwarenessUpdate] A structure that represents an encodable state
+    # @param A [Y::AwarenessUpdate] Structure that represents an encodable state
     #   of an Awareness struct.
+    # @!visibility private
 
     # @!method yawareness_clean_local_state
     #   Clears out a state of a current client , effectively marking it as
     #   disconnected.
+    # @!visibility private
 
     # @!method yawareness_client_id
     #   Returns a globally unique client ID of an underlying Doc.
     # @return [Integer] The Client ID
+    # @!visibility private
 
     # @!method yawareness_clients
     #   Returns a state map of all of the clients
@@ -196,28 +212,33 @@ module Y
     #   replicated to other clients as a JSON string.
     #
     # @return [Hash<Integer, String>] Map of clients
+    # @!visibility private
 
     # @!method yawareness_local_state
     #
     # @return [String|nil] Returns a JSON string state representation of a
     #   current Awareness instance.
+    # @!visibility private
 
     # @!method yawareness_on_update(callback, &block)
     #
-    # @param [Proc] A callback handler for updates
+    # @param callback [callback]
     # @return [Integer] The subscription ID
+    # @!visibility private
 
     # @!method yawareness_remove_on_update(subscription_id)
     #
-    # @param [Integer] subscription_id The subscription id to remove
+    # @param subscription_id [Integer] The subscription id to remove
+    # @!visibility private
 
     # @!method yawareness_remove_state(client_id)
     #   Clears out a state of a given client, effectively marking it as
     #   disconnected.
     #
-    # @param [Integer] client_id A Client ID
+    # @param client_id [Integer] A Client ID
     # @return [String|nil] Returns a JSON string state representation of a
     #   current Awareness instance.
+    # @!visibility private
 
     # @!method yawareness_set_local_state(state)
     #   Sets a current Awareness instance state to a corresponding JSON string.
@@ -225,16 +246,18 @@ module Y
     #   AwarenessUpdate and it will trigger an event to be emitted if current
     #   instance was created using [Awareness::with_observer] method.
     #
-    # @param [String] Returns a state map of all of the clients tracked by
+    # @param Returns [String] A state map of all of the clients tracked by
     #   current Awareness instance. Those states are identified by their
     #   corresponding ClientIDs. The associated state is represented and
     #   replicated to other clients as a JSON string.
+    # @!visibility private
 
     # @!method yawareness_update
     #   Returns a serializable update object which is representation of a
     #   current Awareness state.
     #
     # @return [Y::AwarenessUpdate] The update object
+    # @!visibility private
 
     # @!method yawareness_update_with_clients(clients)
     #   Returns a serializable update object which is representation of a
@@ -243,24 +266,27 @@ module Y
     #   These clients must all be known to a current Awareness instance,
     #   otherwise an error will be returned.
     #
-    # @param [::Array<Integer>] clients
+    # @param clients [::Array<Integer>]
     # @return [::Array<Integer>] A serialized (binary encoded) update object
+    # @!visibility private
 
     # rubocop:enable Lint/UselessAccessModifier
   end
 
-  # rubocop:disable Lint/UselessAccessModifier
+  # @!visibility private
   class AwarenessEvent
-    private
+    private # rubocop:disable Lint/UselessAccessModifier
 
     # @!method added
     # @return [::Array<Integer>] Added clients
+    # @!visibility private
 
     # @!method updated
     # @return [::Array<Integer>] Updated clients
+    # @!visibility private
 
     # @!method removed
     # @return [::Array<Integer>] Removed clients
+    # @!visibility private
   end
-  # rubocop:enable Lint/UselessAccessModifier
 end

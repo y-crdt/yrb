@@ -22,6 +22,7 @@ mod ytext;
 mod ytransaction;
 mod yvalue;
 mod yxml_element;
+mod yxml_fragment;
 mod yxml_text;
 
 #[magnus::init]
@@ -33,10 +34,10 @@ fn init() -> Result<(), Error> {
         .expect("cannot find class Y::Array");
 
     yarray
-        .define_private_method("yarray_each", method!(YArray::yarray_each, 1))
+        .define_private_method("yarray_each", method!(YArray::yarray_each, 2))
         .expect("cannot define private method: yarray_each");
     yarray
-        .define_private_method("yarray_get", method!(YArray::yarray_get, 1))
+        .define_private_method("yarray_get", method!(YArray::yarray_get, 2))
         .expect("cannot define private method: yarray_get");
     yarray
         .define_private_method("yarray_insert", method!(YArray::yarray_insert, 3))
@@ -48,7 +49,7 @@ fn init() -> Result<(), Error> {
         )
         .expect("cannot define private method: yarray_insert_range");
     yarray
-        .define_private_method("yarray_length", method!(YArray::yarray_length, 0))
+        .define_private_method("yarray_length", method!(YArray::yarray_length, 1))
         .expect("cannot define private method: yarray_length");
     yarray
         .define_private_method("yarray_observe", method!(YArray::yarray_observe, 1))
@@ -69,7 +70,7 @@ fn init() -> Result<(), Error> {
         )
         .expect("cannot define private method: yarray_remove_range");
     yarray
-        .define_private_method("yarray_to_a", method!(YArray::yarray_to_a, 0))
+        .define_private_method("yarray_to_a", method!(YArray::yarray_to_a, 1))
         .expect("cannot define private method: yarray_to_a");
     yarray
         .define_private_method("yarray_unobserve", method!(YArray::yarray_unobserve, 1))
@@ -80,10 +81,40 @@ fn init() -> Result<(), Error> {
         .expect("cannot define class Y::Doc");
     ydoc.define_singleton_method("new", function!(YDoc::ydoc_new, -1))
         .expect("cannot define singleton method: ydoc_new");
+    ydoc.define_private_method("ydoc_encode_diff_v1", method!(YDoc::ydoc_encode_diff_v1, 2))
+        .expect("cannot define private method: ydoc_encode_diff_v1");
+    ydoc.define_private_method(
+        "ydoc_get_or_insert_array",
+        method!(YDoc::ydoc_get_or_insert_array, 1),
+    )
+    .expect("cannot define private method: ydoc_get_or_insert_array");
+    ydoc.define_private_method(
+        "ydoc_get_or_insert_map",
+        method!(YDoc::ydoc_get_or_insert_map, 1),
+    )
+    .expect("cannot define private method: ydoc_get_or_insert_map");
+    ydoc.define_private_method(
+        "ydoc_get_or_insert_text",
+        method!(YDoc::ydoc_get_or_insert_text, 1),
+    )
+    .expect("cannot define private method: ydoc_get_or_insert_text");
+    ydoc.define_private_method(
+        "ydoc_get_or_insert_xml_element",
+        method!(YDoc::ydoc_get_or_insert_xml_element, 1),
+    )
+    .expect("cannot define private method: ydoc_get_or_insert_xml_element");
+    ydoc.define_private_method(
+        "ydoc_get_or_insert_xml_fragment",
+        method!(YDoc::ydoc_get_or_insert_xml_fragment, 1),
+    )
+    .expect("cannot define private method: ydoc_get_or_insert_xml_fragment");
+    ydoc.define_private_method(
+        "ydoc_get_or_insert_xml_text",
+        method!(YDoc::ydoc_get_or_insert_xml_text, 1),
+    )
+    .expect("cannot define private method: ydoc_get_or_insert_xml_text");
     ydoc.define_private_method("ydoc_transact", method!(YDoc::ydoc_transact, 0))
         .expect("cannot define private method: ydoc_transact");
-    ydoc.define_private_method("ydoc_encode_diff_v1", method!(YDoc::ydoc_encode_diff_v1, 1))
-        .expect("cannot define private method: ydoc_encode_diff_v1");
 
     let ymap = module
         .define_class("Map", Default::default())
@@ -91,11 +122,11 @@ fn init() -> Result<(), Error> {
 
     ymap.define_private_method("ymap_clear", method!(YMap::ymap_clear, 1))
         .expect("cannot define private method: ymap_clear");
-    ymap.define_private_method("ymap_contains", method!(YMap::ymap_contains, 1))
+    ymap.define_private_method("ymap_contains", method!(YMap::ymap_contains, 2))
         .expect("cannot define private method: ymap_contains");
-    ymap.define_private_method("ymap_each", method!(YMap::ymap_each, 1))
+    ymap.define_private_method("ymap_each", method!(YMap::ymap_each, 2))
         .expect("cannot define private method: ymap_each");
-    ymap.define_private_method("ymap_get", method!(YMap::ymap_get, 1))
+    ymap.define_private_method("ymap_get", method!(YMap::ymap_get, 2))
         .expect("cannot define private method: ymap_get");
     ymap.define_private_method("ymap_insert", method!(YMap::ymap_insert, 3))
         .expect("cannot define private method: ymap_insert");
@@ -103,9 +134,9 @@ fn init() -> Result<(), Error> {
         .expect("cannot define private method: ymap_observe");
     ymap.define_private_method("ymap_remove", method!(YMap::ymap_remove, 2))
         .expect("cannot define private method: ymap_remove");
-    ymap.define_private_method("ymap_size", method!(YMap::ymap_size, 0))
+    ymap.define_private_method("ymap_size", method!(YMap::ymap_size, 1))
         .expect("cannot define private method: ymap_size");
-    ymap.define_private_method("ymap_to_h", method!(YMap::ymap_to_h, 0))
+    ymap.define_private_method("ymap_to_h", method!(YMap::ymap_to_h, 1))
         .expect("cannot define private method: ymap_to_h");
     ymap.define_private_method("ymap_unobserve", method!(YMap::ymap_unobserve, 1))
         .expect("cannot define private method: ymap_unobserve");
@@ -127,6 +158,9 @@ fn init() -> Result<(), Error> {
         )
         .expect("cannot define private method: ytransaction_commit");
     ytransaction
+        .define_method("free", method!(YTransaction::ytransaction_free, 0))
+        .expect("");
+    ytransaction
         .define_private_method(
             "ytransaction_get_array",
             method!(YTransaction::ytransaction_get_array, 1),
@@ -137,7 +171,7 @@ fn init() -> Result<(), Error> {
             "ytransaction_get_map",
             method!(YTransaction::ytransaction_get_map, 1),
         )
-        .expect("cannot define private method: ytransaction_get_mao");
+        .expect("cannot define private method: ytransaction_get_map");
     ytransaction
         .define_private_method(
             "ytransaction_get_text",
@@ -150,6 +184,12 @@ fn init() -> Result<(), Error> {
             method!(YTransaction::ytransaction_get_xml_element, 1),
         )
         .expect("cannot define private method: ytransaction_get_xml_element");
+    ytransaction
+        .define_private_method(
+            "ytransaction_get_xml_fragment",
+            method!(YTransaction::ytransaction_get_xml_fragment, 1),
+        )
+        .expect("cannot define private method: ytransaction_get_xml_fragment");
     ytransaction
         .define_private_method(
             "ytransaction_get_xml_text",
@@ -189,7 +229,7 @@ fn init() -> Result<(), Error> {
         )
         .expect("cannot define private method: ytext_insert_with_attributes");
     ytext
-        .define_private_method("ytext_length", method!(YText::ytext_length, 0))
+        .define_private_method("ytext_length", method!(YText::ytext_length, 1))
         .expect("cannot define private method: ytext_length");
     ytext
         .define_private_method("ytext_observe", method!(YText::ytext_observe, 1))
@@ -201,7 +241,7 @@ fn init() -> Result<(), Error> {
         .define_private_method("ytext_remove_range", method!(YText::ytext_remove_range, 3))
         .expect("cannot define private method: ytext_remove_range");
     ytext
-        .define_private_method("ytext_to_s", method!(YText::ytext_to_s, 0))
+        .define_private_method("ytext_to_s", method!(YText::ytext_to_s, 1))
         .expect("cannot define private method: ytext_to_s");
     ytext
         .define_private_method("ytext_unobserve", method!(YText::ytext_unobserve, 1))
@@ -214,25 +254,25 @@ fn init() -> Result<(), Error> {
     yxml_element
         .define_private_method(
             "yxml_element_attributes",
-            method!(YXmlElement::yxml_element_attributes, 0),
+            method!(YXmlElement::yxml_element_attributes, 1),
         )
         .expect("cannot define private method: yxml_element_attributes");
     yxml_element
         .define_private_method(
             "yxml_element_first_child",
-            method!(YXmlElement::yxml_element_first_child, 0),
+            method!(YXmlElement::yxml_element_first_child, 1),
         )
         .expect("cannot define private method: yxml_element_first_child");
     yxml_element
         .define_private_method(
             "yxml_element_get",
-            method!(YXmlElement::yxml_element_get, 1),
+            method!(YXmlElement::yxml_element_get, 2),
         )
         .expect("cannot define private method: yxml_element_get");
     yxml_element
         .define_private_method(
             "yxml_element_get_attribute",
-            method!(YXmlElement::yxml_element_get_attribute, 1),
+            method!(YXmlElement::yxml_element_get_attribute, 2),
         )
         .expect("cannot define private method: yxml_element_get_attribute");
     yxml_element
@@ -250,13 +290,13 @@ fn init() -> Result<(), Error> {
     yxml_element
         .define_private_method(
             "yxml_element_insert_text",
-            method!(YXmlElement::yxml_element_insert_text, 2),
+            method!(YXmlElement::yxml_element_insert_text, 3),
         )
         .expect("cannot define private method: yxml_element_insert_text");
     yxml_element
         .define_private_method(
             "yxml_element_next_sibling",
-            method!(YXmlElement::yxml_element_next_sibling, 0),
+            method!(YXmlElement::yxml_element_next_sibling, 1),
         )
         .expect("cannot define private method: yxml_element_next_sibling");
     yxml_element
@@ -274,31 +314,31 @@ fn init() -> Result<(), Error> {
     yxml_element
         .define_private_method(
             "yxml_element_prev_sibling",
-            method!(YXmlElement::yxml_element_prev_sibling, 0),
+            method!(YXmlElement::yxml_element_prev_sibling, 1),
         )
         .expect("cannot define private method: yxml_element_prev_sibling");
     yxml_element
         .define_private_method(
-            "yxml_element_push_elem_back",
+            "yxml_element_push_element_back",
             method!(YXmlElement::yxml_element_push_element_back, 2),
         )
-        .expect("cannot define private method: yxml_element_push_elem_back");
+        .expect("cannot define private method: yxml_element_push_element_back");
     yxml_element
         .define_private_method(
-            "yxml_element_push_elem_front",
+            "yxml_element_push_element_front",
             method!(YXmlElement::yxml_element_push_element_front, 2),
         )
-        .expect("cannot define private method: yxml_element_push_elem_front");
+        .expect("cannot define private method: yxml_element_push_element_front");
     yxml_element
         .define_private_method(
             "yxml_element_push_text_back",
-            method!(YXmlElement::yxml_element_push_text_back, 1),
+            method!(YXmlElement::yxml_element_push_text_back, 2),
         )
         .expect("cannot define private method: yxml_element_push_text_back");
     yxml_element
         .define_private_method(
             "yxml_element_push_text_front",
-            method!(YXmlElement::yxml_element_push_text_front, 1),
+            method!(YXmlElement::yxml_element_push_text_front, 2),
         )
         .expect("cannot define private method: yxml_element_push_text_front");
     yxml_element
@@ -315,8 +355,14 @@ fn init() -> Result<(), Error> {
         .expect("cannot define private method: yxml_element_remove_range");
     yxml_element
         .define_private_method(
+            "yxml_element_siblings",
+            method!(YXmlElement::yxml_element_siblings, 1),
+        )
+        .expect("cannot define private method: yxml_element_siblings");
+    yxml_element
+        .define_private_method(
             "yxml_element_size",
-            method!(YXmlElement::yxml_element_size, 0),
+            method!(YXmlElement::yxml_element_size, 1),
         )
         .expect("cannot define private method: yxml_element_size");
     yxml_element
@@ -328,7 +374,7 @@ fn init() -> Result<(), Error> {
     yxml_element
         .define_private_method(
             "yxml_element_to_s",
-            method!(YXmlElement::yxml_element_to_s, 0),
+            method!(YXmlElement::yxml_element_to_s, 1),
         )
         .expect("cannot define private method: yxml_element_to_s");
     yxml_element
@@ -345,7 +391,7 @@ fn init() -> Result<(), Error> {
     yxml_text
         .define_private_method(
             "yxml_text_attributes",
-            method!(YXmlText::yxml_text_attributes, 0),
+            method!(YXmlText::yxml_text_attributes, 1),
         )
         .expect("cannot define private method: yxml_text_attributes");
     yxml_text
@@ -354,7 +400,7 @@ fn init() -> Result<(), Error> {
     yxml_text
         .define_private_method(
             "yxml_text_get_attribute",
-            method!(YXmlText::yxml_text_get_attribute, 1),
+            method!(YXmlText::yxml_text_get_attribute, 2),
         )
         .expect("cannot define private method: yxml_text_get_attribute");
     yxml_text
@@ -385,12 +431,12 @@ fn init() -> Result<(), Error> {
         )
         .expect("cannot define private method: yxml_text_insert_embed");
     yxml_text
-        .define_private_method("yxml_text_length", method!(YXmlText::yxml_text_length, 0))
+        .define_private_method("yxml_text_length", method!(YXmlText::yxml_text_length, 1))
         .expect("cannot define private method: yxml_text_length");
     yxml_text
         .define_private_method(
             "yxml_text_next_sibling",
-            method!(YXmlText::yxml_text_next_sibling, 0),
+            method!(YXmlText::yxml_text_next_sibling, 1),
         )
         .expect("cannot define private method: yxml_text_next_sibling");
     yxml_text
@@ -399,7 +445,7 @@ fn init() -> Result<(), Error> {
     yxml_text
         .define_private_method(
             "yxml_text_prev_sibling",
-            method!(YXmlText::yxml_text_prev_sibling, 0),
+            method!(YXmlText::yxml_text_prev_sibling, 1),
         )
         .expect("cannot define private method: yxml_text_prev_sibling");
     yxml_text
@@ -412,7 +458,7 @@ fn init() -> Result<(), Error> {
         )
         .expect("cannot define private method: yxml_text_remove_range");
     yxml_text
-        .define_private_method("yxml_text_to_s", method!(YXmlText::yxml_text_to_s, 0))
+        .define_private_method("yxml_text_to_s", method!(YXmlText::yxml_text_to_s, 1))
         .expect("cannot define private method: yxml_text_to_s");
 
     let yawareness = module
