@@ -10,7 +10,7 @@ repository = "https://github.com/y-crdt/yrb"
 lib0 = "0.12.2" # must match yrs version
 magnus = { git = "https://github.com/matsadler/magnus", rev = "cc852bfa31992d882d42509b1165eb5f67f9dc2c" } # waiting for release with full rb-sys backend
 thiserror = "1.0.37"
-yrs = "0.12.2"
+yrs = "0.14.0"
 
 [dev-dependencies]
 magnus = { git = "https://github.com/matsadler/magnus", rev = "cc852bfa31992d882d42509b1165eb5f67f9dc2c", features = ["embed"] } # waiting for release with full rb-sys backend
