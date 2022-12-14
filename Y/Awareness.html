@@ -142,6 +142,23 @@ more about the concept here: <a href="https://docs.yjs.dev/getting-started/addin
 <span class='id identifier rubyid_awareness'>awareness</span><span class='period'>.</span><span class='id identifier rubyid_local_state'>local_state</span> <span class='op'>=</span> <span class='id identifier rubyid_local_state'>local_state</span>
 <span class='id identifier rubyid_awareness'>awareness</span><span class='period'>.</span><span class='id identifier rubyid_diff'>diff</span> <span class='comment'># [1,227,245,175,195,11,1,65,123, …]</span></code></pre>
     
+      
+        <p class="example_title"><div class='inline'><p>Two connected clients</p>
+</div></p>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_local_state_a'>local_state_a</span> <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>name:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>User A</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_to_json'>to_json</span>
+
+<span class='id identifier rubyid_client_a'>client_a</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Y.html" title="Y (module)">Y</a></span></span><span class='op'>::</span><span class='const'>Awareness</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
+<span class='id identifier rubyid_client_a'>client_a</span><span class='period'>.</span><span class='id identifier rubyid_local_state'>local_state</span> <span class='op'>=</span> <span class='id identifier rubyid_local_state'>local_state</span>
+
+<span class='id identifier rubyid_local_state_b'>local_state_b</span> <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>name:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>User B</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_to_json'>to_json</span>
+
+<span class='id identifier rubyid_client_b'>client_b</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Y.html" title="Y (module)">Y</a></span></span><span class='op'>::</span><span class='const'>Awareness</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
+<span class='id identifier rubyid_client_b'>client_b</span><span class='period'>.</span><span class='id identifier rubyid_local_state'>local_state</span> <span class='op'>=</span> <span class='id identifier rubyid_local_state_b'>local_state_b</span>
+
+<span class='id identifier rubyid_client_a'>client_a</span><span class='period'>.</span><span class='id identifier rubyid_sync'>sync</span><span class='lparen'>(</span><span class='id identifier rubyid_client_b'>client_b</span><span class='period'>.</span><span class='id identifier rubyid_diff'>diff</span><span class='rparen'>)</span>
+<span class='id identifier rubyid_client_a'>client_a</span><span class='period'>.</span><span class='id identifier rubyid_clients'>clients</span> <span class='comment'># {1242157267=&gt;&quot;{\&quot;name\&quot;:\&quot;User A\&quot;}&quot;, 2401067547=&gt;…</span></code></pre>
+    
   </div>
 
 
@@ -464,14 +481,14 @@ more about the concept here: <a href="https://docs.yjs.dev/getting-started/addin
       <pre class="lines">
 
 
-126
-127
-128
-129
-130</pre>
+138
+139
+140
+141
+142</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 126</span>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 138</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_attach'>attach</span><span class='lparen'>(</span><span class='id identifier rubyid_callback'>callback</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='id identifier rubyid_yawareness_on_update'>yawareness_on_update</span><span class='lparen'>(</span><span class='id identifier rubyid_callback'>callback</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_callback'>callback</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
@@ -509,12 +526,12 @@ disconnected.</p>
       <pre class="lines">
 
 
-56
-57
-58</pre>
+68
+69
+70</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 56</span>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 68</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_clean_local_state'>clean_local_state</span>
   <span class='id identifier rubyid_yawareness_clean_local_state'>yawareness_clean_local_state</span>
@@ -566,12 +583,12 @@ disconnected.</p>
       <pre class="lines">
 
 
-63
-64
-65</pre>
+75
+76
+77</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 63</span>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 75</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_client_id'>client_id</span>
   <span class='id identifier rubyid_yawareness_client_id'>yawareness_client_id</span>
@@ -644,12 +661,12 @@ JSON string.</p>
       <pre class="lines">
 
 
-83
-84
-85</pre>
+95
+96
+97</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 83</span>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 95</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_clients'>clients</span>
   <span class='id identifier rubyid_yawareness_clients'>yawareness_clients</span>
@@ -699,12 +716,12 @@ JSON string.</p>
       <pre class="lines">
 
 
-136
-137
-138</pre>
+148
+149
+150</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 136</span>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 148</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_detach'>detach</span><span class='lparen'>(</span><span class='id identifier rubyid_subscription_id'>subscription_id</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_yawareness_remove_on_update'>yawareness_remove_on_update</span><span class='lparen'>(</span><span class='id identifier rubyid_subscription_id'>subscription_id</span><span class='rparen'>)</span>
@@ -757,12 +774,12 @@ Awareness state.</p>
       <pre class="lines">
 
 
-153
-154
-155</pre>
+165
+166
+167</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 153</span>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 165</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_diff'>diff</span>
   <span class='id identifier rubyid_yawareness_update'>yawareness_update</span>
@@ -837,12 +854,12 @@ Error::ClientNotFound error will be returned.</p>
       <pre class="lines">
 
 
-165
-166
-167</pre>
+177
+178
+179</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 165</span>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 177</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_diff_with_clients'>diff_with_clients</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_clients'>clients</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_yawareness_update_with_clients'>yawareness_update_with_clients</span><span class='lparen'>(</span><span class='id identifier rubyid_clients'>clients</span><span class='rparen'>)</span>
@@ -913,12 +930,12 @@ instance.</p>
       <pre class="lines">
 
 
-101
-102
-103</pre>
+113
+114
+115</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 101</span>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 113</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_local_state'>local_state</span>
   <span class='id identifier rubyid_yawareness_local_state'>yawareness_local_state</span>
@@ -972,12 +989,12 @@ AwarenessUpdate.</p>
       <pre class="lines">
 
 
-119
-120
-121</pre>
+131
+132
+133</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 119</span>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 131</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_local_state='>local_state=</span><span class='lparen'>(</span><span class='id identifier rubyid_json'>json</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_yawareness_set_local_state'>yawareness_set_local_state</span><span class='lparen'>(</span><span class='id identifier rubyid_json'>json</span><span class='rparen'>)</span>
@@ -1032,12 +1049,12 @@ disconnected.</p>
       <pre class="lines">
 
 
-145
-146
-147</pre>
+157
+158
+159</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 145</span>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 157</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_remove_state'>remove_state</span><span class='lparen'>(</span><span class='id identifier rubyid_client_id'>client_id</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_yawareness_remove_state'>yawareness_remove_state</span><span class='lparen'>(</span><span class='id identifier rubyid_client_id'>client_id</span><span class='rparen'>)</span>
@@ -1107,12 +1124,12 @@ user in the local awareness instance.</p>
       <pre class="lines">
 
 
-48
-49
-50</pre>
+60
+61
+62</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 48</span>
+      <pre class="code"><span class="info file"># File 'lib/y/awareness.rb', line 60</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_sync'>sync</span><span class='lparen'>(</span><span class='id identifier rubyid_diff'>diff</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_yawareness_apply_update'>yawareness_apply_update</span><span class='lparen'>(</span><span class='id identifier rubyid_diff'>diff</span><span class='rparen'>)</span>
@@ -1127,9 +1144,9 @@ user in the local awareness instance.</p>
 </div>
 
       <div id="footer">
-  Generated on Mon Nov 14 16:09:23 2022 by
+  Generated on Wed Dec 14 15:16:58 2022 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.28 (ruby-3.0.4).
+  0.9.28 (ruby-3.0.5).
 </div>
 
     </div>

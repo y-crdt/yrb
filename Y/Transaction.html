@@ -162,7 +162,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Applies the binary encoded update for this document.</p>
+    <span class="summary_desc"><div class='inline'><p>Applies the encoded update on this document.</p>
 </div></span>
   
 </li>
@@ -278,6 +278,29 @@
 
   
     <span class="summary_desc"><div class='inline'><p>Create or get XMLElement type.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#get_xml_fragment-instance_method" title="#get_xml_fragment (instance method)">#<strong>get_xml_fragment</strong>(name)  &#x21d2; Y::XMLFragment </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Create or get XMLFragment type.</p>
 </div></span>
   
 </li>
@@ -486,7 +509,7 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p class="note returns_void">This method returns an undefined value.</p><p>Applies the binary encoded update for this document. This will bring the
+    <p class="note returns_void">This method returns an undefined value.</p><p>Applies the encoded update on this document. This will bring the
 the document to the same state as the one the update is from.</p>
 
 
@@ -860,6 +883,78 @@ the document to the same state as the one the update is from.</p>
 </div>
     
       <div class="method_details ">
+  <h3 class="signature " id="get_xml_fragment-instance_method">
+  
+    #<strong>get_xml_fragment</strong>(name)  &#x21d2; <tt><span class='object_link'>Y::XMLFragment</span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Create or get XMLFragment type</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>name</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'>Y::XMLFragment</span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+76
+77
+78
+79
+80</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/y/transaction.rb', line 76</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_get_xml_fragment'>get_xml_fragment</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_xml_fragment'>xml_fragment</span> <span class='op'>=</span> <span class='id identifier rubyid_ytransaction_get_xml_fragment'>ytransaction_get_xml_fragment</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_xml_fragment'>xml_fragment</span><span class='period'>.</span><span class='id identifier rubyid_document'>document</span> <span class='op'>=</span> <span class='id identifier rubyid_document'>document</span>
+  <span class='id identifier rubyid_xml_fragment'>xml_fragment</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
   <h3 class="signature " id="get_xml_text-instance_method">
   
     #<strong>get_xml_text</strong>(name)  &#x21d2; <tt><span class='object_link'><a href="XMLText.html" title="Y::XMLText (class)">Y::XMLText</a></span></tt> 
@@ -912,14 +1007,14 @@ the document to the same state as the one the update is from.</p>
       <pre class="lines">
 
 
-76
-77
-78
-79
-80</pre>
+86
+87
+88
+89
+90</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/transaction.rb', line 76</span>
+      <pre class="code"><span class="info file"># File 'lib/y/transaction.rb', line 86</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_get_xml_text'>get_xml_text</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_xml_text'>xml_text</span> <span class='op'>=</span> <span class='id identifier rubyid_ytransaction_get_xml_text'>ytransaction_get_xml_text</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
@@ -969,12 +1064,12 @@ the document to the same state as the one the update is from.</p>
       <pre class="lines">
 
 
-85
-86
-87</pre>
+95
+96
+97</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/transaction.rb', line 85</span>
+      <pre class="code"><span class="info file"># File 'lib/y/transaction.rb', line 95</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_state'>state</span>
   <span class='id identifier rubyid_ytransaction_state_vector'>ytransaction_state_vector</span>
@@ -989,9 +1084,9 @@ the document to the same state as the one the update is from.</p>
 </div>
 
       <div id="footer">
-  Generated on Mon Nov 14 16:09:23 2022 by
+  Generated on Wed Dec 14 15:16:58 2022 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.28 (ruby-3.0.4).
+  0.9.28 (ruby-3.0.5).
 </div>
 
     </div>

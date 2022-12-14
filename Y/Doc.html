@@ -170,30 +170,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#current_transaction-instance_method" title="#current_transaction (instance method)">#<strong>current_transaction</strong>  &#x21d2; Y::Transaction </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>The currently active transaction for this document.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#diff-instance_method" title="#diff (instance method)">#<strong>diff</strong>(state = ZERO_STATE)  &#x21d2; ::Array&lt;Int&gt; </a>
+      <a href="#diff-instance_method" title="#diff (instance method)">#<strong>diff</strong>(state = ZERO_STATE)  &#x21d2; ::Array&lt;Integer&gt; </a>
     
 
     
@@ -216,7 +193,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#full_diff-instance_method" title="#full_diff (instance method)">#<strong>full_diff</strong>  &#x21d2; ::Array&lt;Int&gt; </a>
+      <a href="#full_diff-instance_method" title="#full_diff (instance method)">#<strong>full_diff</strong>  &#x21d2; ::Array&lt;Integer&gt; </a>
     
 
     
@@ -331,6 +308,29 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#get_xml_fragment-instance_method" title="#get_xml_fragment (instance method)">#<strong>get_xml_fragment</strong>(name)  &#x21d2; Y::XMLFragment </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Gets or creates a new XMLFragment by name.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#get_xml_text-instance_method" title="#get_xml_text (instance method)">#<strong>get_xml_text</strong>(name, input = nil)  &#x21d2; Y::XMLText </a>
     
 
@@ -377,7 +377,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#state-instance_method" title="#state (instance method)">#<strong>state</strong>  &#x21d2; ::Array&lt;Int&gt; </a>
+      <a href="#state-instance_method" title="#state (instance method)">#<strong>state</strong>  &#x21d2; ::Array&lt;Integer&gt; </a>
     
 
     
@@ -423,7 +423,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#transact-instance_method" title="#transact (instance method)">#<strong>transact</strong> {|transaction| ... } &#x21d2; Y::Transaction </a>
+      <a href="#transact-instance_method" title="#transact (instance method)">#<strong>transact</strong>  &#x21d2; Object </a>
     
 
     
@@ -437,7 +437,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Creates a new transaction and provides it to the given block.</p>
+    <span class="summary_desc"><div class='inline'><p>Creates a new transaction.</p>
 </div></span>
   
 </li>
@@ -488,68 +488,7 @@ current transaction used by this document.</p>
       <pre class="code"><span class="info file"># File 'lib/y/doc.rb', line 28</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_commit'>commit</span>
-  <span class='id identifier rubyid_current_transaction'>current_transaction</span><span class='period'>.</span><span class='id identifier rubyid_commit'>commit</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="current_transaction-instance_method">
-  
-    #<strong>current_transaction</strong>  &#x21d2; <tt><span class='object_link'><a href="Transaction.html" title="Y::Transaction (class)">Y::Transaction</a></span></tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>The currently active transaction for this document</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt><span class='object_link'><a href="Transaction.html" title="Y::Transaction (class)">Y::Transaction</a></span></tt>)</span>
-      
-      
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-34
-35
-36
-37
-38
-39
-40</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/y/doc.rb', line 34</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_current_transaction'>current_transaction</span>
-  <span class='ivar'>@current_transaction</span> <span class='op'>||=</span> <span class='kw'>begin</span>
-    <span class='id identifier rubyid_transaction'>transaction</span> <span class='op'>=</span> <span class='id identifier rubyid_ydoc_transact'>ydoc_transact</span>
-    <span class='id identifier rubyid_transaction'>transaction</span><span class='period'>.</span><span class='id identifier rubyid_document'>document</span> <span class='op'>=</span> <span class='kw'>self</span>
-    <span class='id identifier rubyid_transaction'>transaction</span>
-  <span class='kw'>end</span>
+  <span class='id identifier rubyid_current_transaction'>current_transaction</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:commit</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -559,7 +498,7 @@ current transaction used by this document.</p>
       <div class="method_details ">
   <h3 class="signature " id="diff-instance_method">
   
-    #<strong>diff</strong>(state = ZERO_STATE)  &#x21d2; <tt>::Array&lt;Int&gt;</tt> 
+    #<strong>diff</strong>(state = ZERO_STATE)  &#x21d2; <tt>::Array&lt;Integer&gt;</tt> 
   
 
   
@@ -583,7 +522,7 @@ returns the missing blocks, as binary encoded sequence.</p>
         <span class='name'>state</span>
       
       
-        <span class='type'>(<tt>::Array&lt;Int&gt;</tt>)</span>
+        <span class='type'>(<tt>::Array&lt;Integer&gt;</tt>)</span>
       
       
         <em class="default">(defaults to: <tt>ZERO_STATE</tt>)</em>
@@ -603,7 +542,7 @@ returns the missing blocks, as binary encoded sequence.</p>
     <li>
       
       
-        <span class='type'>(<tt>::Array&lt;Int&gt;</tt>)</span>
+        <span class='type'>(<tt>::Array&lt;Integer&gt;</tt>)</span>
       
       
       
@@ -621,15 +560,15 @@ returns the missing blocks, as binary encoded sequence.</p>
       <pre class="lines">
 
 
-48
-49
-50</pre>
+38
+39
+40</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/doc.rb', line 48</span>
+      <pre class="code"><span class="info file"># File 'lib/y/doc.rb', line 38</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_diff'>diff</span><span class='lparen'>(</span><span class='id identifier rubyid_state'>state</span> <span class='op'>=</span> <span class='const'>ZERO_STATE</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_ydoc_encode_diff_v1'>ydoc_encode_diff_v1</span><span class='lparen'>(</span><span class='id identifier rubyid_state'>state</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_current_transaction'>current_transaction</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_tx'>tx</span><span class='op'>|</span> <span class='id identifier rubyid_ydoc_encode_diff_v1'>ydoc_encode_diff_v1</span><span class='lparen'>(</span><span class='id identifier rubyid_tx'>tx</span><span class='comma'>,</span> <span class='id identifier rubyid_state'>state</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -639,7 +578,7 @@ returns the missing blocks, as binary encoded sequence.</p>
       <div class="method_details ">
   <h3 class="signature " id="full_diff-instance_method">
   
-    #<strong>full_diff</strong>  &#x21d2; <tt>::Array&lt;Int&gt;</tt> 
+    #<strong>full_diff</strong>  &#x21d2; <tt>::Array&lt;Integer&gt;</tt> 
   
 
   
@@ -662,7 +601,7 @@ to the encode_diff function.</p>
     <li>
       
       
-        <span class='type'>(<tt>::Array&lt;Int&gt;</tt>)</span>
+        <span class='type'>(<tt>::Array&lt;Integer&gt;</tt>)</span>
       
       
       
@@ -680,17 +619,15 @@ to the encode_diff function.</p>
       <pre class="lines">
 
 
-57
-58
-59
-60</pre>
+47
+48
+49</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/doc.rb', line 57</span>
+      <pre class="code"><span class="info file"># File 'lib/y/doc.rb', line 47</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_full_diff'>full_diff</span>
-  <span class='id identifier rubyid_empty_state'>empty_state</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Y.html" title="Y (module)">Y</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="Y::Doc (class)">Doc</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='period'>.</span><span class='id identifier rubyid_state'><span class='object_link'><a href="#state-instance_method" title="Y::Doc#state (method)">state</a></span></span>
-  <span class='id identifier rubyid_ydoc_encode_diff_v1'>ydoc_encode_diff_v1</span><span class='lparen'>(</span><span class='id identifier rubyid_empty_state'>empty_state</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_diff'>diff</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -775,18 +712,18 @@ empty, elements are pushed to the end of the array.</p>
       <pre class="lines">
 
 
-71
-72
-73
-74
-75
-76</pre>
+60
+61
+62
+63
+64
+65</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/doc.rb', line 71</span>
+      <pre class="code"><span class="info file"># File 'lib/y/doc.rb', line 60</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_get_array'>get_array</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_values'>values</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_array'>array</span> <span class='op'>=</span> <span class='id identifier rubyid_current_transaction'>current_transaction</span><span class='period'>.</span><span class='id identifier rubyid_get_array'>get_array</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_array'>array</span> <span class='op'>=</span> <span class='id identifier rubyid_ydoc_get_or_insert_array'>ydoc_get_or_insert_array</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_array'>array</span><span class='period'>.</span><span class='id identifier rubyid_document'>document</span> <span class='op'>=</span> <span class='kw'>self</span>
   <span class='id identifier rubyid_array'>array</span><span class='period'>.</span><span class='id identifier rubyid_concat'>concat</span><span class='lparen'>(</span><span class='id identifier rubyid_values'>values</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_values'>values</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
   <span class='id identifier rubyid_array'>array</span>
@@ -874,18 +811,18 @@ empty, any existing keys are overridden and new keys are added.</p>
       <pre class="lines">
 
 
-87
-88
-89
-90
-91
-92</pre>
+76
+77
+78
+79
+80
+81</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/doc.rb', line 87</span>
+      <pre class="code"><span class="info file"># File 'lib/y/doc.rb', line 76</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_get_map'>get_map</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_input'>input</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_map'>map</span> <span class='op'>=</span> <span class='id identifier rubyid_current_transaction'>current_transaction</span><span class='period'>.</span><span class='id identifier rubyid_get_map'>get_map</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_map'>map</span> <span class='op'>=</span> <span class='id identifier rubyid_ydoc_get_or_insert_map'>ydoc_get_or_insert_map</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_map'>map</span><span class='period'>.</span><span class='id identifier rubyid_document'>document</span> <span class='op'>=</span> <span class='kw'>self</span>
   <span class='id identifier rubyid_input'>input</span><span class='op'>&amp;.</span><span class='id identifier rubyid_each'>each</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='op'>|</span> <span class='id identifier rubyid_map'>map</span><span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_value'>value</span> <span class='rbrace'>}</span>
   <span class='id identifier rubyid_map'>map</span>
@@ -973,18 +910,18 @@ to the end of the text.</p>
       <pre class="lines">
 
 
-103
-104
-105
-106
-107
-108</pre>
+92
+93
+94
+95
+96
+97</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/doc.rb', line 103</span>
+      <pre class="code"><span class="info file"># File 'lib/y/doc.rb', line 92</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_get_text'>get_text</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_input'>input</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_text'>text</span> <span class='op'>=</span> <span class='id identifier rubyid_current_transaction'>current_transaction</span><span class='period'>.</span><span class='id identifier rubyid_get_text'>get_text</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_text'>text</span> <span class='op'>=</span> <span class='id identifier rubyid_ydoc_get_or_insert_text'>ydoc_get_or_insert_text</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_text'>text</span><span class='period'>.</span><span class='id identifier rubyid_document'>document</span> <span class='op'>=</span> <span class='kw'>self</span>
   <span class='id identifier rubyid_text'>text</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_input'>input</span> <span class='kw'>unless</span> <span class='id identifier rubyid_input'>input</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
   <span class='id identifier rubyid_text'>text</span>
@@ -1051,19 +988,95 @@ to the end of the text.</p>
       <pre class="lines">
 
 
+103
+104
+105
+106
+107</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/y/doc.rb', line 103</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_get_xml_element'>get_xml_element</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_xml_element'>xml_element</span> <span class='op'>=</span> <span class='id identifier rubyid_ydoc_get_or_insert_xml_element'>ydoc_get_or_insert_xml_element</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_xml_element'>xml_element</span><span class='period'>.</span><span class='id identifier rubyid_document'>document</span> <span class='op'>=</span> <span class='kw'>self</span>
+  <span class='id identifier rubyid_xml_element'>xml_element</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="get_xml_fragment-instance_method">
+  
+    #<strong>get_xml_fragment</strong>(name)  &#x21d2; <tt><span class='object_link'>Y::XMLFragment</span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Gets or creates a new XMLFragment by name</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>name</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The name of the fragment</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'>Y::XMLFragment</span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+113
 114
 115
 116
-117
-118</pre>
+117</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/doc.rb', line 114</span>
+      <pre class="code"><span class="info file"># File 'lib/y/doc.rb', line 113</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_get_xml_element'>get_xml_element</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_xml_element'>xml_element</span> <span class='op'>=</span> <span class='id identifier rubyid_current_transaction'>current_transaction</span><span class='period'>.</span><span class='id identifier rubyid_get_xml_element'>get_xml_element</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_xml_element'>xml_element</span><span class='op'>&amp;.</span><span class='id identifier rubyid_document'>document</span> <span class='op'>=</span> <span class='kw'>self</span>
-  <span class='id identifier rubyid_xml_element'>xml_element</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_get_xml_fragment'>get_xml_fragment</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_xml_fragment'>xml_fragment</span> <span class='op'>=</span> <span class='id identifier rubyid_ydoc_get_or_insert_xml_fragment'>ydoc_get_or_insert_xml_fragment</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_xml_fragment'>xml_fragment</span><span class='period'>.</span><span class='id identifier rubyid_document'>document</span> <span class='op'>=</span> <span class='kw'>self</span>
+  <span class='id identifier rubyid_xml_fragment'>xml_fragment</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1144,18 +1157,18 @@ to the end of the text.</p>
       <pre class="lines">
 
 
+124
 125
 126
 127
 128
-129
-130</pre>
+129</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/doc.rb', line 125</span>
+      <pre class="code"><span class="info file"># File 'lib/y/doc.rb', line 124</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_get_xml_text'>get_xml_text</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_input'>input</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_xml_text'>xml_text</span> <span class='op'>=</span> <span class='id identifier rubyid_current_transaction'>current_transaction</span><span class='period'>.</span><span class='id identifier rubyid_get_xml_text'>get_xml_text</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_xml_text'>xml_text</span> <span class='op'>=</span> <span class='id identifier rubyid_ydoc_get_or_insert_xml_text'>ydoc_get_or_insert_xml_text</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_xml_text'>xml_text</span><span class='period'>.</span><span class='id identifier rubyid_document'>document</span> <span class='op'>=</span> <span class='kw'>self</span>
   <span class='id identifier rubyid_xml_text'>xml_text</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_input'>input</span> <span class='kw'>unless</span> <span class='id identifier rubyid_input'>input</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
   <span class='id identifier rubyid_xml_text'>xml_text</span>
@@ -1193,7 +1206,7 @@ the intent. This is the companion to <span class='object_link'><a href="#full_di
         <span class='name'>full_diff</span>
       
       
-        <span class='type'>(<tt>::Array&lt;Int&gt;</tt>)</span>
+        <span class='type'>(<tt>::Array&lt;Integer&gt;</tt>)</span>
       
       
       
@@ -1212,15 +1225,15 @@ the intent. This is the companion to <span class='object_link'><a href="#full_di
       <pre class="lines">
 
 
+154
 155
-156
-157</pre>
+156</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/doc.rb', line 155</span>
+      <pre class="code"><span class="info file"># File 'lib/y/doc.rb', line 154</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_restore'>restore</span><span class='lparen'>(</span><span class='id identifier rubyid_full_diff'>full_diff</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_current_transaction'>current_transaction</span><span class='period'>.</span><span class='id identifier rubyid_apply'>apply</span><span class='lparen'>(</span><span class='id identifier rubyid_full_diff'>full_diff</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_current_transaction'>current_transaction</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_tx'>tx</span><span class='op'>|</span> <span class='id identifier rubyid_tx'>tx</span><span class='period'>.</span><span class='id identifier rubyid_apply'>apply</span><span class='lparen'>(</span><span class='id identifier rubyid_full_diff'>full_diff</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1230,7 +1243,7 @@ the intent. This is the companion to <span class='object_link'><a href="#full_di
       <div class="method_details ">
   <h3 class="signature " id="state-instance_method">
   
-    #<strong>state</strong>  &#x21d2; <tt>::Array&lt;Int&gt;</tt> 
+    #<strong>state</strong>  &#x21d2; <tt>::Array&lt;Integer&gt;</tt> 
   
 
   
@@ -1252,7 +1265,7 @@ state of two documents with each other and to later on sync them.</p>
     <li>
       
       
-        <span class='type'>(<tt>::Array&lt;Int&gt;</tt>)</span>
+        <span class='type'>(<tt>::Array&lt;Integer&gt;</tt>)</span>
       
       
       
@@ -1270,15 +1283,15 @@ state of two documents with each other and to later on sync them.</p>
       <pre class="lines">
 
 
+135
 136
-137
-138</pre>
+137</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/doc.rb', line 136</span>
+      <pre class="code"><span class="info file"># File 'lib/y/doc.rb', line 135</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_state'>state</span>
-  <span class='id identifier rubyid_current_transaction'>current_transaction</span><span class='period'>.</span><span class='id identifier rubyid_state'>state</span>
+  <span class='id identifier rubyid_current_transaction'>current_transaction</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:state</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1310,7 +1323,7 @@ state of two documents with each other and to later on sync them.</p>
         <span class='name'>diff</span>
       
       
-        <span class='type'>(<tt>::Array&lt;Int&gt;</tt>)</span>
+        <span class='type'>(<tt>::Array&lt;Integer&gt;</tt>)</span>
       
       
       
@@ -1329,15 +1342,15 @@ state of two documents with each other and to later on sync them.</p>
       <pre class="lines">
 
 
+143
 144
-145
-146</pre>
+145</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/doc.rb', line 144</span>
+      <pre class="code"><span class="info file"># File 'lib/y/doc.rb', line 143</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_sync'>sync</span><span class='lparen'>(</span><span class='id identifier rubyid_diff'>diff</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_current_transaction'>current_transaction</span><span class='period'>.</span><span class='id identifier rubyid_apply'>apply</span><span class='lparen'>(</span><span class='id identifier rubyid_diff'>diff</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_current_transaction'>current_transaction</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_tx'>tx</span><span class='op'>|</span> <span class='id identifier rubyid_tx'>tx</span><span class='period'>.</span><span class='id identifier rubyid_apply'>apply</span><span class='lparen'>(</span><span class='id identifier rubyid_diff'>diff</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1347,7 +1360,7 @@ state of two documents with each other and to later on sync them.</p>
       <div class="method_details ">
   <h3 class="signature " id="transact-instance_method">
   
-    #<strong>transact</strong> {|transaction| ... } &#x21d2; <tt><span class='object_link'><a href="Transaction.html" title="Y::Transaction (class)">Y::Transaction</a></span></tt> 
+    #<strong>transact</strong>  &#x21d2; <tt>Object</tt> 
   
 
   
@@ -1355,83 +1368,13 @@ state of two documents with each other and to later on sync them.</p>
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Creates a new transaction and provides it to the given block</p>
+    <p>Creates a new transaction</p>
 
 
   </div>
 </div>
 <div class="tags">
   
-  <div class="examples">
-    <p class="tag_title">Examples:</p>
-    
-      
-        <p class="example_title"><div class='inline'><p>Insert into text</p>
-</div></p>
-      
-      <pre class="example code"><code><span class='id identifier rubyid_doc'>doc</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Y.html" title="Y (module)">Y</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="Y::Doc (class)">Doc</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
-<span class='id identifier rubyid_text'>text</span> <span class='op'>=</span> <span class='id identifier rubyid_doc'>doc</span><span class='period'>.</span><span class='id identifier rubyid_get_text'>get_text</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>my text</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
-
-<span class='id identifier rubyid_doc'>doc</span><span class='period'>.</span><span class='id identifier rubyid_transact'>transact</span> <span class='kw'>do</span>
-  <span class='id identifier rubyid_text'>text</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Hello, World!</span><span class='tstring_end'>&quot;</span></span>
-<span class='kw'>end</span></code></pre>
-    
-  </div>
-
-<p class="tag_title">Yields:</p>
-<ul class="yield">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>transaction</tt>)</span>
-      
-      
-      
-    </li>
-  
-</ul>
-<p class="tag_title">Yield Parameters:</p>
-<ul class="yieldparam">
-  
-    <li>
-      
-        <span class='name'>transaction</span>
-      
-      
-        <span class='type'>(<tt><span class='object_link'><a href="Transaction.html" title="Y::Transaction (class)">Y::Transaction</a></span></tt>)</span>
-      
-      
-      
-    </li>
-  
-</ul>
-<p class="tag_title">Yield Returns:</p>
-<ul class="yieldreturn">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>void</tt>)</span>
-      
-      
-      
-    </li>
-  
-</ul>
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt><span class='object_link'><a href="Transaction.html" title="Y::Transaction (class)">Y::Transaction</a></span></tt>)</span>
-      
-      
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -1439,53 +1382,43 @@ state of two documents with each other and to later on sync them.</p>
       <pre class="lines">
 
 
-175
-176
-177
-178
-179
-180
-181
-182
-183
-184
-185
-186
-187
-188
-189
-190
-191
-192
-193
-194
-195
-196</pre>
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/doc.rb', line 175</span>
+      <pre class="code"><span class="info file"># File 'lib/y/doc.rb', line 159</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_transact'>transact</span>
-  <span class='id identifier rubyid_current_transaction'>current_transaction</span><span class='period'>.</span><span class='id identifier rubyid_commit'>commit</span>
-
-  <span class='kw'>if</span> <span class='id identifier rubyid_block_given?'>block_given?</span>
-    <span class='comment'># create new transaction just for the lifetime of this block
-</span>    <span class='id identifier rubyid_tmp_transaction'>tmp_transaction</span> <span class='op'>=</span> <span class='id identifier rubyid_ydoc_transact'>ydoc_transact</span>
-    <span class='id identifier rubyid_tmp_transaction'>tmp_transaction</span><span class='period'>.</span><span class='id identifier rubyid_document'>document</span> <span class='op'>=</span> <span class='kw'>self</span>
-
-    <span class='comment'># override transaction for the lifetime of the block
-</span>    <span class='ivar'>@current_transaction</span> <span class='op'>=</span> <span class='id identifier rubyid_tmp_transaction'>tmp_transaction</span>
-
-    <span class='kw'>yield</span> <span class='id identifier rubyid_tmp_transaction'>tmp_transaction</span>
-
-    <span class='id identifier rubyid_tmp_transaction'>tmp_transaction</span><span class='period'>.</span><span class='id identifier rubyid_commit'>commit</span>
+  <span class='comment'># 1. release potentially existing transaction
+</span>  <span class='kw'>if</span> <span class='ivar'>@current_transaction</span>
+    <span class='ivar'>@current_transaction</span><span class='period'>.</span><span class='id identifier rubyid_free'>free</span>
+    <span class='ivar'>@current_transaction</span> <span class='op'>=</span> <span class='kw'>nil</span>
   <span class='kw'>end</span>
 
-  <span class='comment'># create new transaction
+  <span class='comment'># 2. store new transaction in instance variable
 </span>  <span class='ivar'>@current_transaction</span> <span class='op'>=</span> <span class='id identifier rubyid_ydoc_transact'>ydoc_transact</span>
   <span class='ivar'>@current_transaction</span><span class='period'>.</span><span class='id identifier rubyid_document'>document</span> <span class='op'>=</span> <span class='kw'>self</span>
 
-  <span class='id identifier rubyid_current_transaction'>current_transaction</span>
+  <span class='comment'># 3. call block with reference to current_transaction
+</span>  <span class='kw'>yield</span> <span class='ivar'>@current_transaction</span>
+<span class='kw'>ensure</span>
+  <span class='ivar'>@current_transaction</span><span class='op'>&amp;.</span><span class='id identifier rubyid_free'>free</span>
+  <span class='ivar'>@current_transaction</span> <span class='op'>=</span> <span class='kw'>nil</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1497,9 +1430,9 @@ state of two documents with each other and to later on sync them.</p>
 </div>
 
       <div id="footer">
-  Generated on Mon Nov 14 16:09:22 2022 by
+  Generated on Wed Dec 14 15:16:58 2022 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.28 (ruby-3.0.4).
+  0.9.28 (ruby-3.0.5).
 </div>
 
     </div>
