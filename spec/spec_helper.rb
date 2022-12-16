@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "rspec-benchmark"
 require "y"
 
 RSpec.configure do |config|
@@ -12,4 +13,7 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
+
+  config.include RSpec::Benchmark::Matchers
+  config.filter_run_excluding bench: true
 end
