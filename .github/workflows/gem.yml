@@ -39,7 +39,7 @@ jobs:
           platform: ${{ matrix.platform }}
           version: '0.9.50'
           env: |
-            RUBY_CC_VERSION=3.1.0:3.0.0:2.7.0
+            RUBY_CC_VERSION=3.2.0:3.1.0:3.0.0:2.7.0
 
       - uses: actions/download-artifact@v3
         with:
