@@ -1,7 +1,7 @@
 use crate::yvalue::YValue;
 use lib0::any::Any;
 use magnus::r_hash::ForEach::Continue;
-use magnus::{Error, RHash, RString, Symbol, Value};
+use magnus::{exception, Error, RHash, RString, Symbol, Value};
 use std::rc::Rc;
 use yrs::types::Attrs;
 
@@ -27,7 +27,10 @@ pub(crate) fn map_rhash_to_attrs(hash: RHash) -> Result<Attrs, Error> {
     });
 
     if result.is_err() {
-        return Err(Error::runtime_error("could not map hash to attrs"));
+        return Err(Error::new(
+            exception::runtime_error(),
+            "could not map hash to attrs",
+        ));
     }
 
     Ok(a)
