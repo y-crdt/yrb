@@ -5,7 +5,7 @@ use crate::yxml_element::YXmlElement;
 use crate::yxml_fragment::YXmlFragment;
 use crate::yxml_text::YXmlText;
 use crate::YTransaction;
-use magnus::{Error, Integer, Value};
+use magnus::{exception, Error, Integer, Value};
 use std::borrow::Borrow;
 use std::cell::RefCell;
 use yrs::updates::decoder::Decode;
@@ -39,7 +39,7 @@ impl YDoc {
 
         StateVector::decode_v1(state_vector.borrow())
             .map(|sv| tx.encode_diff_v1(&sv))
-            .map_err(|_e| Error::runtime_error("cannot encode diff"))
+            .map_err(|_e| Error::new(exception::runtime_error(), "cannot encode diff"))
     }
 
     pub(crate) fn ydoc_get_or_insert_array(&self, name: String) -> YArray {

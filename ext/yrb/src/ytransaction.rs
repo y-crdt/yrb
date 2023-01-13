@@ -4,7 +4,7 @@ use crate::ytext::YText;
 use crate::yxml_element::YXmlElement;
 use crate::yxml_fragment::YXmlFragment;
 use crate::yxml_text::YXmlText;
-use magnus::Error;
+use magnus::{exception, Error};
 use std::cell::{RefCell, RefMut};
 use yrs::updates::decoder::Decode;
 use yrs::updates::encoder::Encode;
@@ -29,7 +29,12 @@ impl<'doc> From<TransactionMut<'doc>> for YTransaction {
 impl YTransaction {
     pub(crate) fn ytransaction_apply_update(&self, update: Vec<u8>) -> Result<(), Error> {
         Update::decode_v1(update.as_slice())
-            .map_err(|error| Error::runtime_error(format!("cannot decode update: {:?}", error)))
+            .map_err(|error| {
+                Error::new(
+                    exception::runtime_error(),
+                    format!("cannot decode update: {:?}", error),
+                )
+            })
             .map(|u| self.transaction().as_mut().unwrap().apply_update(u))
     }
 

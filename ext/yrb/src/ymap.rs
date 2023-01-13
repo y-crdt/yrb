@@ -3,7 +3,7 @@ use crate::yvalue::YValue;
 use crate::YTransaction;
 use lib0::any::Any;
 use magnus::block::Proc;
-use magnus::{Error, RArray, RHash, Symbol, Value};
+use magnus::{exception, Error, RArray, RHash, Symbol, Value};
 use std::cell::RefCell;
 use yrs::types::{EntryChange, Value as YrsValue};
 use yrs::{Map, MapRef, Observable};
@@ -60,7 +60,8 @@ impl YMap {
         let tx = tx.as_mut().unwrap();
 
         match indifferent_hash_key(key) {
-            None => Err(Error::runtime_error(
+            None => Err(Error::new(
+                exception::runtime_error(),
                 "invalid key type, make sure it is either of type Symbol or String",
             )),
             Some(k) => {

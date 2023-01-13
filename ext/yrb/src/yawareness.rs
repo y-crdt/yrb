@@ -1,6 +1,5 @@
 use crate::awareness::{Awareness, AwarenessUpdate, Event};
-use magnus::block::Proc;
-use magnus::{Error, Value};
+use magnus::{block::Proc, exception, Error, Value};
 use std::borrow::Borrow;
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -25,12 +24,11 @@ impl YAwareness {
 
     pub(crate) fn yawareness_apply_update(&self, update: Vec<u8>) -> Result<(), Error> {
         AwarenessUpdate::decode_v1(update.as_slice())
-            .map_err(|_error| Error::runtime_error("cannot decode update"))
+            .map_err(|_error| Error::new(exception::runtime_error(), "cannot decode update"))
             .and_then(|value| {
-                self.0
-                    .borrow_mut()
-                    .apply_update(value)
-                    .map_err(|_error| Error::runtime_error("cannot apply awareness update"))
+                self.0.borrow_mut().apply_update(value).map_err(|_error| {
+                    Error::new(exception::runtime_error(), "cannot apply awareness update")
+                })
             })
     }
 
@@ -83,7 +81,12 @@ impl YAwareness {
             .borrow_mut()
             .update()
             .map(|update| update.encode_v1())
-            .map_err(|_error| Error::runtime_error("cannot create update for current state"))
+            .map_err(|_error| {
+                Error::new(
+                    exception::runtime_error(),
+                    "cannot create update for current state",
+                )
+            })
     }
 
     pub(crate) fn yawareness_update_with_clients(
@@ -95,7 +98,10 @@ impl YAwareness {
             .update_with_clients(clients)
             .map(|update| update.encode_v1())
             .map_err(|_error| {
-                Error::runtime_error("cannot create update for current state and given clients")
+                Error::new(
+                    exception::runtime_error(),
+                    "cannot create update for current state and given clients",
+                )
             })
     }
 }
