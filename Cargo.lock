@@ -124,6 +124,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "lib0"
+version = "0.15.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "681181bb2479a2d829ec72fffe2c0cd18848f03ab1f01865597116b8d3108783"
+dependencies = [
+ "thiserror",
+]
+
+[[package]]
 name = "libc"
 version = "0.2.133"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -339,9 +348,9 @@ dependencies = [
 
 [[package]]
 name = "smallvec"
-version = "1.9.0"
+version = "1.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2fd0db749597d91ff862fd1d55ea87f7855a744a8425a64695b6fca237d1dad1"
+checksum = "a507befe795404456341dfab10cef66ead4c041f62b8b11bbb92bffe5d0953e0"
 
 [[package]]
 name = "syn"
@@ -466,7 +475,7 @@ checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
 name = "yrb"
 version = "0.4.1"
 dependencies = [
- "lib0",
+ "lib0 0.14.1",
  "magnus",
  "thiserror",
  "yrs",
@@ -474,13 +483,14 @@ dependencies = [
 
 [[package]]
 name = "yrs"
-version = "0.14.1"
+version = "0.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "70956c211f07cd4667ef3397ee8b78a00700707fc5f22ed64ae48771d8b1d348"
+checksum = "e6b97a23dff4fb570f6d59083cf6e19f568852bb8ffb559109385efe789dcfeb"
 dependencies = [
  "atomic_refcell",
- "lib0",
+ "lib0 0.15.0",
  "rand",
  "smallstr",
+ "smallvec",
  "thiserror",
 ]
