@@ -147,4 +147,27 @@ RSpec.describe Y::Doc do
     end
     # rubocop:enable RSpec/MultipleExpectations
   end
+
+  context "when listening to updates" do
+    it "attaching to updates return a subscription_id" do
+      doc = described_class.new
+
+      subscription_id = doc.attach { |_update| }
+
+      expect(subscription_id).to be_a_kind_of(Numeric)
+    end
+
+    it "block call count equals number of changes" do
+      doc = described_class.new
+
+      count = 0
+      doc.attach { |_update| count += 1 }
+
+      text = doc.get_text("my text")
+      text << "1"
+      text << "2"
+
+      expect(count).to eq(2)
+    end
+  end
 end

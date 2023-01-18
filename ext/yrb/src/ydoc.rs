@@ -5,11 +5,13 @@ use crate::yxml_element::YXmlElement;
 use crate::yxml_fragment::YXmlFragment;
 use crate::yxml_text::YXmlText;
 use crate::YTransaction;
-use magnus::{exception, Error, Integer, Value};
+use magnus::block::Proc;
+use magnus::exception::runtime_error;
+use magnus::{exception, Error, Integer, RArray, Value};
 use std::borrow::Borrow;
 use std::cell::RefCell;
 use yrs::updates::decoder::Decode;
-use yrs::{Doc, OffsetKind, Options, ReadTxn, StateVector, Transact};
+use yrs::{Doc, OffsetKind, Options, ReadTxn, StateVector, SubscriptionId, Transact};
 
 #[magnus::wrap(class = "Y::Doc")]
 pub(crate) struct YDoc(pub(crate) RefCell<Doc>);
@@ -74,5 +76,21 @@ impl YDoc {
         let doc = self.0.borrow();
         let transaction = doc.transact_mut();
         YTransaction::from(transaction)
+    }
+
+    pub(crate) fn ydoc_observe_update(&self, block: Proc) -> Result<SubscriptionId, Error> {
+        self.0
+            .borrow()
+            .observe_update_v1(move |_tx, update_event| {
+                let update = update_event.update.to_vec();
+                let update = RArray::from_vec(update);
+
+                let args: (RArray,) = (update,);
+                block
+                    .call::<(RArray,), Value>(args)
+                    .expect("cannot call update block");
+            })
+            .map(|v| v.into())
+            .map_err(|err| Error::new(runtime_error(), err.to_string()))
     }
 }

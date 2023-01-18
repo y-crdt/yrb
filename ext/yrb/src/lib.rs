@@ -116,6 +116,9 @@ fn init() -> Result<(), Error> {
     ydoc.define_private_method("ydoc_transact", method!(YDoc::ydoc_transact, 0))
         .expect("cannot define private method: ydoc_transact");
 
+    ydoc.define_private_method("ydoc_observe_update", method!(YDoc::ydoc_observe_update, 1))
+        .expect("cannot define private method: ydoc_observe_update");
+
     let ymap = module
         .define_class("Map", Default::default())
         .expect("cannot define class Y::Map");
