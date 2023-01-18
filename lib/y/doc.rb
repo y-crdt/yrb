@@ -19,6 +19,22 @@ module Y
     ZERO_STATE = [0].freeze
     private_constant :ZERO_STATE
 
+    # Attach a listener to document changes. If one of the data structures is
+    # changes, the block is called with the update as its only argument.
+    #
+    # @yield [update] Called when document is updated
+    # @yieldparam [Array<Integer>] update The encoded document updates
+
+    # Example: Attach listener to document changes
+    #   doc = described_class.new
+    #   doc.attach { |update| pp update }
+    #
+    #   text = doc.get_text("my text")
+    #   text << "1"
+    def attach(&block)
+      ydoc_observe_update(block)
+    end
+
     # Commit current transaction
     #
     # This is a convenience method that invokes {Y::Transaction#commit} on the
@@ -221,6 +237,12 @@ module Y
     #   Creates a new XMLText for the document
     #
     # @return [Y::XMLText]
+    # @!visibility private
+
+    # @!method ydoc_observe_update(block)
+    #   Creates a subscription to observe changes to the document
+    # @param [Proc] block
+    # @return [Integer]
     # @!visibility private
   end
 end
