@@ -36,11 +36,10 @@ Gem::Specification.new do |spec|
 
   spec.metadata["rubygems_mfa_required"] = "true"
 
-  spec.add_runtime_dependency "rake", "~> 13.0"
+  spec.add_dependency "rake", "~> 13.0"
+  spec.add_dependency "rb_sys", "~> 0.9.56"
 
-  spec.add_dependency "rb_sys", "~> 0.9.53"
-
-  spec.add_development_dependency "rake-compiler", "~> 1.2.0"
+  spec.add_development_dependency "rake-compiler", "~> 1.2.1"
   spec.add_development_dependency "rake-compiler-dock", "~> 1.3.0"
 
   spec.extensions = ["ext/yrb/extconf.rb"]

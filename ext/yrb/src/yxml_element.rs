@@ -107,15 +107,16 @@ impl YXmlElement {
                 for change in delta {
                     match change {
                         Change::Added(v) => {
-                            let values = v
-                                .iter()
-                                .map(|o| YValue::from(o.clone()))
-                                .map(|o| *o.0.borrow())
-                                .collect::<Vec<_>>();
+                            let values = RArray::new();
+                            for value in v.iter() {
+                                let value = YValue::from(value.clone());
+                                let value = value.0.borrow().clone();
+                                values.push(value).expect("cannot push value to array");
+                            }
 
                             let payload = RHash::new();
                             payload
-                                .aset(change_added, RArray::from_vec(values))
+                                .aset(change_added, values)
                                 .expect("cannot create change::added payload");
 
                             changes

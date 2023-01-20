@@ -61,7 +61,6 @@ begin
 
   RSpec::Core::RakeTask.new(:bench, [] => [:compile]) do |t|
     t.rspec_opts = "--tag bench"
-
   end
 rescue LoadError
   # Ok

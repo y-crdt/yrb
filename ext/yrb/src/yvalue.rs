@@ -116,12 +116,13 @@ impl From<Any> for YValue {
             Any::String(v) => YValue::from(v.into_string()),
             Any::Buffer(v) => YValue::from(Value::from(v.into_vec())),
             Any::Array(v) => {
-                let arr = v
-                    .iter()
-                    .map(|i| YValue::from(i.clone()))
-                    .map(|value| *value.0.borrow())
-                    .collect::<Vec<Value>>();
-                YValue::from(RArray::from_vec(arr))
+                let arr = RArray::new();
+                for item in v.iter() {
+                    let val = YValue::from(item.clone());
+                    let val = val.0.borrow().clone();
+                    arr.push(val).expect("cannot push item event to array");
+                }
+                YValue::from(arr)
             }
             Any::Map(v) => {
                 let map = v
@@ -146,14 +147,12 @@ impl From<YrsValue> for YValue {
             YrsValue::YXmlText(text) => YValue::from(text),
             YrsValue::YArray(val) => {
                 let tx = val.transact();
-                let arr = RArray::from_vec(
-                    val.iter(&tx)
-                        .map(|item| {
-                            let yvalue = YValue::from(item);
-                            yvalue.0.into_inner()
-                        })
-                        .collect(),
-                );
+                let arr = RArray::new();
+                for item in val.iter(&tx) {
+                    let val = YValue::from(item.clone());
+                    let val = val.0.borrow().clone();
+                    arr.push(val).expect("cannot push item event to array");
+                }
                 YValue::from(arr)
             }
             YrsValue::YMap(val) => {

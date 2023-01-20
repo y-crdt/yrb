@@ -15,7 +15,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.1"
+          ruby-version: "3.2"
       - name: Install required gem dependencies
         run: gem install yard github-markup redcarpet --no-document
 

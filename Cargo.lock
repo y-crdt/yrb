@@ -151,7 +151,7 @@ dependencies = [
 [[package]]
 name = "magnus"
 version = "0.5.0"
-source = "git+https://github.com/matsadler/magnus?rev=a51ccaf01d82e9e1a981e4f3fbaca35100513b08#a51ccaf01d82e9e1a981e4f3fbaca35100513b08"
+source = "git+https://github.com/matsadler/magnus?rev=ab982c3643421b38f3293f1fe014aa373abfd6dc#ab982c3643421b38f3293f1fe014aa373abfd6dc"
 dependencies = [
  "magnus-macros",
  "rb-sys",
@@ -161,7 +161,7 @@ dependencies = [
 [[package]]
 name = "magnus-macros"
 version = "0.3.0"
-source = "git+https://github.com/matsadler/magnus?rev=a51ccaf01d82e9e1a981e4f3fbaca35100513b08#a51ccaf01d82e9e1a981e4f3fbaca35100513b08"
+source = "git+https://github.com/matsadler/magnus?rev=ab982c3643421b38f3293f1fe014aa373abfd6dc#ab982c3643421b38f3293f1fe014aa373abfd6dc"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -464,7 +464,7 @@ checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
 
 [[package]]
 name = "yrb"
-version = "0.4.1"
+version = "0.4.3"
 dependencies = [
  "lib0",
  "magnus",

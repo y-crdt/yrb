@@ -29,7 +29,7 @@ jobs:
       - uses: oxidize-rb/actions/setup-ruby-and-rust@main
         with:
           rubygems: latest
-          ruby-version: "3.1"
+          ruby-version: "3.2"
           bundler-cache: false
           cargo-cache: true
           cargo-vendor: true

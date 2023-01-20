@@ -4,6 +4,7 @@ use lib0::any::Any;
 use magnus::block::Proc;
 use magnus::value::Qnil;
 use magnus::{Error, RArray, RHash, Symbol, Value};
+use std::borrow::Borrow;
 use std::cell::RefCell;
 use yrs::types::Change;
 use yrs::{Array, ArrayRef, Observable};
@@ -112,9 +113,15 @@ impl YArray {
                     .partition(Result::is_ok);
 
                 if errors.is_empty() {
-                    let args = (RArray::from_vec(
-                        changes.into_iter().map(Result::unwrap).collect(),
-                    ),);
+                    let args_changes = RArray::new();
+                    for change in changes.iter() {
+                        let c = *change.borrow().as_ref().unwrap();
+                        args_changes
+                            .push(c)
+                            .expect("cannot push change event to args");
+                    }
+
+                    let args = (args_changes,);
                     let _ = block.call::<(RArray,), Qnil>(args);
                     // todo: make sure we respect the result and bubble up the
                     //  error so that we can return as part of the Result
@@ -164,12 +171,13 @@ impl YArray {
         let tx = transaction.transaction();
         let tx = tx.as_ref().unwrap();
 
-        let arr = arr
-            .iter(tx)
-            .map(|v| YValue::from(v).into())
-            .collect::<Vec<Value>>();
-
-        RArray::from_vec(arr)
+        let r_arr = RArray::new();
+        for item in arr.iter(tx) {
+            let r_val = YValue::from(item);
+            let r_val = r_val.0.borrow().clone();
+            r_arr.push(r_val).expect("cannot push item event to array");
+        }
+        r_arr
     }
     pub(crate) fn yarray_unobserve(&self, subscription_id: u32) {
         self.0.borrow_mut().unobserve(subscription_id);

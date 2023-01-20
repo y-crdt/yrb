@@ -1,6 +1,6 @@
 [package]
 name = "yrb"
-version = "0.4.2"
+version = "0.4.3"
 authors = ["Hannes Moser <box@hannesmoser.at>", "Hannes Moser <hmoser@gitlab.com>"]
 edition = "2021"
 homepage = "https://github.com/y-crdt/yrb"
@@ -8,12 +8,12 @@ repository = "https://github.com/y-crdt/yrb"
 
 [dependencies]
 lib0 = "0.14.1" # must match yrs version
-magnus = { git = "https://github.com/matsadler/magnus", rev = "a51ccaf01d82e9e1a981e4f3fbaca35100513b08" }
+magnus = { git = "https://github.com/matsadler/magnus", rev = "ab982c3643421b38f3293f1fe014aa373abfd6dc" }
 thiserror = "1.0.38"
 yrs = "0.14.1"
 
 [dev-dependencies]
-magnus = { git = "https://github.com/matsadler/magnus", rev = "a51ccaf01d82e9e1a981e4f3fbaca35100513b08", features = ["embed"] }
+magnus = { git = "https://github.com/matsadler/magnus", rev = "ab982c3643421b38f3293f1fe014aa373abfd6dc", features = ["embed"] }
 
 [lib]
 name = "yrb"

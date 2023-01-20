@@ -1,4 +1,5 @@
 use lib0::any::Any;
+use magnus::r_string::IntoRString;
 use magnus::{RArray, RHash, RString, Value, QNIL};
 use std::borrow::Borrow;
 use std::ops::{Deref, DerefMut};
@@ -37,7 +38,7 @@ impl TryInto<Value> for YAny {
             Any::Bool(v) => Ok(Value::from(v)),
             Any::Number(v) => Ok(Value::from(v)),
             Any::BigInt(v) => Ok(Value::from(v)),
-            Any::String(v) => Ok(Value::from(RString::from(v.borrow()))),
+            Any::String(v) => Ok(Value::from(RString::from(v.into_r_string()))),
             Any::Buffer(v) => Ok(Value::from(RString::from_slice(v.borrow()))),
         };
     }

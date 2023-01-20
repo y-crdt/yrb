@@ -154,7 +154,7 @@ RSpec.describe Y::Doc do
 
       subscription_id = doc.attach { |_update| }
 
-      expect(subscription_id).to be_a_kind_of(Numeric)
+      expect(subscription_id).to be_a(Numeric)
     end
 
     it "block call count equals number of changes" do
