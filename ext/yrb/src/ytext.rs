@@ -48,7 +48,7 @@ impl YText {
         let yvalue = YValue::from(content);
         let avalue = Any::from(yvalue);
 
-        self.0.borrow_mut().insert_embed(tx, index, avalue)
+        self.0.borrow_mut().insert_embed(tx, index, avalue);
     }
     pub(crate) fn ytext_insert_embed_with_attributes(
         &self,
@@ -67,7 +67,7 @@ impl YText {
 
         self.0
             .borrow_mut()
-            .insert_embed_with_attributes(tx, index, avalue, a.0)
+            .insert_embed_with_attributes(tx, index, avalue, a.0);
     }
     pub(crate) fn ytext_insert_with_attributes(
         &self,

@@ -150,7 +150,7 @@ impl YArray {
         let tx = tx.as_mut().unwrap();
 
         let arr = self.0.borrow_mut();
-        arr.push_front(tx, avalue)
+        arr.push_front(tx, avalue);
     }
     pub(crate) fn yarray_remove(&self, transaction: &YTransaction, index: u32) {
         let mut tx = transaction.transaction();

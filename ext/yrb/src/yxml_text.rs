@@ -72,11 +72,13 @@ impl YXmlText {
         let yvalue = YValue::from(content);
         let avalue = Any::from(yvalue);
 
-        map_rhash_to_attrs(attrs).map(|a| {
-            self.0
-                .borrow_mut()
-                .insert_embed_with_attributes(tx, index, avalue, a)
-        })
+        map_rhash_to_attrs(attrs)
+            .map(|a| {
+                self.0
+                    .borrow_mut()
+                    .insert_embed_with_attributes(tx, index, avalue, a)
+            })
+            .map(|_| ())
     }
     pub(crate) fn yxml_text_insert_embed(
         &self,
@@ -89,7 +91,7 @@ impl YXmlText {
 
         self.0
             .borrow_mut()
-            .insert_embed(tx, index, Any::from(YValue::from(embed)))
+            .insert_embed(tx, index, Any::from(YValue::from(embed)));
     }
     pub(crate) fn yxml_text_insert_with_attributes(
         &self,
