@@ -27,7 +27,7 @@ impl YMap {
 
         match indifferent_hash_key(key) {
             None => false,
-            Some(k) => self.0.borrow().contains(tx, k.as_str()),
+            Some(k) => self.0.borrow().contains_key(tx, k.as_str()),
         }
     }
     pub(crate) fn ymap_each(&self, transaction: &YTransaction, proc: Proc) {
