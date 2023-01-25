@@ -76,7 +76,7 @@ impl YXmlElement {
         index: u32,
         content: String,
     ) -> YXmlText {
-        let text = XmlTextPrelim(content.as_str());
+        let text = XmlTextPrelim::new(content.as_str());
         let mut tx = transaction.transaction();
         let tx = tx.as_mut().unwrap();
 
@@ -204,7 +204,7 @@ impl YXmlElement {
         let mut tx = transaction.transaction();
         let tx = tx.as_mut().unwrap();
 
-        let text = XmlTextPrelim(content.as_str());
+        let text = XmlTextPrelim::new(content.as_str());
         YXmlText::from(self.0.borrow_mut().push_back(tx, text))
     }
     pub(crate) fn yxml_element_push_text_front(
@@ -215,7 +215,7 @@ impl YXmlElement {
         let mut tx = transaction.transaction();
         let tx = tx.as_mut().unwrap();
 
-        let text = XmlTextPrelim(content.as_str());
+        let text = XmlTextPrelim::new(content.as_str());
         YXmlText::from(self.0.borrow_mut().push_front(tx, text))
     }
     pub(crate) fn yxml_element_remove_attribute(&self, transaction: &YTransaction, name: String) {
