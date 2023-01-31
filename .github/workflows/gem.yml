@@ -37,7 +37,7 @@ jobs:
       - uses: oxidize-rb/cross-gem-action@main
         with:
           platform: ${{ matrix.platform }}
-          version: '0.9.50'
+          version: '0.9.58'
           env: |
             RUBY_CC_VERSION=3.2.0:3.1.0:3.0.0:2.7.0
 
