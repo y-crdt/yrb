@@ -116,9 +116,9 @@ checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
 
 [[package]]
 name = "lib0"
-version = "0.16.0"
+version = "0.16.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "63c39315b777aa983231705ae9ae72c59cf1cd9f025a94cd3de30fabec3d4b29"
+checksum = "f60662632c34189a97296912b0ee1aabed9dd795025104e5996bde4efd9d0122"
 dependencies = [
  "thiserror",
 ]
@@ -464,7 +464,7 @@ checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
 
 [[package]]
 name = "yrb"
-version = "0.4.4"
+version = "0.4.5"
 dependencies = [
  "lib0",
  "magnus",
@@ -474,9 +474,9 @@ dependencies = [
 
 [[package]]
 name = "yrs"
-version = "0.16.0"
+version = "0.16.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6286bdd05f2c867e99ff850aeca53e4e9fc93dd17cc8c196f90eef780fa77c95"
+checksum = "7e56c8ceaa3d013eb7e41550e547ca05255c651391fbe6a810d644add9f8f0f5"
 dependencies = [
  "atomic_refcell",
  "lib0",
