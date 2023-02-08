@@ -116,8 +116,8 @@ module Y
     # - Hash (where the the types of key and values must be supported)
     #
     # @param index [Integer]
-    # @param value [String|Numeric|Array|Hash]
-    # @param attrs [Hash|nil]
+    # @param value [String, Numeric, Array, Hash]
+    # @param attrs [Hash, nil]
     # @return [void]
     def insert(index, value, attrs = nil)
       document.current_transaction do |tx|

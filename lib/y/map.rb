@@ -70,7 +70,7 @@ module Y
     #   m.delete(:nosuch) { |key| "Key #{key} not found" }# => "Key nosuch not found"
     #   m # => {}
     #
-    # @param key [String|Symbol]
+    # @param key [String, Symbol]
     # @return [void]
     def delete(key)
       value = document.current_transaction { |tx| ymap_remove(tx, key) }
@@ -96,7 +96,7 @@ module Y
       document.current_transaction { |tx| ymap_each(tx, block) }
     end
 
-    # @return [true|false]
+    # @return [true, false]
     def key?(key)
       document.current_transaction { |tx| ymap_contains(tx, key) }
     end
@@ -143,7 +143,7 @@ module Y
     #   Check if a certain key is in the Map
     #
     # @param tx [Y::Transaction]
-    # @param key [String|Symbol]
+    # @param key [String, Symbol]
     # @return [Boolean] True, if and only if the key exists
 
     # @!method ymap_each(tx, proc)
@@ -151,21 +151,21 @@ module Y
     #   with the key and the value as arguments.
     #
     # @param tx [Y::Transaction]
-    # @param proc [Proc<String|Any>] A proc that is called for every element
+    # @param proc [Proc<String, Any>] A proc that is called for every element
 
     # @!method ymap_get(tx, key)
     #   Returns stored value for key or nil if none is present
     #
     # @param tx [Y::Transaction]
-    # @param key [String|Symbol]
-    # @return [Object|nil] Value or nil
+    # @param key [String, Symbol]
+    # @return [Object, nil] Value or nil
 
     # @!method ymap_insert(tx, key, value)
     #   Insert value for key. In case the key already exists, the previous value
     #   will be overwritten.
     #
     # @param tx [Y::Transaction]
-    # @param key [String|Symbol]
+    # @param key [String, Symbol]
     # @param value [Object]
 
     # @!method ymap_observe(callback)
@@ -177,7 +177,7 @@ module Y
     #   Removes key-value pair from Map if key exists.
     #
     # @param tx [Y::Transaction]
-    # @param key [String|Symbol]
+    # @param key [String, Symbol]
 
     # @!method ymap_size(tx)
     #   Returns number of key-value pairs stored in map
