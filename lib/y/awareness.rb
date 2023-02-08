@@ -25,19 +25,19 @@ module Y
   #   local_state = {
   #     editing: { field: "description", pos: 0 },
   #     name: "Hannes Moser"
-  #   }.to_json
+  #   }
   #
   #   awareness = Y::Awareness.new
   #   awareness.local_state = local_state
   #   awareness.diff # [1,227,245,175,195,11,1,65,123, …]
   #
   # @example Two connected clients
-  #   local_state_a = { name: "User A" }.to_json
+  #   local_state_a = { name: "User A" }
   #
   #   client_a = Y::Awareness.new
   #   client_a.local_state = local_state
   #
-  #   local_state_b = { name: "User B" }.to_json
+  #   local_state_b = { name: "User B" }
   #
   #   client_b = Y::Awareness.new
   #   client_b.local_state = local_state_b
@@ -85,7 +85,7 @@ module Y
     #   local_state = {
     #     editing: { field: "description", pos: 0 },
     #     name: "Hannes Moser"
-    #   }.to_json
+    #   }
     #
     #   awareness = Y::Awareness.new
     #   awareness.local_state = local_state
@@ -125,7 +125,7 @@ module Y
     #   local_state = {
     #     editing: { field: "description", pos: 0 },
     #     name: "Hannes Moser"
-    #   }.to_json
+    #   }
     #
     #   awareness = Y::Awareness.new
     #   awareness.local_state = local_state
