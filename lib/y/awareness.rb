@@ -93,25 +93,28 @@ module Y
     #
     # @return [Hash] All clients and their current state
     def clients
-      yawareness_clients
+      transform = yawareness_clients.map do |client_id, state|
+        [client_id, JSON.parse!(state)]
+      end
+      transform.to_h
     end
 
-    # Returns a JSON string state representation of a current Awareness
-    # instance.
+    # Returns the state of the local Awareness instance.
     #
     # @example Create local state and inspect it
     #   local_state = {
     #     editing: { field: "description", pos: 0 },
     #     name: "Hannes Moser"
-    #   }.to_json
+    #   }
     #
     #   awareness = Y::Awareness.new
     #   awareness.local_state = local_state
-    #   local_state # "{\"editing\":{\"field\":\"description\",\"pos\":0}, …
+    #   awareness.local_state # {  editing: { field: "description", ...
     #
     # @return [String] The current state of the local client
     def local_state
-      yawareness_local_state
+      json = yawareness_local_state
+      JSON.parse!(json) if json
     end
 
     # Sets a current Awareness instance state to a corresponding JSON string.
@@ -127,26 +130,21 @@ module Y
     #   awareness = Y::Awareness.new
     #   awareness.local_state = local_state
     #
+    # @param [#to_json] state
     # @return [void]
-    def local_state=(json)
-      yawareness_set_local_state(json)
+    def local_state=(state)
+      raise "state cannot be encoded to JSON" unless state.respond_to? :to_json
+
+      yawareness_set_local_state(state.to_json)
     end
 
     # Subscribes to changes
     #
     # @return [Integer] The subscription ID
-    def attach(callback, &block)
+    def attach(callback = nil, &block)
       return yawareness_on_update(callback) unless callback.nil?
 
       yawareness_on_update(block.to_proc) unless block.nil?
-    end
-
-    # Unsubscribe from changes
-    #
-    # @param subscription_id [Integer]
-    # @return [void]
-    def detach(subscription_id)
-      yawareness_remove_on_update(subscription_id)
     end
 
     # Clears out a state of a given client, effectively marking it as

@@ -463,12 +463,24 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
 
 [[package]]
+name = "y-sync"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "57b05ee3c166fe347adc9b90dd75362df1bd661615baa11c29ca1c7ef1545073"
+dependencies = [
+ "lib0",
+ "thiserror",
+ "yrs",
+]
+
+[[package]]
 name = "yrb"
-version = "0.4.6"
+version = "0.5.0"
 dependencies = [
  "lib0",
  "magnus",
  "thiserror",
+ "y-sync",
  "yrs",
 ]
 

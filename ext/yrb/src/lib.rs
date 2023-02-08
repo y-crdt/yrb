@@ -11,7 +11,6 @@ use crate::yxml_fragment::YXmlFragment;
 use crate::yxml_text::YXmlText;
 use magnus::{define_module, function, method, Error, Module, Object};
 
-mod awareness;
 mod utils;
 mod yany;
 mod yarray;
@@ -578,12 +577,6 @@ fn init() -> Result<(), Error> {
             method!(YAwareness::yawareness_on_update, 1),
         )
         .expect("cannot define private method: yawareness_on_update");
-    yawareness
-        .define_private_method(
-            "yawareness_remove_on_update",
-            method!(YAwareness::yawareness_remove_on_update, 1),
-        )
-        .expect("cannot define private method: yawareness_remove_on_update");
     yawareness
         .define_private_method(
             "yawareness_remove_state",
