@@ -136,7 +136,7 @@ more about the concept here: <a href="https://docs.yjs.dev/getting-started/addin
       <pre class="example code"><code><span class='id identifier rubyid_local_state'>local_state</span> <span class='op'>=</span> <span class='lbrace'>{</span>
   <span class='label'>editing:</span> <span class='lbrace'>{</span> <span class='label'>field:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>description</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>pos:</span> <span class='int'>0</span> <span class='rbrace'>}</span><span class='comma'>,</span>
   <span class='label'>name:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Hannes Moser</span><span class='tstring_end'>&quot;</span></span>
-<span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_to_json'>to_json</span>
+<span class='rbrace'>}</span>
 
 <span class='id identifier rubyid_awareness'>awareness</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Y.html" title="Y (module)">Y</a></span></span><span class='op'>::</span><span class='const'>Awareness</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
 <span class='id identifier rubyid_awareness'>awareness</span><span class='period'>.</span><span class='id identifier rubyid_local_state'>local_state</span> <span class='op'>=</span> <span class='id identifier rubyid_local_state'>local_state</span>
@@ -146,12 +146,12 @@ more about the concept here: <a href="https://docs.yjs.dev/getting-started/addin
         <p class="example_title"><div class='inline'><p>Two connected clients</p>
 </div></p>
       
-      <pre class="example code"><code><span class='id identifier rubyid_local_state_a'>local_state_a</span> <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>name:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>User A</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_to_json'>to_json</span>
+      <pre class="example code"><code><span class='id identifier rubyid_local_state_a'>local_state_a</span> <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>name:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>User A</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span>
 
 <span class='id identifier rubyid_client_a'>client_a</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Y.html" title="Y (module)">Y</a></span></span><span class='op'>::</span><span class='const'>Awareness</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
 <span class='id identifier rubyid_client_a'>client_a</span><span class='period'>.</span><span class='id identifier rubyid_local_state'>local_state</span> <span class='op'>=</span> <span class='id identifier rubyid_local_state'>local_state</span>
 
-<span class='id identifier rubyid_local_state_b'>local_state_b</span> <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>name:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>User B</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_to_json'>to_json</span>
+<span class='id identifier rubyid_local_state_b'>local_state_b</span> <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>name:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>User B</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span>
 
 <span class='id identifier rubyid_client_b'>client_b</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Y.html" title="Y (module)">Y</a></span></span><span class='op'>::</span><span class='const'>Awareness</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
 <span class='id identifier rubyid_client_b'>client_b</span><span class='period'>.</span><span class='id identifier rubyid_local_state'>local_state</span> <span class='op'>=</span> <span class='id identifier rubyid_local_state_b'>local_state_b</span>
@@ -606,7 +606,7 @@ JSON string.</p>
       <pre class="example code"><code><span class='id identifier rubyid_local_state'>local_state</span> <span class='op'>=</span> <span class='lbrace'>{</span>
   <span class='label'>editing:</span> <span class='lbrace'>{</span> <span class='label'>field:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>description</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>pos:</span> <span class='int'>0</span> <span class='rbrace'>}</span><span class='comma'>,</span>
   <span class='label'>name:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Hannes Moser</span><span class='tstring_end'>&quot;</span></span>
-<span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_to_json'>to_json</span>
+<span class='rbrace'>}</span>
 
 <span class='id identifier rubyid_awareness'>awareness</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Y.html" title="Y (module)">Y</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="Y::Awareness (class)">Awareness</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
 <span class='id identifier rubyid_awareness'>awareness</span><span class='period'>.</span><span class='id identifier rubyid_local_state'>local_state</span> <span class='op'>=</span> <span class='id identifier rubyid_local_state'>local_state</span>
@@ -904,7 +904,7 @@ AwarenessUpdate.</p>
       <pre class="example code"><code><span class='id identifier rubyid_local_state'>local_state</span> <span class='op'>=</span> <span class='lbrace'>{</span>
   <span class='label'>editing:</span> <span class='lbrace'>{</span> <span class='label'>field:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>description</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>pos:</span> <span class='int'>0</span> <span class='rbrace'>}</span><span class='comma'>,</span>
   <span class='label'>name:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Hannes Moser</span><span class='tstring_end'>&quot;</span></span>
-<span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_to_json'>to_json</span>
+<span class='rbrace'>}</span>
 
 <span class='id identifier rubyid_awareness'>awareness</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Y.html" title="Y (module)">Y</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="Y::Awareness (class)">Awareness</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
 <span class='id identifier rubyid_awareness'>awareness</span><span class='period'>.</span><span class='id identifier rubyid_local_state'>local_state</span> <span class='op'>=</span> <span class='id identifier rubyid_local_state'>local_state</span></code></pre>
@@ -1092,7 +1092,7 @@ user in the local awareness instance.</p>
 </div>
 
       <div id="footer">
-  Generated on Wed Feb  8 15:20:29 2023 by
+  Generated on Wed Feb  8 15:25:33 2023 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.28 (ruby-3.2.0).
 </div>
