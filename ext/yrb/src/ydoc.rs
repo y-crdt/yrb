@@ -6,8 +6,7 @@ use crate::yxml_fragment::YXmlFragment;
 use crate::yxml_text::YXmlText;
 use crate::YTransaction;
 use magnus::block::Proc;
-use magnus::exception::runtime_error;
-use magnus::{exception, Error, Integer, RArray, Value};
+use magnus::{exception::runtime_error, Error, Integer, RArray, Value};
 use std::borrow::Borrow;
 use std::cell::RefCell;
 use yrs::updates::decoder::Decode;
@@ -41,19 +40,22 @@ impl YDoc {
 
         StateVector::decode_v1(state_vector.borrow())
             .map(|sv| tx.encode_diff_v1(&sv))
-            .map_err(|_e| Error::new(exception::runtime_error(), "cannot encode diff"))
+            .map_err(|_e| Error::new(runtime_error(), "cannot encode diff"))
     }
 
     pub(crate) fn ydoc_get_or_insert_array(&self, name: String) -> YArray {
-        self.0.borrow().get_or_insert_array(name.as_str()).into()
+        let array_ref = self.0.borrow().get_or_insert_array(name.as_str());
+        YArray::from(array_ref)
     }
 
     pub(crate) fn ydoc_get_or_insert_map(&self, name: String) -> YMap {
-        self.0.borrow().get_or_insert_map(name.as_str()).into()
+        let map_ref = self.0.borrow().get_or_insert_map(name.as_str());
+        YMap::from(map_ref)
     }
 
     pub(crate) fn ydoc_get_or_insert_text(&self, name: String) -> YText {
-        self.0.borrow().get_or_insert_text(name.as_str()).into()
+        let text_ref = self.0.borrow().get_or_insert_text(name.as_str());
+        YText::from(text_ref)
     }
 
     pub(crate) fn ydoc_get_or_insert_xml_element(&self, name: String) -> YXmlElement {
@@ -62,14 +64,13 @@ impl YDoc {
     }
 
     pub(crate) fn ydoc_get_or_insert_xml_fragment(&self, name: String) -> YXmlFragment {
-        self.0
-            .borrow()
-            .get_or_insert_xml_fragment(name.as_str())
-            .into()
+        let xml_fragment_ref = self.0.borrow().get_or_insert_xml_fragment(name.as_str());
+        YXmlFragment::from(xml_fragment_ref)
     }
 
     pub(crate) fn ydoc_get_or_insert_xml_text(&self, name: String) -> YXmlText {
-        self.0.borrow().get_or_insert_xml_text(name.as_str()).into()
+        let xml_text_ref = self.0.borrow().get_or_insert_xml_text(name.as_str());
+        YXmlText::from(xml_text_ref)
     }
 
     pub(crate) fn ydoc_transact<'doc>(&self) -> YTransaction {

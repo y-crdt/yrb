@@ -82,6 +82,12 @@ impl YXmlElement {
 
         YXmlText::from(self.0.borrow_mut().insert(tx, index, text))
     }
+    pub(crate) fn yxml_element_len(&self, transaction: &YTransaction) -> u32 {
+        let mut tx = transaction.transaction();
+        let tx = tx.as_mut().unwrap();
+
+        self.0.borrow().len(tx)
+    }
     pub(crate) fn yxml_element_next_sibling(&self, transaction: &YTransaction) -> Option<Value> {
         let tx = transaction.transaction();
         let tx = tx.as_ref().unwrap();

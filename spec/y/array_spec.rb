@@ -30,7 +30,7 @@ RSpec.describe Y::Array do
     doc = Y::Doc.new
     arr = doc.get_array("my array")
 
-    arr.concat([1, 2, 3])
+    arr.push(1, 2, 3)
 
     expect(arr.to_a).to eq([1, 2, 3])
   end

@@ -7,6 +7,7 @@ use crate::ymap::YMap;
 use crate::ytext::YText;
 use crate::ytransaction::YTransaction;
 use crate::yxml_element::YXmlElement;
+use crate::yxml_fragment::YXmlFragment;
 use crate::yxml_text::YXmlText;
 use magnus::{define_module, function, method, Error, Module, Object};
 
@@ -298,6 +299,12 @@ fn init() -> Result<(), Error> {
         .expect("cannot define private method: yxml_element_insert_text");
     yxml_element
         .define_private_method(
+            "yxml_element_len",
+            method!(YXmlElement::yxml_element_len, 1),
+        )
+        .expect("cannot define private method: yxml_element_len");
+    yxml_element
+        .define_private_method(
             "yxml_element_next_sibling",
             method!(YXmlElement::yxml_element_next_sibling, 1),
         )
@@ -386,6 +393,71 @@ fn init() -> Result<(), Error> {
             method!(YXmlElement::yxml_element_unobserve, 1),
         )
         .expect("cannot define private method: yxml_element_unobserve");
+
+    let yxml_fragment = module
+        .define_class("XMLFragment", Default::default())
+        .expect("cannot define class: Y::XMLFragment");
+
+    yxml_fragment
+        .define_private_method(
+            "yxml_fragment_first_child",
+            method!(YXmlFragment::yxml_fragment_first_child, 0),
+        )
+        .expect("cannot define private method: yxml_fragment_first_child");
+    yxml_fragment
+        .define_private_method(
+            "yxml_fragment_get",
+            method!(YXmlFragment::yxml_fragment_get, 2),
+        )
+        .expect("cannot define private method: yxml_fragment_get");
+    yxml_fragment
+        .define_private_method(
+            "yxml_fragment_insert",
+            method!(YXmlFragment::yxml_fragment_insert, 3),
+        )
+        .expect("cannot define private method: yxml_fragment_insert");
+    yxml_fragment
+        .define_private_method(
+            "yxml_fragment_len",
+            method!(YXmlFragment::yxml_fragment_len, 1),
+        )
+        .expect("cannot define private method: yxml_fragment_len");
+    yxml_fragment
+        .define_private_method(
+            "yxml_fragment_parent",
+            method!(YXmlFragment::yxml_fragment_parent, 0),
+        )
+        .expect("cannot define private method: yxml_fragment_parent");
+    yxml_fragment
+        .define_private_method(
+            "yxml_fragment_push_back",
+            method!(YXmlFragment::yxml_fragment_push_back, 2),
+        )
+        .expect("cannot define private method: yxml_fragment_push_back");
+    yxml_fragment
+        .define_private_method(
+            "yxml_fragment_push_front",
+            method!(YXmlFragment::yxml_fragment_push_front, 2),
+        )
+        .expect("cannot define private method: yxml_fragment_push_front");
+    yxml_fragment
+        .define_private_method(
+            "yxml_fragment_remove_range",
+            method!(YXmlFragment::yxml_fragment_remove_range, 3),
+        )
+        .expect("cannot define private method: yxml_fragment_remove_range");
+    yxml_fragment
+        .define_private_method(
+            "yxml_fragment_successors",
+            method!(YXmlFragment::yxml_fragment_successors, 1),
+        )
+        .expect("cannot define private method: yxml_fragment_successors");
+    yxml_fragment
+        .define_private_method(
+            "yxml_fragment_to_s",
+            method!(YXmlFragment::yxml_fragment_to_s, 1),
+        )
+        .expect("cannot define private method: yxml_fragment_to_s");
 
     let yxml_text = module
         .define_class("XMLText", Default::default())
