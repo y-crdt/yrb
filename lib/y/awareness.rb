@@ -214,7 +214,7 @@ module Y
 
     # @!method yawareness_local_state
     #
-    # @return [String|nil] Returns a JSON string state representation of a
+    # @return [String, nil] Returns a JSON string state representation of a
     #   current Awareness instance.
     # @!visibility private
 
@@ -234,7 +234,7 @@ module Y
     #   disconnected.
     #
     # @param client_id [Integer] A Client ID
-    # @return [String|nil] Returns a JSON string state representation of a
+    # @return [String, nil] Returns a JSON string state representation of a
     #   current Awareness instance.
     # @!visibility private
 

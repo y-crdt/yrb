@@ -38,7 +38,7 @@ module Y
 
     # Retrieves element at position
     #
-    # @return [true|false|Float|Integer|String|Array|Hash]
+    # @return [true, false, Float, Integer, String, Array, Hash]
     def [](index)
       document.current_transaction { |tx| yarray_get(tx, index) }
     end
@@ -46,7 +46,7 @@ module Y
     # Inserts value at position
     #
     # @param index [Integer]
-    # @param value [true|false|Float|Integer|String|Array|Hash]
+    # @param value [true, false, Float, Integer, String, Array, Hash]
     # @return [void]
     def []=(index, value)
       document.current_transaction { |tx| yarray_insert(tx, index, value) }
@@ -54,7 +54,7 @@ module Y
 
     # Adds an element to the end of the array
     #
-    # @param value [true|false|Float|Integer|String|::Array|Hash]
+    # @param value [true, false, Float, Integer, String, ::Array, Hash]
     # @return [void]
     def <<(value, *values)
       document.current_transaction do |tx|
@@ -121,21 +121,21 @@ module Y
 
     # Check if the array is empty
     #
-    # @return [true|false]
+    # @return [true, false]
     def empty?
       size.zero?
     end
 
     # Returns first element in array if there is at least one
     #
-    # @return [true|false|Float|Integer|String|::Array|Hash|nil]
+    # @return [true, false, Float, Integer, String, ::Array, Hash, nil]
     def first
       document.current_transaction { |tx| yarray_get(tx, 0) }
     end
 
     # Returns last element in array if there is at least one element
     #
-    # @return [true|false|Float|Integer|String|::Array|Hash|nil]
+    # @return [true, false, Float, Integer, String, ::Array, Hash, nil]
     def last
       document.current_transaction do |tx|
         len = yarray_length(tx)
@@ -149,7 +149,7 @@ module Y
 
     # Removes last (n) element(s) from array
     #
-    # @param n [Integer|nil] Number of elements to remove
+    # @param n [Integer, nil] Number of elements to remove
     # @return [void]
     def pop(n = nil)
       document.current_transaction do |tx|
@@ -167,7 +167,7 @@ module Y
 
     # Removes first (n) element(s) from array
     #
-    # @param n [Integer|nil] Number of elements to remove
+    # @param n [Integer, nil] Number of elements to remove
     # @return [void]
     def shift(n = nil)
       document.current_transaction do |tx|
@@ -264,7 +264,7 @@ module Y
 
     # Convert this array to a Ruby Array
     #
-    # @return [Array<true|false|Float|Integer|String|::Array|Hash>]
+    # @return [Array<true, false, Float, Integer, String, ::Array, Hash>]
     def to_a
       document.current_transaction { |tx| yarray_to_a(tx) }
     end
@@ -306,7 +306,7 @@ module Y
     #
     # @param transaction [Y::Transaction]
     # @param index [Integer]
-    # @param arr [Array<Boolean|Float|Integer|Array|Hash|Text>]
+    # @param arr [Array<Boolean, Float, Integer, Array, Hash, Text>]
     # @return [void]
     # @!visibility private
 
