@@ -225,7 +225,7 @@ module Y
     # @return [void]
     def slice!(*args)
       document.current_transaction do |tx|
-        if args.size.zero?
+        if args.empty?
           raise ArgumentError,
                 "Provide one of `index`, `range`, `start, length` as arguments"
         end

@@ -8,12 +8,12 @@ repository = "https://github.com/y-crdt/yrb"
 
 [dependencies]
 lib0 = "0.16.2" # must match yrs version
-magnus = { git = "https://github.com/matsadler/magnus", rev = "ab982c3643421b38f3293f1fe014aa373abfd6dc" }
+magnus = { git = "https://github.com/matsadler/magnus", rev = "2c2024920a403daadbe23fe63270440dfac86288" }
 thiserror = "1.0.38"
 yrs = "0.16.2"
 
 [dev-dependencies]
-magnus = { git = "https://github.com/matsadler/magnus", rev = "ab982c3643421b38f3293f1fe014aa373abfd6dc", features = ["embed"] }
+magnus = { git = "https://github.com/matsadler/magnus", rev = "2c2024920a403daadbe23fe63270440dfac86288", features = ["embed"] }
 
 [lib]
 name = "yrb"

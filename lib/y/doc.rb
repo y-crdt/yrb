@@ -221,26 +221,51 @@ module Y
     # @return [Y::Transaction] The transaction object
     # @!visibility private
 
+    # @!method ydoc_get_or_insert_array(name)
+    #   Creates a new array for the document
+    #
+    # @param [String] name
+    # @return [Y::Array]
+    # @!visibility private
+
+    # @!method ydoc_get_or_insert_map(name)
+    #   Creates a new map for the document
+    #
+    # @param [String] name
+    # @return [Y::Map]
+    # @!visibility private
+
+    # @!method ydoc_get_or_insert_text(name)
+    #   Creates a new text for the document
+    #
+    # @param [String] name
+    # @return [Y::Text]
+    # @!visibility private
+
     # @!method ydoc_get_or_insert_xml_element(name)
     #   Creates a new XMLText for the document
     #
+    # @param [String] name
     # @return [Y::XMLElement]
     # @!visibility private
 
     # @!method ydoc_get_or_insert_xml_fragment(name)
     #   Creates a new XMLFragment for the document
     #
+    # @param [String] name
     # @return [Y::XMLFragment]
     # @!visibility private
 
     # @!method ydoc_get_or_insert_xml_text(name)
     #   Creates a new XMLText for the document
     #
+    # @param [String] name
     # @return [Y::XMLText]
     # @!visibility private
 
     # @!method ydoc_observe_update(block)
     #   Creates a subscription to observe changes to the document
+    #
     # @param [Proc] block
     # @return [Integer]
     # @!visibility private

@@ -31,7 +31,7 @@ module Y
     # Retrieve node at index
     #
     # @param index [Integer]
-    # @return [Y::XMLElement|nil]
+    # @return [Y::XMLElement, nil]
     def [](index)
       node = document.current_transaction { |tx| yxml_element_get(tx, index) }
       node&.document = document
@@ -76,7 +76,7 @@ module Y
     # Optional input is pushed to the text if provided
     #
     # @param index [Integer]
-    # @param input [String|nil]
+    # @param input [String, nil]
     # @return [Y::XMLText]
     def insert_text(index, input = "")
       text = document.current_transaction do |tx|
@@ -88,7 +88,7 @@ module Y
 
     # Retrieve element or text adjacent (next) to this element
     #
-    # @return [Y::XMLElement|Y::XMLText|nil]
+    # @return [Y::XMLElement, Y::XMLText, nil]
     def next_sibling
       node = document.current_transaction { |tx| yxml_element_next_sibling(tx) }
       node&.document = document
@@ -120,7 +120,7 @@ module Y
 
     # Retrieve parent element
     #
-    # @return [Y::XMLElement|nil]
+    # @return [Y::XMLElement, nil]
     def parent
       node = yxml_element_parent
       node.document = document
@@ -129,7 +129,7 @@ module Y
 
     # Retrieve element or text adjacent (previous) to this element
     #
-    # @return [Y::XMLElement|Y::XMLText|nil]
+    # @return [Y::XMLElement, Y::XMLText, nil]
     def prev_sibling
       node = document.current_transaction { |tx| yxml_element_prev_sibling(tx) }
       node&.document = document
@@ -199,7 +199,7 @@ module Y
     # @return [void]
     def slice!(*args)
       document.current_transaction do |tx| # rubocop:disable Metrics/BlockLength
-        if args.size.zero?
+        if args.empty?
           raise ArgumentError,
                 "Provide one of `index`, `range`, `start, length` as arguments"
         end
@@ -349,26 +349,26 @@ module Y
     # @!method yxml_element_first_child(tx)
     #
     # @param tx [Y::Transaction]
-    # @return [Y::XMLElement|Y::XMLText]
+    # @return [Y::XMLElement, Y::XMLText]
 
     # @!method yxml_element_get_attribute(tx, name)
     #
     # @param tx [Y::Transaction]
     # @param name [String]
-    # @return [String|nil]
+    # @return [String, nil]
 
     # @!method yxml_element_get(tx, index)
     #
     # @param tx [Y::Transaction]
     # @param index [Integer]
-    # @return [Y::XMLElement|Y::XMLText|nil]
+    # @return [Y::XMLElement, Y::XMLText, nil]
 
     # @!method yxml_element_insert_attribute(tx, name, value)
     #
     # @param tx [Y::Transaction]
     # @param name [String]
     # @param value [String]
-    # @return [String|nil]
+    # @return [String, nil]
 
     # @!method yxml_element_insert_element(tx, index, name)
     # Insert XML element into this XML element
@@ -389,7 +389,7 @@ module Y
     # @!method yxml_element_next_sibling(tx)
     #
     # @param tx [Y::Transaction]
-    # @return [Y::XMLElement|XMLText|nil]
+    # @return [Y::XMLElement, XMLText, nil]
 
     # @!method yxml_element_observe(callback)
     #
@@ -398,12 +398,12 @@ module Y
 
     # @!method yxml_element_parent()
     #
-    # @return [Y::XMLElement|nil]
+    # @return [Y::XMLElement, nil]
 
     # @!method yxml_element_prev_sibling(tx)
     #
     # @param tx [Y::Transaction]
-    # @return [Y::XMLElement|XMLText|nil]
+    # @return [Y::XMLElement, XMLText, nil]
 
     # @!method yxml_element_push_element_back(tx, name)
     #
@@ -562,7 +562,7 @@ module Y
     #
     # @param index [Integer]
     # @param value [String, Float, Integer, Array, Hash, Boolean]
-    # @param attrs [Hash|nil]
+    # @param attrs [Hash, nil]
     # @return [void]
     def insert(index, value, attrs = nil)
       document.current_transaction do |tx|
@@ -604,7 +604,7 @@ module Y
 
     # Return adjacent XMLElement or XMLText node (next)
     #
-    # @return [Y::XMLElement|Y::XMLText|nil]
+    # @return [Y::XMLElement, Y::XMLText, nil]
     def next_sibling
       node = document.current_transaction { |tx| yxml_text_next_sibling(tx) }
       node.document = document
@@ -613,7 +613,7 @@ module Y
 
     # Return parent XMLElement
     #
-    # @return [Y::XMLElement|nil]
+    # @return [Y::XMLElement, nil]
     def parent
       node = yxml_text_parent
       node.document = document
@@ -622,7 +622,7 @@ module Y
 
     # Return adjacent XMLElement or XMLText node (prev)
     #
-    # @return [Y::XMLElement|Y::XMLText|nil]
+    # @return [Y::XMLElement, Y::XMLText, nil]
     def prev_sibling
       node = document.current_transaction { |tx| yxml_text_prev_sibling(tx) }
       node&.document = document
@@ -682,7 +682,7 @@ module Y
     # @return [void]
     def slice!(*args)
       document.current_transaction do |tx|
-        if args.size.zero?
+        if args.empty?
           raise ArgumentError,
                 "Provide one of `index`, `range`, `start, length` as arguments"
         end
@@ -742,7 +742,7 @@ module Y
       setter = method_name
       setter += "=" unless is_setter
       getter = method_name
-      getter = getter.to_s.slice(0...-1).to_sym if is_setter
+      getter = getter.to_s.slice(0...-1)&.to_sym if is_setter
 
       define_singleton_method(setter.to_sym) do |new_val|
         document.current_transaction do |tx|
@@ -803,7 +803,7 @@ module Y
     #
     # @param tx [Y::Transaction]
     # @param name [String]
-    # @return [String|nil]
+    # @return [String, nil]
 
     # @!method yxml_text_insert(tx, index, str)
     #
@@ -838,7 +838,7 @@ module Y
     #
     # @param tx [Y::Transaction]
     # @param index [Integer]
-    # @param value [true|false|Float|Integer|Array|Hash]
+    # @param value [true, false, Float, Integer, Array, Hash]
     # @param attrs [Hash]
     # @return [void]
 
@@ -850,7 +850,7 @@ module Y
     # @!method yxml_text_next_sibling(tx)
     #
     # @param tx [Y::Transaction]
-    # @return [Y::XMLElement|Y::XMLText|nil]
+    # @return [Y::XMLElement, Y::XMLText, nil]
 
     # @!method yxml_text_observe(callback)
     #
@@ -859,12 +859,12 @@ module Y
 
     # @!method yxml_text_parent
     #
-    # @return [Y::XMLElement|nil]
+    # @return [Y::XMLElement, nil]
 
     # @!method yxml_text_prev_sibling(tx)
     #
     # @param tx [Y::Transaction]
-    # @return [Y::XMLElement|Y::XMLText|nil]
+    # @return [Y::XMLElement, Y::XMLText, nil]
 
     # @!method yxml_text_push(tx, str)
     #
@@ -896,6 +896,245 @@ module Y
     #
     # @return [Y::Doc] The document this array belongs to
     attr_accessor :document
+
+    # Create a new XMLElement instance
+    #
+    # @param doc [Y::Doc]
+    def initialize(doc = nil)
+      @document = doc || Y::Doc.new
+
+      super()
+    end
+
+    # Retrieve node at index
+    #
+    # @param index [Integer]
+    # @return [Y::XMLElement, Y::XMLFragment, Y::XMLText, nil]
+    def [](index)
+      node = document.current_transaction { |tx| yxml_fragment_get(tx, index) }
+      node&.document = document
+      node
+    end
+
+    # Create a node at index
+    #
+    # @param index [Integer]
+    # @param name [String] Name of node, e.g. `<p />`
+    # @return [Y::XMLElement]
+    # rubocop:disable Lint/Void
+    def []=(index, name)
+      node = document.current_transaction do |tx|
+        yxml_fragment_insert(tx, index, name)
+      end
+      node.document = document
+      node
+    end
+    # rubocop:enable Lint/Void
+
+    # Retrieve first child
+    #
+    # @return [Y::XMLElement, Y::XMLFragment, Y::XMLText, nil]
+    def first_child
+      node = yxml_fragment_first_child
+      node&.document = document
+      node
+    end
+
+    # Retrieve child at index
+    #
+    # @param [Integer] index
+    # @param [String] tag
+    # @return [Y::XMLElement, Y::XMLFragment, Y::XMLText, nil]
+    def insert(index, tag)
+      document.current_transaction { |tx| yxml_fragment_insert(tx, index, tag) }
+    end
+
+    # Length of the fragment
+    #
+    # @return [Integer]
+    def length
+      document.current_transaction { |tx| yxml_fragment_len(tx) }
+    end
+
+    alias size length
+
+    # Retrieve parent element
+    #
+    # @return [Y::XMLElement, Y::XMLFragment, Y::XMLText, nil]
+    def parent
+      node = yxml_fragment_parent
+      node.document = document
+      node
+    end
+
+    # Creates a new child an inserts at the end of the children list
+    #
+    # @param name [String]
+    # @return [Y::XMLElement]
+    def <<(name)
+      xml_element = document.current_transaction do |tx|
+        yxml_fragment_push_back(tx, name)
+      end
+      xml_element.document = document
+      xml_element
+    end
+
+    alias push <<
+
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+
+    # Removes one or more children from XML Fragment
+    #
+    # @example Removes a single element
+    #   doc = Y::Doc.new
+    #
+    #   xml_fragment = doc.get_xml_fragment("my xml fragment")
+    #   xml_fragment << "A"
+    #   xml_fragment << "B"
+    #   xml_fragment << "C"
+    #
+    #   xml_fragment.slice!(1)
+    #
+    #   xml_fragment.to_s # <UNDEFINED><A></A><C></C></UNDEFINED>
+    #
+    # @overload slice!(n)
+    #   Removes nth node from child list
+    #
+    # @overload slice!(start, length)
+    #   Removes a range of nodes
+    #
+    # @overload slice!(range)
+    #   Removes a range of nodes
+    #
+    # @return [void]
+    def slice!(*args)
+      document.current_transaction do |tx| # rubocop:disable Metrics/BlockLength
+        if args.empty?
+          raise ArgumentError,
+                "Provide one of `index`, `range`, `start, length` as arguments"
+        end
+
+        if args.size == 1
+          arg = args.first
+
+          if arg.is_a?(Range)
+            if arg.exclude_end?
+              yxml_fragment_remove_range(tx, arg.first,
+                                         arg.last - arg.first)
+            end
+            unless arg.exclude_end?
+              yxml_fragment_remove_range(tx, arg.first,
+                                         arg.last + 1 - arg.first)
+            end
+            return nil
+          end
+
+          if arg.is_a?(Numeric)
+            yxml_fragment_remove_range(tx, arg.to_int, 1)
+            return nil
+          end
+        end
+
+        if args.size == 2
+          first, second = args
+
+          if first.is_a?(Numeric) && second.is_a?(Numeric)
+            yxml_fragment_remove_range(tx, first, second)
+            return nil
+          end
+        end
+
+        raise ArgumentError, "Please check your arguments, can't slice."
+      end
+    end
+
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+
+    # Traverse over the successors of the current XML element and return
+    # a flat representation of all successors.
+    #
+    # @return [Array<Y::XMLElement, Y::XMLFragment, Y::XMLText]
+    def successors
+      document.current_transaction { |tx| yxml_fragment_successors(tx) }
+    end
+
+    # Returns string representation of XMLFragment
+    #
+    # @return [String]
+    def to_s
+      document.current_transaction { |tx| yxml_fragment_to_s(tx) }
+    end
+
+    # Creates a new node and puts it in front of the child list
+    #
+    # @param name [String]
+    # @return [Y::XMLElement]
+    def unshift(name)
+      xml_element = document.current_transaction do |tx|
+        yxml_fragment_push_front(tx, name)
+      end
+      xml_element.document = document
+      xml_element
+    end
+
+    # @!method yxml_fragment_first_child
+    #
+    # @return [Y::XMLElement, Y::XMLFragment, Y::XMLText, nil]
+
+    # @!method yxml_fragment_get(tx, index)
+    #
+    # @param [Y::Transaction] tx
+    # @param [Integer] index
+    # @return [Y::XMLElement, Y::XMLFragment, Y::XMLText, nil]
+
+    # @!method yxml_fragment_insert(tx, index, tag)
+    #
+    # @param tx [Y::Transaction]
+    # @param [Integer] index
+    # @param [String] tag
+    # @return [Y::XMLElement, Y::XMLFragment, Y::XMLText, nil]
+
+    # @!method yxml_fragment_len(tx)
+    #
+    # @param tx [Y::Transaction]
+    # @return [Integer]
+
+    # @!method yxml_fragment_parent
+    #
+    # @return [Y::XMLElement, Y::XMLFragment, Y::XMLText, nil]
+
+    # @!method yxml_fragment_push_back(tx, tag)
+    #
+    # @param tx [Y::Transaction]
+    # @param [String] tag
+    # @return [Y::XMLElement]
+
+    # @!method yxml_fragment_push_front(tx, tag)
+    #
+    # @param tx [Y::Transaction]
+    # @param [String] tag
+    # @return [Y::XMLElement]
+
+    # @!method yxml_fragment_remove(tx, index)
+    #
+    # @param tx [Y::Transaction]
+    # @param [Integer] index
+
+    # @!method yxml_fragment_remove_range(tx, index, length)
+    #
+    # @param tx [Y::Transaction]
+    # @param [Integer] index
+    # @param [Integer] length
+
+    # @!method yxml_fragment_successors(tx)
+    #
+    # @param tx [Y::Transaction]
+    # @return [Array<Y::XMLElement, Y::XMLFragment, Y::XMLText>]
+
+    # @!method yxml_fragment_to_s(tx)
+    #
+    # @param tx [Y::Transaction]
+    # @return [String]
   end
 
   # rubocop:enable Metrics/ClassLength

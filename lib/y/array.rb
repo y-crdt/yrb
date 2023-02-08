@@ -56,8 +56,11 @@ module Y
     #
     # @param value [true|false|Float|Integer|String|::Array|Hash]
     # @return [void]
-    def <<(value)
-      document.current_transaction { |tx| yarray_push_back(tx, value) }
+    def <<(value, *values)
+      document.current_transaction do |tx|
+        yarray_push_back(tx, value)
+        values.each { |v| yarray_push_back(tx, v) }
+      end
     end
 
     # Attach listener to array changes
@@ -218,7 +221,7 @@ module Y
     # @return [void]
     def slice!(*args)
       document.current_transaction do |tx| # rubocop:disable Metrics/BlockLength
-        if args.size.zero?
+        if args.empty?
           raise ArgumentError,
                 "Provide one of `index`, `range`, `start, length` as arguments"
         end
