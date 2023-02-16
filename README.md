@@ -41,7 +41,7 @@ older RubyGems versions, the platform is described as `x86_64-linux-musl`, but
 `x86_64-linux` is fetched instead. 
 
 ```bash
-gem system --update
+gem update --system
 ```
 
 ## Usage
