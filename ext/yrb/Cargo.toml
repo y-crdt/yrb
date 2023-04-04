@@ -1,6 +1,6 @@
 [package]
 name = "yrb"
-version = "0.5.0"
+version = "0.5.1"
 authors = ["Hannes Moser <box@hannesmoser.at>", "Hannes Moser <hmoser@gitlab.com>"]
 edition = "2021"
 homepage = "https://github.com/y-crdt/yrb"
@@ -12,6 +12,7 @@ magnus = "0.5.2"
 thiserror = "1.0.40"
 yrs = "0.16.5"
 y-sync = "0.3.0"
+rb-sys = "0.9.71"
 
 [dev-dependencies]
 magnus = { version = "0.5.2", features = ["embed"] }
