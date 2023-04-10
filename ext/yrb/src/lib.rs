@@ -83,6 +83,8 @@ fn init() -> Result<(), Error> {
         .expect("cannot define singleton method: ydoc_new");
     ydoc.define_private_method("ydoc_encode_diff_v1", method!(YDoc::ydoc_encode_diff_v1, 2))
         .expect("cannot define private method: ydoc_encode_diff_v1");
+    ydoc.define_private_method("ydoc_encode_diff_v2", method!(YDoc::ydoc_encode_diff_v2, 2))
+        .expect("cannot define private method: ydoc_encode_diff_v2");
     ydoc.define_private_method(
         "ydoc_get_or_insert_array",
         method!(YDoc::ydoc_get_or_insert_array, 1),
@@ -156,6 +158,12 @@ fn init() -> Result<(), Error> {
         .expect("cannot define private method: ytransaction_apply_update");
     ytransaction
         .define_private_method(
+            "ytransaction_apply_update_v2",
+            method!(YTransaction::ytransaction_apply_update_v2, 1),
+        )
+        .expect("cannot define private method: ytransaction_apply_update_v2");
+    ytransaction
+        .define_private_method(
             "ytransaction_commit",
             method!(YTransaction::ytransaction_commit, 0),
         )
@@ -205,6 +213,12 @@ fn init() -> Result<(), Error> {
             method!(YTransaction::ytransaction_state_vector, 0),
         )
         .expect("cannot define private method: ytransaction_state_vector");
+    ytransaction
+        .define_private_method(
+            "ytransaction_state_vector_v2",
+            method!(YTransaction::ytransaction_state_vector_v2, 0),
+        )
+        .expect("cannot define private method: ytransaction_state_vector_v2");
 
     let ytext = module
         .define_class("Text", Default::default())

@@ -38,6 +38,17 @@ impl YTransaction {
             .map(|u| self.transaction().as_mut().unwrap().apply_update(u))
     }
 
+    pub(crate) fn ytransaction_apply_update_v2(&self, update: Vec<u8>) -> Result<(), Error> {
+        Update::decode_v2(update.as_slice())
+            .map_err(|error| {
+                Error::new(
+                    exception::runtime_error(),
+                    format!("cannot decode update: {:?}", error),
+                )
+            })
+            .map(|u| self.transaction().as_mut().unwrap().apply_update(u))
+    }
+
     pub(crate) fn ytransaction_commit(&self) {
         self.transaction().as_mut().unwrap().commit();
     }
@@ -96,6 +107,14 @@ impl YTransaction {
             .unwrap()
             .state_vector()
             .encode_v1()
+    }
+
+    pub(crate) fn ytransaction_state_vector_v2(&self) -> Vec<u8> {
+        self.transaction()
+            .as_ref()
+            .unwrap()
+            .state_vector()
+            .encode_v2()
     }
 
     pub(crate) fn ytransaction_free(&self) {

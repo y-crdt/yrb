@@ -22,6 +22,15 @@ module Y
       ytransaction_apply_update(update)
     end
 
+    # Applies the v2 encoded update on this document. This will bring the
+    # the document to the same state as the one the update is from.
+    #
+    # @param update [::Array<Integer>]
+    # @return [void]
+    def apply_v2(update)
+      ytransaction_apply_update_v2(update)
+    end
+
     # Commits transaction
     #
     # @return [void]
@@ -89,15 +98,29 @@ module Y
       xml_text
     end
 
-    # Return state vector for transaction
+    # Return a state vector for this transaction
     #
     # @return [::Array<Integer>]
     def state
       ytransaction_state_vector
     end
 
+    # Returns a v2 state vector for this transaction
+    #
+    # @return [::Array<Integer>]
+    def state_v2
+      ytransaction_state_vector_v2
+    end
+
     # @!method ytransaction_apply_update(update)
-    #   Returns or creates an array by name
+    #   Apply the encoded update within current transaction
+    #
+    # @param update [::Array<Integer>]
+    # @return [void]
+    # @!visibility private
+
+    # @!method ytransaction_apply_update_v2(update)
+    #   Apply the v2 encoded update within current transaction
     #
     # @param update [::Array<Integer>]
     # @return [void]
@@ -154,6 +177,11 @@ module Y
     # @!visibility private
 
     # @!method ytransaction_state_vector
+    #
+    # @return [Array<Integer>]
+    # @!visibility private
+
+    # @!method ytransaction_state_vector_v2
     #
     # @return [Array<Integer>]
     # @!visibility private

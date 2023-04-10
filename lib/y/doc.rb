@@ -19,6 +19,9 @@ module Y
     ZERO_STATE = [0].freeze
     private_constant :ZERO_STATE
 
+    ZERO_STATE_V2 = [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0].freeze
+    private_constant :ZERO_STATE_V2
+
     # Attach a listener to document changes. If one of the data structures is
     # changes, the block is called with the update as its only argument.
     #
@@ -53,6 +56,16 @@ module Y
     # @return [::Array<Integer>] Binary encoded diff
     def diff(state = ZERO_STATE)
       current_transaction { |tx| ydoc_encode_diff_v1(tx, state) }
+    end
+
+    # Create a v2 diff between this document and another document. The diff is
+    # created based on a state vector provided by the other document. It only
+    # returns the missing blocks, as binary encoded sequence.
+    #
+    # @param state [::Array<Integer>] The state to create the diff against
+    # @return [::Array<Integer>] Binary encoded diff
+    def diff_v2(state = ZERO_STATE_V2)
+      current_transaction { |tx| ydoc_encode_diff_v2(tx, state) }
     end
 
     # Creates a full diff for the current document. It is similar to {#diff},
@@ -152,12 +165,28 @@ module Y
       current_transaction(&:state)
     end
 
+    # Creates a v2 state vector of this document. This can be used to compare
+    # the state of two documents with each other and to later on sync them.
+    #
+    # @return [::Array<Integer>] Binary encoded state vector
+    def state_v2
+      current_transaction(&:state_v2)
+    end
+
     # Synchronizes this document with the diff from another document
     #
     # @param diff [::Array<Integer>] Binary encoded update
     # @return [void]
     def sync(diff)
       current_transaction { |tx| tx.apply(diff) }
+    end
+
+    # Synchronizes this document with the v2 diff from another document
+    #
+    # @param diff [::Array<Integer>] Binary encoded update
+    # @return [void]
+    def sync_v2(diff)
+      current_transaction { |tx| tx.apply_v2(diff) }
     end
 
     # Restores a specific document from an update that contains full state
@@ -207,6 +236,17 @@ module Y
     #   @example Create transaction on doc
     #     doc = Y::Doc.new
     #     tx = doc.ydoc_encode_diff_v1(other_state)
+    #
+    # @return [Array<Integer>] Binary encoded update
+    # @!visibility private
+
+    # @!method ydoc_encode_diff_v2(tx, state_vector)
+    #   Encodes the diff of current document state vs provided state in the v2
+    #   format
+    #
+    #   @example Create transaction on doc
+    #     doc = Y::Doc.new
+    #     tx = doc.ydoc_encode_diff_v2(other_state)
     #
     # @return [Array<Integer>] Binary encoded update
     # @!visibility private

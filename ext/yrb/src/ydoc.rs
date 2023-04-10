@@ -10,6 +10,7 @@ use magnus::{exception::runtime_error, Error, Integer, RArray, Value};
 use std::borrow::Borrow;
 use std::cell::RefCell;
 use yrs::updates::decoder::Decode;
+use yrs::updates::encoder::{Encoder, EncoderV2};
 use yrs::{Doc, OffsetKind, Options, ReadTxn, StateVector, SubscriptionId, Transact};
 
 #[magnus::wrap(class = "Y::Doc")]
@@ -40,6 +41,21 @@ impl YDoc {
 
         StateVector::decode_v1(state_vector.borrow())
             .map(|sv| tx.encode_diff_v1(&sv))
+            .map_err(|_e| Error::new(runtime_error(), "cannot encode diff"))
+    }
+
+    pub(crate) fn ydoc_encode_diff_v2(
+        &self,
+        transaction: &YTransaction,
+        state_vector: Vec<u8>,
+    ) -> Result<Vec<u8>, Error> {
+        let mut tx = transaction.transaction();
+        let tx = tx.as_mut().unwrap();
+        let mut encoder = EncoderV2::new();
+
+        StateVector::decode_v2(state_vector.borrow())
+            .map(|sv| tx.encode_diff(&sv, &mut encoder))
+            .map(|_| encoder.to_vec())
             .map_err(|_e| Error::new(runtime_error(), "cannot encode diff"))
     }
 
