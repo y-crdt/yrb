@@ -170,4 +170,20 @@ RSpec.describe Y::Doc do
       expect(count).to eq(2)
     end
   end
+
+  context "when using v2 encoding" do
+    it "encodes and restores document" do
+      local = described_class.new
+      local_text = local.get_text("my text")
+      local_text << "Hello, World!"
+
+      diff = local.diff_v2
+
+      remote = described_class.new
+      remote.sync_v2(diff)
+      remote_text = remote.get_text("my text")
+
+      expect(remote_text.to_s).to eq(local_text.to_s)
+    end
+  end
 end
