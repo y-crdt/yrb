@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
   spec.license = "MIT"
   spec.required_ruby_version = ">= 2.7.0"
   # https://github.com/rubygems/rubygems/pull/5852#issuecomment-1231118509
-  spec.required_rubygems_version = ">= 3.3.21"
+  spec.required_rubygems_version = ">= 3.3.22"
 
   spec.metadata["allowed_push_host"] = "https://rubygems.org"
 
