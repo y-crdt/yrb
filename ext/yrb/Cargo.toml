@@ -12,7 +12,7 @@ magnus = "0.5.3"
 thiserror = "1.0.40"
 yrs = "0.16.5"
 y-sync = "0.3.0"
-rb-sys = "0.9.72"
+rb-sys = "0.9.74"
 
 [dev-dependencies]
 magnus = { version = "0.5.3", features = ["embed"] }
