@@ -7,7 +7,7 @@ homepage = "https://github.com/y-crdt/yrb"
 repository = "https://github.com/y-crdt/yrb"
 
 [dependencies]
-lib0 = "0.16.5" # must match yrs version
+lib0 = "0.16.7" # must match yrs version
 magnus = "0.5.3"
 thiserror = "1.0.40"
 yrs = "0.16.5"
