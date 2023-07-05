@@ -6,7 +6,7 @@ require "rake/testtask"
 require "rake/extensiontask"
 require "rb_sys"
 
-cross_rubies = %w[3.2.0 3.1.0 3.0.0 2.7.0]
+cross_rubies = %w[3.2.0 3.1.0 3.0.0]
 cross_platforms = %w[
   aarch64-linux
   arm64-darwin
