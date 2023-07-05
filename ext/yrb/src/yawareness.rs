@@ -2,7 +2,7 @@ use magnus::{block::Proc, exception, Error, Value};
 use std::borrow::Borrow;
 use std::cell::RefCell;
 use std::collections::HashMap;
-use y_sync::awareness::{Awareness, AwarenessUpdate, Event, Subscription};
+use y_sync::awareness::{Awareness, AwarenessUpdate, Event, UpdateSubscription};
 use yrs::block::ClientID;
 use yrs::updates::decoder::Decode;
 use yrs::updates::encoder::Encode;
@@ -138,14 +138,14 @@ impl From<&Event> for YAwarenessEvent {
 }
 
 #[magnus::wrap(class = "Y::AwarenessEvent")]
-pub(crate) struct YAwarenessSubscription(Subscription<Event>);
+pub(crate) struct YAwarenessSubscription(UpdateSubscription);
 
 unsafe impl Send for YAwarenessSubscription {}
 
 impl YAwarenessSubscription {}
 
-impl From<Subscription<Event>> for YAwarenessSubscription {
-    fn from(v: Subscription<Event>) -> Self {
+impl From<UpdateSubscription> for YAwarenessSubscription {
+    fn from(v: UpdateSubscription) -> Self {
         YAwarenessSubscription(v)
     }
 }

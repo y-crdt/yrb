@@ -482,9 +482,9 @@ checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
 
 [[package]]
 name = "y-sync"
-version = "0.3.0"
+version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e77a143afe4dde83bc987ad3119228d0f107053a3da131a00738cb2d7f496641"
+checksum = "f54d34b68ec4514a0659838c2b1ba867c571b20b3804a1338dacf4fa9062d801"
 dependencies = [
  "lib0",
  "thiserror",
