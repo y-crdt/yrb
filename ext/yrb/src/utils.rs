@@ -2,7 +2,7 @@ use crate::yvalue::YValue;
 use lib0::any::Any;
 use magnus::r_hash::ForEach::Continue;
 use magnus::{exception, Error, RHash, RString, Symbol, Value};
-use std::rc::Rc;
+use std::sync::Arc;
 use yrs::types::Attrs;
 
 #[derive(Debug, Clone)]
@@ -18,7 +18,7 @@ pub(crate) fn map_rhash_to_attrs(hash: RHash) -> Result<Attrs, Error> {
     let mut a: Attrs = Default::default();
 
     let result = hash.foreach(|key: Value, value: Value| {
-        let k = Rc::from(key.to_string());
+        let k = Arc::from(key.to_string());
         let v = Any::from(YValue::from(value));
 
         a.insert(k, v);
