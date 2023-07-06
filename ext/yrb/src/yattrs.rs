@@ -3,7 +3,7 @@ use lib0::any::Any;
 use magnus::r_hash::ForEach::Continue;
 use magnus::{RHash, Value};
 use std::ops::{Deref, DerefMut};
-use std::rc::Rc;
+use std::sync::Arc;
 use yrs::types::Attrs;
 
 pub(crate) struct YAttrs(pub(crate) Attrs);
@@ -23,7 +23,7 @@ impl From<RHash> for YAttrs {
                 let k = key.to_string();
                 let yvalue = YValue::from(value);
                 let avalue = Any::from(yvalue);
-                attrs.insert(Rc::from(k), avalue);
+                attrs.insert(Arc::from(k), avalue);
 
                 Ok(Continue)
             })
