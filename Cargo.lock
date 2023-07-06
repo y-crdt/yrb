@@ -505,9 +505,9 @@ dependencies = [
 
 [[package]]
 name = "yrs"
-version = "0.16.5"
+version = "0.16.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4c2aef2bf89b4f7c003f9c73f1c8097427ca32e1d006443f3f607f11e79a797b"
+checksum = "602a92ff0f51cf8106cb483b69ceb71fb56ebe5ba64bd142f48d5fa5597813ea"
 dependencies = [
  "atomic_refcell",
  "lib0",
