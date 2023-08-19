@@ -8,14 +8,14 @@ repository = "https://github.com/y-crdt/yrb"
 
 [dependencies]
 lib0 = "0.16.10" # must match yrs version
-magnus = "0.5.4"
+magnus = "0.6.0"
 thiserror = "1.0.47"
 yrs = "=0.16.10"
 y-sync = "=0.3.1"
 rb-sys = "0.9.81"
 
 [dev-dependencies]
-magnus = { version = "0.5.4", features = ["embed"] }
+magnus = { version = "0.6.0", features = ["embed"] }
 
 [lib]
 name = "yrb"
