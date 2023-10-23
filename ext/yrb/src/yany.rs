@@ -1,6 +1,7 @@
 use lib0::any::Any;
 use magnus::r_string::IntoRString;
-use magnus::{RArray, RHash, RString, Value, QNIL};
+use magnus::value::ReprValue;
+use magnus::{value, IntoValue, RArray, RHash, RString, Value};
 use std::borrow::Borrow;
 use std::ops::{Deref, DerefMut};
 
@@ -27,19 +28,19 @@ impl TryInto<Value> for YAny {
         return match self.0 {
             Any::Array(_v) => {
                 let arr = RArray::new();
-                Ok(Value::from(arr))
+                Ok(arr.as_value())
             }
             Any::Map(_v) => {
                 let hash = RHash::new();
-                Ok(Value::from(hash))
+                Ok(hash.as_value())
             }
-            Any::Null => Ok(Value::from(QNIL)),
-            Any::Undefined => Ok(Value::from(QNIL)),
-            Any::Bool(v) => Ok(Value::from(v)),
-            Any::Number(v) => Ok(Value::from(v)),
-            Any::BigInt(v) => Ok(Value::from(v)),
-            Any::String(v) => Ok(Value::from(RString::from(v.into_r_string()))),
-            Any::Buffer(v) => Ok(Value::from(RString::from_slice(v.borrow()))),
+            Any::Null => Ok(value::qnil().as_value()),
+            Any::Undefined => Ok(Value::from(value::qnil().as_value())),
+            Any::Bool(v) => Ok(v.into_value()),
+            Any::Number(v) => Ok(Value::from(v.into_value())),
+            Any::BigInt(v) => Ok(Value::from(v.into_value())),
+            Any::String(v) => Ok(RString::from(v.into_r_string()).as_value()),
+            Any::Buffer(v) => Ok(RString::from_slice(v.borrow()).as_value()),
         };
     }
 }
