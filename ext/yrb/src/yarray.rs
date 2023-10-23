@@ -3,7 +3,7 @@ use crate::yvalue::YValue;
 use lib0::any::Any;
 use magnus::block::Proc;
 use magnus::value::Qnil;
-use magnus::{Error, RArray, RHash, Symbol, Value};
+use magnus::{Error, IntoValue, RArray, RHash, Symbol, Value};
 use std::borrow::Borrow;
 use std::cell::RefCell;
 use yrs::types::Change;
@@ -98,10 +98,10 @@ impl YArray {
                                 payload.aset(change_added, values)
                             }
                             Change::Retain(position) => {
-                                payload.aset(change_retain, Value::from(*position))
+                                payload.aset(change_retain, (*position).into_value())
                             }
                             Change::Removed(position) => {
-                                payload.aset(change_removed, Value::from(*position))
+                                payload.aset(change_removed, (*position).into_value())
                             }
                         };
 

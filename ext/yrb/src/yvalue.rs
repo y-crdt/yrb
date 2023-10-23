@@ -1,8 +1,8 @@
 use crate::{YText, YXmlElement, YXmlText};
 use lib0::any::Any;
 use magnus::r_hash::ForEach::Continue;
-use magnus::value::Qnil;
-use magnus::{class, Float, Integer, RArray, RHash, RString, Symbol, Value, QNIL};
+use magnus::value::{Qnil, ReprValue};
+use magnus::{class, value, Float, Integer, IntoValue, RArray, RHash, RString, Symbol, Value};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use yrs::types::Value as YrsValue;
@@ -21,100 +21,100 @@ impl From<Value> for YValue {
 
 impl From<Qnil> for YValue {
     fn from(value: Qnil) -> Self {
-        YValue(RefCell::from(Value::from(value)))
+        YValue(RefCell::from(value.into_value()))
     }
 }
 
 impl From<bool> for YValue {
     fn from(value: bool) -> Self {
-        YValue(RefCell::from(Value::from(value)))
+        YValue(RefCell::from(value.into_value()))
     }
 }
 
 impl From<f64> for YValue {
     fn from(value: f64) -> Self {
-        YValue(RefCell::from(Value::from(value)))
+        YValue(RefCell::from(value.into_value()))
     }
 }
 
 impl From<i64> for YValue {
     fn from(value: i64) -> Self {
-        YValue(RefCell::from(Value::from(value)))
+        YValue(RefCell::from(value.into_value()))
     }
 }
 
 impl From<u32> for YValue {
     fn from(value: u32) -> Self {
-        YValue(RefCell::from(Value::from(value)))
+        YValue(RefCell::from(value.into_value()))
     }
 }
 
 impl From<String> for YValue {
     fn from(value: String) -> Self {
-        YValue(RefCell::from(Value::from(value)))
+        YValue(RefCell::from(value.into_value()))
     }
 }
 
 impl From<RArray> for YValue {
     fn from(value: RArray) -> Self {
-        YValue(RefCell::from(Value::from(value)))
+        YValue(RefCell::from(value.into_value()))
     }
 }
 
 impl From<RHash> for YValue {
     fn from(value: RHash) -> Self {
-        YValue(RefCell::from(Value::from(value)))
+        YValue(RefCell::from(value.into_value()))
     }
 }
 
 impl From<YrsText> for YValue {
     fn from(value: YrsText) -> Self {
-        YValue(RefCell::from(Value::from(YText(RefCell::from(value)))))
+        YValue(RefCell::from(YText(RefCell::from(value)).into_value()))
     }
 }
 
 impl From<YrsXmlElement> for YValue {
     fn from(value: YrsXmlElement) -> Self {
-        YValue(RefCell::from(Value::from(YXmlElement(RefCell::from(
-            value,
-        )))))
+        YValue(RefCell::from(
+            YXmlElement(RefCell::from(value)).into_value(),
+        ))
     }
 }
 
 impl From<YrsXmlText> for YValue {
     fn from(value: YrsXmlText) -> Self {
-        YValue(RefCell::from(Value::from(YXmlText(RefCell::from(value)))))
+        YValue(RefCell::from(YXmlText(RefCell::from(value)).into_value()))
     }
 }
 
 impl From<YText> for YValue {
     fn from(value: YText) -> Self {
-        YValue(RefCell::from(Value::from(value)))
+        YValue(RefCell::from(value.into_value()))
     }
 }
 
 impl From<YXmlElement> for YValue {
     fn from(value: YXmlElement) -> Self {
-        YValue(RefCell::from(Value::from(value)))
+        YValue(RefCell::from(value.into_value()))
     }
 }
 
 impl From<YXmlText> for YValue {
     fn from(value: YXmlText) -> Self {
-        YValue(RefCell::from(Value::from(value)))
+        YValue(RefCell::from(value.into_value()))
     }
 }
 
 impl From<Any> for YValue {
     fn from(value: Any) -> Self {
         match value {
-            Any::Null => YValue::from(QNIL),
-            Any::Undefined => YValue::from(QNIL),
+            Any::Null => YValue::from(value::qnil()),
+            Any::Undefined => YValue::from(value::qnil()),
             Any::Bool(v) => YValue::from(v),
             Any::Number(v) => YValue::from(v),
             Any::BigInt(v) => YValue::from(v),
             Any::String(v) => YValue::from(v.into_string()),
-            Any::Buffer(v) => YValue::from(Value::from(v.into_vec())),
+            Any::Buffer(v) => YValue::from(v.into_vec().into_value()),
             Any::Array(v) => {
                 let arr = RArray::new();
                 for item in v.iter() {
@@ -237,6 +237,7 @@ impl Into<Value> for YValue {
 mod tests {
     use crate::yvalue::YValue;
     use lib0::any::Any;
+    use magnus::value::ReprValue;
 
     #[test]
     fn convert_any_to_yvalue() {

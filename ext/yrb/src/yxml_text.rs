@@ -3,7 +3,7 @@ use crate::yvalue::YValue;
 use crate::yxml_fragment::YXmlFragment;
 use crate::{YTransaction, YXmlElement};
 use lib0::any::Any;
-use magnus::{Error, RHash, Value};
+use magnus::{Error, IntoValue, RHash, Value};
 use std::cell::RefCell;
 use yrs::{GetString, Text, Xml, XmlNode, XmlTextRef};
 
@@ -120,16 +120,16 @@ impl YXmlText {
         let tx = tx.as_ref().unwrap();
 
         self.0.borrow().siblings(tx).next().map(|item| match item {
-            XmlNode::Element(el) => Value::from(YXmlElement(RefCell::from(el))),
-            XmlNode::Fragment(fragment) => Value::from(YXmlFragment(RefCell::from(fragment))),
-            XmlNode::Text(text) => Value::from(YXmlText(RefCell::from(text))),
+            XmlNode::Element(el) => YXmlElement(RefCell::from(el)).into_value(),
+            XmlNode::Fragment(fragment) => YXmlFragment(RefCell::from(fragment)).into_value(),
+            XmlNode::Text(text) => YXmlText(RefCell::from(text)).into_value(),
         })
     }
     pub(crate) fn yxml_text_parent(&self) -> Option<Value> {
         self.0.borrow().parent().map(|item| match item {
-            XmlNode::Element(el) => Value::from(YXmlElement(RefCell::from(el))),
-            XmlNode::Fragment(fragment) => Value::from(YXmlFragment(RefCell::from(fragment))),
-            XmlNode::Text(text) => Value::from(YXmlText(RefCell::from(text))),
+            XmlNode::Element(el) => YXmlElement(RefCell::from(el)).into_value(),
+            XmlNode::Fragment(fragment) => YXmlFragment(RefCell::from(fragment)).into_value(),
+            XmlNode::Text(text) => YXmlText(RefCell::from(text)).into_value(),
         })
     }
     pub(crate) fn yxml_text_prev_sibling(&self, transaction: &YTransaction) -> Option<Value> {
@@ -141,9 +141,9 @@ impl YXmlText {
             .siblings(tx)
             .next_back()
             .map(|item| match item {
-                XmlNode::Element(el) => Value::from(YXmlElement(RefCell::from(el))),
-                XmlNode::Fragment(fragment) => Value::from(YXmlFragment(RefCell::from(fragment))),
-                XmlNode::Text(text) => Value::from(YXmlText(RefCell::from(text))),
+                XmlNode::Element(el) => YXmlElement(RefCell::from(el)).into_value(),
+                XmlNode::Fragment(fragment) => YXmlFragment(RefCell::from(fragment)).into_value(),
+                XmlNode::Text(text) => YXmlText(RefCell::from(text)).into_value(),
             })
     }
     pub(crate) fn yxml_text_push(&self, transaction: &YTransaction, content: String) {

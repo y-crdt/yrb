@@ -3,7 +3,7 @@ use crate::yxml_fragment::YXmlFragment;
 use crate::yxml_text::YXmlText;
 use crate::YTransaction;
 use magnus::block::Proc;
-use magnus::{Error, RArray, RHash, Symbol, Value};
+use magnus::{Error, IntoValue, RArray, RHash, Symbol, Value};
 use std::cell::RefCell;
 use yrs::types::Change;
 use yrs::{
@@ -32,9 +32,9 @@ impl YXmlElement {
         let tx = tx.as_ref().unwrap();
 
         self.0.borrow().get(tx, index).map(|node| match node {
-            XmlNode::Element(element) => Value::from(YXmlElement::from(element)),
-            XmlNode::Fragment(fragment) => Value::from(YXmlFragment::from(fragment)),
-            XmlNode::Text(text) => Value::from(YXmlText::from(text)),
+            XmlNode::Element(element) => YXmlElement::from(element).into_value(),
+            XmlNode::Fragment(fragment) => YXmlFragment::from(fragment).into_value(),
+            XmlNode::Text(text) => YXmlText::from(text).into_value(),
         })
     }
     pub(crate) fn yxml_element_get_attribute(
@@ -93,9 +93,9 @@ impl YXmlElement {
         let tx = tx.as_ref().unwrap();
 
         self.0.borrow().siblings(tx).next().map(|item| match item {
-            XmlNode::Element(el) => Value::from(YXmlElement::from(el)),
-            XmlNode::Fragment(fragment) => Value::from(YXmlFragment::from(fragment)),
-            XmlNode::Text(text) => Value::from(YXmlText::from(text)),
+            XmlNode::Element(el) => YXmlElement::from(el).into_value(),
+            XmlNode::Fragment(fragment) => YXmlFragment::from(fragment).into_value(),
+            XmlNode::Text(text) => YXmlText::from(text).into_value(),
         })
     }
     pub(crate) fn yxml_element_observe(&self, block: Proc) -> Result<u32, Error> {
@@ -161,9 +161,9 @@ impl YXmlElement {
     }
     pub(crate) fn yxml_element_parent(&self) -> Option<Value> {
         self.0.borrow().parent().map(|item| match item {
-            XmlNode::Element(el) => Value::from(YXmlElement::from(el)),
-            XmlNode::Fragment(fragment) => Value::from(YXmlFragment::from(fragment)),
-            XmlNode::Text(text) => Value::from(YXmlText::from(text)),
+            XmlNode::Element(el) => YXmlElement::from(el).into_value(),
+            XmlNode::Fragment(fragment) => YXmlFragment::from(fragment).into_value(),
+            XmlNode::Text(text) => YXmlText::from(text).into_value(),
         })
     }
     pub(crate) fn yxml_element_prev_sibling(&self, transaction: &YTransaction) -> Option<Value> {
@@ -175,9 +175,9 @@ impl YXmlElement {
             .siblings(tx)
             .next_back()
             .map(|item| match item {
-                XmlNode::Element(el) => Value::from(YXmlElement::from(el)),
-                XmlNode::Fragment(fragment) => Value::from(YXmlFragment::from(fragment)),
-                XmlNode::Text(text) => Value::from(YXmlText::from(text)),
+                XmlNode::Element(el) => YXmlElement::from(el).into_value(),
+                XmlNode::Fragment(fragment) => YXmlFragment::from(fragment).into_value(),
+                XmlNode::Text(text) => YXmlText::from(text).into_value(),
             })
     }
     pub(crate) fn yxml_element_push_element_back(
@@ -246,9 +246,9 @@ impl YXmlElement {
         let tx = tx.as_ref().unwrap();
 
         let siblings = self.0.borrow().siblings(tx).map(|item| match item {
-            XmlNode::Element(el) => Value::from(YXmlElement::from(el)),
-            XmlNode::Fragment(fragment) => Value::from(YXmlFragment::from(fragment)),
-            XmlNode::Text(text) => Value::from(YXmlText::from(text)),
+            XmlNode::Element(el) => YXmlElement::from(el).into_value(),
+            XmlNode::Fragment(fragment) => YXmlFragment::from(fragment).into_value(),
+            XmlNode::Text(text) => YXmlText::from(text).into_value(),
         });
 
         RArray::from_iter(siblings)
