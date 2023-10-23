@@ -125,12 +125,61 @@ RSpec.describe Y::Map do
     expect(expected).to eq(actual)
   end
 
+  context "when inserting various data types" do
+    it "inserts number to map" do
+      doc = Y::Doc.new
+      map = doc.get_map("my map")
+
+      map[:my_number] = 3.14
+
+      expect(map).to have_key(:my_number)
+    end
+
+    it "inserts string to map" do
+      doc = Y::Doc.new
+      map = doc.get_map("my map")
+
+      map[:my_string] = "hello"
+
+      expect(map).to have_key(:my_string)
+    end
+
+    it "inserts boolean to map" do
+      doc = Y::Doc.new
+      map = doc.get_map("my map")
+
+      map[:my_boolean] = true
+
+      expect(map).to have_key(:my_boolean)
+    end
+
+    it "inserts array to map" do
+      doc = Y::Doc.new
+      map = doc.get_map("my map")
+
+      map[:my_array] = [1, "two", true]
+
+      expect(map).to have_key(:my_array)
+    end
+
+    it "inserts hash to map" do
+      doc = Y::Doc.new
+      map = doc.get_map("my map")
+
+      map[:my_hash] = { a: 1, b: "hello", c: true }
+
+      expect(map).to have_key(:my_hash)
+    end
+  end
+
   context "when syncing documents" do
     it "updates remote map from local map" do
       local = Y::Doc.new
 
       local_map = local.get_map("my map")
       local_map[:hello] = "world"
+      local_map[:my_array] = [1, "two", true]
+      local_map[:my_hash] = { a: 1, b: "hello", c: true }
 
       remote = Y::Doc.new
       diff = local.diff(remote.state)
@@ -139,6 +188,8 @@ RSpec.describe Y::Map do
       remote_map = remote.get_map("my map")
 
       expect(remote_map).to have_key(:hello)
+      expect(remote_map).to have_key(:my_array)
+      expect(remote_map).to have_key(:my_hash)
     end
   end
 
@@ -160,12 +211,8 @@ RSpec.describe Y::Map do
 
       map.detach(subscription_id)
 
-      expect(called).to match_array(
-        [
-          { inserted: { hello: "world" } },
-          { inserted: { say: "goodbye" } }
-        ]
-      )
+      expect(called).to contain_exactly({ inserted: { hello: "world" } },
+                                        { inserted: { say: "goodbye" } })
     end
 
     # rubocop:disable RSpec/MultipleExpectations
@@ -197,18 +244,10 @@ RSpec.describe Y::Map do
         }
       )
 
-      expect(changes[0]).to match_array(
-        [
-          { inserted: { say: "goodbye" } },
-          { inserted: { hello: "world" } }
-        ]
-      )
-      expect(changes[1]).to match_array(
-        [{ removed: { say: "goodbye" } }]
-      )
-      expect(changes[2]).to match_array(
-        [{ inserted: { say: "hello again" } }]
-      )
+      expect(changes[0]).to contain_exactly({ inserted: { say: "goodbye" } },
+                                            { inserted: { hello: "world" } })
+      expect(changes[1]).to contain_exactly({ removed: { say: "goodbye" } })
+      expect(changes[2]).to contain_exactly({ inserted: { say: "hello again" } })
     end
     # rubocop:enable RSpec/MultipleExpectations
   end

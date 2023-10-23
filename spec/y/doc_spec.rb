@@ -70,7 +70,7 @@ RSpec.describe Y::Doc do
   it "returns state" do
     doc = described_class.new
 
-    expect(doc.state).to match_array([0])
+    expect(doc.state).to contain_exactly(0)
   end
 
   context "when syncing documents" do
@@ -143,7 +143,7 @@ RSpec.describe Y::Doc do
       doc2.restore(update)
 
       expect(doc2.get_text("my text").to_s).to eq("Hello, World")
-      expect(doc2.get_array("my array").to_a).to match_array([1])
+      expect(doc2.get_array("my array").to_a).to contain_exactly(1)
     end
     # rubocop:enable RSpec/MultipleExpectations
   end

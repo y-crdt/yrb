@@ -208,7 +208,7 @@ RSpec.describe Y::Array do
 
       remote_arr = remote.get_array("my array")
 
-      expect(remote_arr.to_a).to match_array(["world"])
+      expect(remote_arr.to_a).to contain_exactly("world")
     end
   end
 
@@ -258,20 +258,14 @@ RSpec.describe Y::Array do
         arr[1] = 2
       end
 
-      expect(arr.to_a).to match_array([1, 2, 3])
-      expect(changes).to match_array(
-        [
-          [{ added: [1, 2, 3] }],
-          [
-            { retain: 1 },
-            { removed: 1 }
-          ],
-          [
-            { retain: 1 },
-            { added: [2] }
-          ]
-        ]
-      )
+      expect(arr.to_a).to contain_exactly(1, 2, 3)
+      expect(changes).to contain_exactly([{ added: [1, 2, 3] }], [
+                                           { retain: 1 },
+                                           { removed: 1 }
+                                         ], [
+                                           { retain: 1 },
+                                           { added: [2] }
+                                         ])
     end
     # rubocop:enable RSpec/MultipleExpectations
   end

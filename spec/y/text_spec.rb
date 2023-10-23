@@ -193,15 +193,8 @@ RSpec.describe Y::Text do
       end
 
       expect(text.to_s).to eq("Hello, World!")
-      expect(changes).to match_array(
-        [
-          { insert: "Hello, Wörld!" },
-          { retain: 8 },
-          { delete: 1 },
-          { retain: 8 },
-          { insert: "o" }
-        ]
-      )
+      expect(changes).to contain_exactly({ insert: "Hello, Wörld!" },
+                                         { retain: 8 }, { delete: 1 }, { retain: 8 }, { insert: "o" })
     end
     # rubocop:enable RSpec/MultipleExpectations
   end
