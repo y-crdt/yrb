@@ -1,3 +1,4 @@
+use crate::utils::convert_yvalue_to_ruby_value;
 use crate::ytransaction::YTransaction;
 use crate::yvalue::YValue;
 use lib0::any::Any;
@@ -22,20 +23,21 @@ impl YArray {
 
         let arr = self.0.borrow();
         arr.iter(tx).for_each(|val| {
-            let yvalue = YValue::from(val);
-            let args = (yvalue.into(),);
+            let yvalue = *convert_yvalue_to_ruby_value(val, tx).0.borrow();
+            let args = (yvalue,);
             let _ = block.call::<(Value,), Qnil>(args);
         });
 
         Ok(())
     }
+
     pub(crate) fn yarray_get(&self, transaction: &YTransaction, index: u32) -> Value {
         let tx = transaction.transaction();
         let tx = tx.as_ref().unwrap();
 
         let arr = self.0.borrow();
         let v = arr.get(tx, index).unwrap();
-        YValue::from(v).into()
+        *convert_yvalue_to_ruby_value(v, tx).0.borrow()
     }
     pub(crate) fn yarray_insert(&self, transaction: &YTransaction, index: u32, value: Value) {
         let yvalue = YValue::from(value);
