@@ -1,4 +1,4 @@
-use crate::utils::indifferent_hash_key;
+use crate::utils::{convert_yvalue_to_ruby_value, indifferent_hash_key};
 use crate::yvalue::YValue;
 use crate::YTransaction;
 use lib0::any::Any;
@@ -30,17 +30,18 @@ impl YMap {
             Some(k) => self.0.borrow().contains_key(tx, k.as_str()),
         }
     }
+
     pub(crate) fn ymap_each(&self, transaction: &YTransaction, proc: Proc) {
         let tx = transaction.transaction();
         let tx = tx.as_ref().unwrap();
-
         self.0.borrow().iter(tx).for_each(|(key, val)| {
             let k = key.to_string();
-            let v = *YValue::from(val).0.borrow();
+            let v = *convert_yvalue_to_ruby_value(val, tx).0.borrow();
             proc.call::<(String, Value), Value>((k, v))
                 .expect("cannot iterate map");
         })
     }
+
     pub(crate) fn ymap_get(&self, transaction: &YTransaction, key: Value) -> Option<Value> {
         let tx = transaction.transaction();
         let tx = tx.as_ref().unwrap();
@@ -48,7 +49,7 @@ impl YMap {
         indifferent_hash_key(key)
             .map(|k| self.0.borrow().get(tx, k.as_str()))
             .map(|v| v.unwrap_or(YrsValue::Any(Any::Undefined)))
-            .map(|v| *YValue::from(v).0.borrow())
+            .map(|v| *convert_yvalue_to_ruby_value(v, tx).0.borrow())
     }
     pub(crate) fn ymap_insert(
         &self,

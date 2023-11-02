@@ -1,9 +1,10 @@
 use crate::yvalue::YValue;
 use lib0::any::Any;
 use magnus::r_hash::ForEach::Continue;
-use magnus::{exception, Error, RHash, RString, Symbol, Value};
+use magnus::{exception, Error, RArray, RHash, RString, Symbol, Value};
 use std::sync::Arc;
-use yrs::types::Attrs;
+use yrs::types::{Attrs, Value as YrsValue};
+use yrs::{Array, Map, TransactionMut};
 
 #[derive(Debug, Clone)]
 pub(crate) struct TypeConversionError;
@@ -34,4 +35,31 @@ pub(crate) fn map_rhash_to_attrs(hash: RHash) -> Result<Attrs, Error> {
     }
 
     Ok(a)
+}
+
+pub(crate) fn convert_yvalue_to_ruby_value(value: YrsValue, tx: &TransactionMut) -> YValue {
+    match value {
+        YrsValue::Any(val) => YValue::from(val),
+        YrsValue::YText(text) => YValue::from(text),
+        YrsValue::YXmlElement(el) => YValue::from(el),
+        YrsValue::YXmlText(text) => YValue::from(text),
+        YrsValue::YArray(val) => {
+            let arr = RArray::new();
+            for item in val.iter(tx) {
+                let val = convert_yvalue_to_ruby_value(item.clone(), tx);
+                let val = *val.0.borrow();
+                arr.push(val).expect("cannot push item event to array");
+            }
+            YValue::from(arr)
+        }
+        YrsValue::YMap(val) => {
+            let iter = val.iter(tx).map(|(key, val)| {
+                let val = convert_yvalue_to_ruby_value(val.clone(), tx);
+                let val = val.0.into_inner();
+                (key, val)
+            });
+            YValue::from(RHash::from_iter(iter))
+        }
+        v => panic!("cannot map given yrs values to yvalue: {:?}", v),
+    }
 }

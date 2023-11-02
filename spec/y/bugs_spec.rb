@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "base64"
+
 RSpec.describe "Bugs" do
   it "issue #45" do
     diffs = [[1, 3, 197, 134, 244, 186, 10, 0, 7, 1, 7, 100, 101, 102, 97, 117, 108, 116, 3, 9, 112, 97, 114, 97, 103, 114, 97, 112, 104, 7, 0, 197, 134, 244, 186, 10, 0, 6, 4, 0, 197, 134, 244, 186, 10, 1, 1, 115, 0],
@@ -106,5 +108,49 @@ RSpec.describe "Bugs" do
     diffs.each do |diff|
       doc.sync(diff)
     end
+  end
+
+  it "issue #131" do
+    file = File.join(__dir__, "/../files/issue131_ydoc.base64.txt")
+    message = File.read(file)
+    update = Base64.decode64(message).unpack("C*")
+
+    doc = Y::Doc.new
+    doc.sync(update)
+
+    ymap = doc.get_map("data")
+
+    expect(ymap["agents"]).to eq([])
+    expect(ymap["fields"]).to eq(
+      {
+        "test_text" => {
+          "order" => 1.0,
+          "type" => "text",
+          "label" => "Test Text"
+        },
+        "test_date" => {
+          "order" => 1.0,
+          "type" => "date",
+          "label" => "Test Date"
+        },
+        "test_person" => {
+          "order" => 2.0,
+          "type" => "person",
+          "label" => "Test Person"
+        }
+      }
+    )
+    expect(ymap["testArray"]).to eq([1.0, "two", true])
+    expect(ymap["testBool"]).to be(false)
+    expect(ymap["testFloat"]).to eq(3.1415)
+    expect(ymap["testInt"]).to eq(1.0)
+    expect(ymap["title"]).to eq("New Document 3")
+    expect(ymap["testHash"]).to eq(
+      {
+        "c" => false,
+        "a" => 1.0,
+        "b" => "2"
+      }
+    )
   end
 end

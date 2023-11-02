@@ -146,16 +146,18 @@ impl From<YrsValue> for YValue {
             YrsValue::YXmlElement(el) => YValue::from(el),
             YrsValue::YXmlText(text) => YValue::from(text),
             YrsValue::YArray(val) => {
+                print!("try to acquire transaction");
                 let tx = val.transact();
                 let arr = RArray::new();
                 for item in val.iter(&tx) {
                     let val = YValue::from(item.clone());
-                    let val = val.0.borrow().clone();
+                    let val = *val.0.borrow();
                     arr.push(val).expect("cannot push item event to array");
                 }
                 YValue::from(arr)
             }
             YrsValue::YMap(val) => {
+                print!("try to acquire transaction");
                 let tx = val.transact();
                 let iter = val.iter(&tx).map(|(key, val)| {
                     let val = YValue::from(val);
