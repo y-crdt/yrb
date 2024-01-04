@@ -5,7 +5,6 @@ use lib0::any::Any;
 use magnus::block::Proc;
 use magnus::value::Qnil;
 use magnus::{Error, IntoValue, RArray, RHash, Symbol, Value};
-use std::borrow::Borrow;
 use std::cell::RefCell;
 use yrs::types::Change;
 use yrs::{Array, ArrayRef, Observable};
@@ -117,7 +116,7 @@ impl YArray {
                 if errors.is_empty() {
                     let args_changes = RArray::new();
                     for change in changes.iter() {
-                        let c = *change.borrow().as_ref().unwrap();
+                        let c = *change.as_ref().unwrap();
                         args_changes
                             .push(c)
                             .expect("cannot push change event to args");
