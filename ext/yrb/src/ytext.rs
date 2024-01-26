@@ -1,13 +1,12 @@
 use crate::yattrs::YAttrs;
 use crate::yvalue::YValue;
 use crate::YTransaction;
-use lib0::any::Any;
 use magnus::block::Proc;
 use magnus::value::Qnil;
 use magnus::{Error, RHash, Symbol, Value};
 use std::cell::RefCell;
 use yrs::types::Delta;
-use yrs::{GetString, Observable, Text, TextRef};
+use yrs::{Any, GetString, Observable, Text, TextRef};
 
 #[magnus::wrap(class = "Y::Text")]
 pub(crate) struct YText(pub(crate) RefCell<TextRef>);

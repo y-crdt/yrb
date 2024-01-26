@@ -25,7 +25,7 @@ impl YDoc {
             let value = client_id.first().unwrap();
             options.client_id = Integer::from_value(*value).unwrap().to_u64().unwrap();
         }
-        options.offset_kind = OffsetKind::Utf32;
+        options.offset_kind = OffsetKind::Utf16;
 
         let doc = Doc::with_options(options);
         Self(RefCell::new(doc))

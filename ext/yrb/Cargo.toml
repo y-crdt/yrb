@@ -7,11 +7,10 @@ homepage = "https://github.com/y-crdt/yrb"
 repository = "https://github.com/y-crdt/yrb"
 
 [dependencies]
-lib0 = "0.16.10" # must match yrs version
 magnus = "0.6.2"
 thiserror = "1.0.56"
-yrs = "=0.16.10"
-y-sync = "=0.3.1"
+yrs = "=0.17.4"
+y-sync = "=0.4.0"
 rb-sys = "0.9.87"
 
 [dev-dependencies]

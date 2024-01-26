@@ -1,9 +1,9 @@
-use lib0::any::Any;
 use magnus::r_string::IntoRString;
 use magnus::value::ReprValue;
 use magnus::{value, IntoValue, RArray, RHash, RString, Value};
 use std::borrow::Borrow;
 use std::ops::{Deref, DerefMut};
+use yrs::Any;
 
 pub(crate) struct YAny(pub(crate) Any);
 

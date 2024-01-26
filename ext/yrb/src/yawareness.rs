@@ -17,10 +17,10 @@ unsafe impl Send for YAwareness {}
 impl YAwareness {
     pub(crate) fn yawareness_new() -> Self {
         let mut options = Options {
-            offset_kind: OffsetKind::Utf32,
+            offset_kind: OffsetKind::Utf16,
             ..Default::default()
         };
-        options.offset_kind = OffsetKind::Utf32;
+        options.offset_kind = OffsetKind::Utf16;
 
         let doc = Doc::with_options(options);
 

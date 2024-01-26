@@ -1,12 +1,11 @@
 use crate::utils::{convert_yvalue_to_ruby_value, indifferent_hash_key};
 use crate::yvalue::YValue;
 use crate::YTransaction;
-use lib0::any::Any;
 use magnus::block::Proc;
 use magnus::{exception, Error, RArray, RHash, Symbol, Value};
 use std::cell::RefCell;
 use yrs::types::{EntryChange, Value as YrsValue};
-use yrs::{Map, MapRef, Observable};
+use yrs::{Any, Map, MapRef, Observable};
 
 #[magnus::wrap(class = "Y::Map")]
 pub(crate) struct YMap(pub(crate) RefCell<MapRef>);

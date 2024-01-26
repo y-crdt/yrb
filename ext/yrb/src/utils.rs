@@ -1,10 +1,9 @@
 use crate::yvalue::YValue;
-use lib0::any::Any;
 use magnus::r_hash::ForEach::Continue;
 use magnus::{exception, Error, RArray, RHash, RString, Symbol, Value};
 use std::sync::Arc;
 use yrs::types::{Attrs, Value as YrsValue};
-use yrs::{Array, Map, TransactionMut};
+use yrs::{Any, Array, Map, TransactionMut};
 
 #[derive(Debug, Clone)]
 pub(crate) struct TypeConversionError;

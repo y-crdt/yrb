@@ -2,10 +2,9 @@ use crate::utils::map_rhash_to_attrs;
 use crate::yvalue::YValue;
 use crate::yxml_fragment::YXmlFragment;
 use crate::{YTransaction, YXmlElement};
-use lib0::any::Any;
 use magnus::{Error, IntoValue, RHash, Value};
 use std::cell::RefCell;
-use yrs::{GetString, Text, Xml, XmlNode, XmlTextRef};
+use yrs::{Any, GetString, Text, Xml, XmlNode, XmlTextRef};
 
 #[magnus::wrap(class = "Y::XMLText")]
 pub(crate) struct YXmlText(pub(crate) RefCell<XmlTextRef>);
