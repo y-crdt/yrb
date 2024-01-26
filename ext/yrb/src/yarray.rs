@@ -1,13 +1,12 @@
 use crate::utils::convert_yvalue_to_ruby_value;
 use crate::ytransaction::YTransaction;
 use crate::yvalue::YValue;
-use lib0::any::Any;
 use magnus::block::Proc;
 use magnus::value::Qnil;
 use magnus::{Error, IntoValue, RArray, RHash, Symbol, Value};
 use std::cell::RefCell;
 use yrs::types::Change;
-use yrs::{Array, ArrayRef, Observable};
+use yrs::{Any, Array, ArrayRef, Observable};
 
 #[magnus::wrap(class = "Y::Array")]
 pub(crate) struct YArray(pub(crate) RefCell<ArrayRef>);
