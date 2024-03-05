@@ -80,6 +80,15 @@ module Y
       ytext_unobserve(subscription_id)
     end
 
+    # Diff
+    #
+    # @return[Array<YDiff>]
+    def diff
+      document.current_transaction do |tx|
+        ytext_diff(tx)
+      end
+    end
+
     # Checks if text is empty
     #
     # @example Check if text is empty
@@ -283,6 +292,12 @@ module Y
         value.is_a?(Enumerable) ||
         value.is_a?(Hash)
     end
+
+    # @!method ytext_diff(tx)
+    #   Returns text changes as list of diffs
+    #
+    # @param transaction [Y::Transaction]
+    # @return [Array<YDiff>]
 
     # @!method ytext_insert(tx, index, chunk)
     #   Insert into text at position
