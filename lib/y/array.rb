@@ -115,8 +115,8 @@ module Y
     end
 
     # @return [void]
-    def each(&block)
-      document.current_transaction { |tx| yarray_each(tx, &block) }
+    def each(...)
+      document.current_transaction { |tx| yarray_each(tx, ...) }
     end
 
     # Check if the array is empty

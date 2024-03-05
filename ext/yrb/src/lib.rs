@@ -2,6 +2,7 @@ extern crate core;
 
 use crate::yarray::YArray;
 use crate::yawareness::{YAwareness, YAwarenessEvent};
+use crate::ydiff::YDiff;
 use crate::ydoc::YDoc;
 use crate::ymap::YMap;
 use crate::ytext::YText;
@@ -9,6 +10,7 @@ use crate::ytransaction::YTransaction;
 use crate::yxml_element::YXmlElement;
 use crate::yxml_fragment::YXmlFragment;
 use crate::yxml_text::YXmlText;
+
 use magnus::{class, define_module, function, method, Error, Module, Object};
 
 mod utils;
@@ -16,6 +18,7 @@ mod yany;
 mod yarray;
 mod yattrs;
 mod yawareness;
+mod ydiff;
 mod ydoc;
 mod ymap;
 mod ytext;
@@ -224,6 +227,9 @@ fn init() -> Result<(), Error> {
         .define_class("Text", class::object())
         .expect("cannot define class Y::Text");
 
+    ytext
+        .define_private_method("ytext_diff", method!(YText::ytext_diff, 1))
+        .expect("cannot define private method: ytext_diff");
     ytext
         .define_private_method("ytext_format", method!(YText::ytext_format, 4))
         .expect("cannot define private method: ytext_format");
@@ -618,7 +624,7 @@ fn init() -> Result<(), Error> {
 
     let yawareness_event = module
         .define_class("AwarenessEvent", class::object())
-        .expect("cannot define class Y:AwarenessEvent");
+        .expect("cannot define class Y::AwarenessEvent");
     yawareness_event
         .define_method("added", method!(YAwarenessEvent::added, 0))
         .expect("cannot define private method: added");
@@ -628,6 +634,16 @@ fn init() -> Result<(), Error> {
     yawareness_event
         .define_method("removed", method!(YAwarenessEvent::removed, 0))
         .expect("cannot define private method: removed");
+
+    let ydiff = module
+        .define_class("Diff", class::object())
+        .expect("cannot define class Y::Diff");
+    ydiff
+        .define_private_method("ydiff_insert", method!(YDiff::ydiff_insert, 0))
+        .expect("cannot define private method: insert");
+    ydiff
+        .define_private_method("ydiff_attrs", method!(YDiff::ydiff_attrs, 0))
+        .expect("cannot define private method: attrs");
 
     Ok(())
 }

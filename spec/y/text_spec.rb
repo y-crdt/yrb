@@ -20,6 +20,21 @@ RSpec.describe Y::Text do
     expect(text.to_s).to eq("Hello, World!")
   end
 
+  it "get a list of changes" do
+    doc = Y::Doc.new
+    text = doc.get_text("my text")
+
+    text.insert(0, "Hello, World!", { format: "bold" })
+    text.insert(13, " From Hannes.", { format: "italic" })
+
+    expect(text.diff.map(&:to_h)).to eq([
+                                          { insert: "Hello, World!",
+                                            attrs: { "format" => "bold" } },
+                                          { insert: " From Hannes.",
+                                            attrs: { "format" => "italic" } }
+                                        ])
+  end
+
   it "inserts string at position" do
     doc = Y::Doc.new
     text = doc.get_text("my text")

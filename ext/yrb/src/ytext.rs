@@ -1,10 +1,13 @@
 use crate::yattrs::YAttrs;
+use crate::ydiff::YDiff;
 use crate::yvalue::YValue;
 use crate::YTransaction;
 use magnus::block::Proc;
 use magnus::value::Qnil;
-use magnus::{Error, RHash, Symbol, Value};
+use magnus::RArray;
+pub(crate) use magnus::{Error, IntoValue, RHash, Symbol, Value};
 use std::cell::RefCell;
+use yrs::types::text::YChange;
 use yrs::types::Delta;
 use yrs::{Any, GetString, Observable, Text, TextRef};
 
@@ -15,6 +18,38 @@ pub(crate) struct YText(pub(crate) RefCell<TextRef>);
 unsafe impl Send for YText {}
 
 impl YText {
+    pub(crate) fn ytext_diff(&self, transaction: &YTransaction) -> RArray {
+        let tx = transaction.transaction();
+        let tx = tx.as_ref().unwrap();
+
+        RArray::from_iter(
+            self.0
+                .borrow()
+                .diff(tx, YChange::identity)
+                .iter()
+                .map(move |diff| {
+                    let yvalue = YValue::from(diff.insert.clone());
+                    let insert = yvalue.0.into_inner();
+                    let attributes = diff.attributes.as_ref().map_or_else(
+                        || None,
+                        |boxed_attrs| {
+                            let attributes = RHash::new();
+                            for (key, value) in boxed_attrs.iter() {
+                                let key = key.to_string();
+                                let value = YValue::from(value.clone()).0.into_inner();
+                                attributes.aset(key, value).expect("cannot add value");
+                            }
+                            Some(attributes)
+                        },
+                    );
+                    YDiff {
+                        ydiff_insert: insert,
+                        ydiff_attrs: attributes,
+                    }
+                    .into_value()
+                }),
+        )
+    }
     pub(crate) fn ytext_format(
         &self,
         transaction: &YTransaction,
@@ -27,7 +62,9 @@ impl YText {
 
         let a = YAttrs::from(attrs);
 
-        self.0.borrow_mut().format(tx, index, length, a.0)
+        self.0
+            .borrow_mut()
+            .format(tx, index, length, a.0.into_inner())
     }
     pub(crate) fn ytext_insert(&self, transaction: &YTransaction, index: u32, chunk: String) {
         let mut tx = transaction.transaction();
@@ -66,7 +103,7 @@ impl YText {
 
         self.0
             .borrow_mut()
-            .insert_embed_with_attributes(tx, index, avalue, a.0);
+            .insert_embed_with_attributes(tx, index, avalue, a.0.into_inner());
     }
     pub(crate) fn ytext_insert_with_attributes(
         &self,
@@ -82,7 +119,7 @@ impl YText {
 
         self.0
             .borrow_mut()
-            .insert_with_attributes(tx, index, chunk.as_str(), a.0)
+            .insert_with_attributes(tx, index, chunk.as_str(), a.0.into_inner())
     }
     pub(crate) fn ytext_length(&self, transaction: &YTransaction) -> u32 {
         let tx = transaction.transaction();
