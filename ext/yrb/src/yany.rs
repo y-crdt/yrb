@@ -35,11 +35,11 @@ impl TryInto<Value> for YAny {
                 Ok(hash.as_value())
             }
             Any::Null => Ok(value::qnil().as_value()),
-            Any::Undefined => Ok(Value::from(value::qnil().as_value())),
+            Any::Undefined => Ok(value::qnil().as_value()),
             Any::Bool(v) => Ok(v.into_value()),
-            Any::Number(v) => Ok(Value::from(v.into_value())),
-            Any::BigInt(v) => Ok(Value::from(v.into_value())),
-            Any::String(v) => Ok(RString::from(v.into_r_string()).as_value()),
+            Any::Number(v) => Ok(v.into_value()),
+            Any::BigInt(v) => Ok(v.into_value()),
+            Any::String(v) => Ok(v.into_r_string().as_value()),
             Any::Buffer(v) => Ok(RString::from_slice(v.borrow()).as_value()),
         };
     }

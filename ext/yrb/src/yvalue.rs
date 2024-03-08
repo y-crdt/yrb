@@ -125,7 +125,7 @@ impl From<Any> for YValue {
                 let arr = RArray::new();
                 for item in v.iter() {
                     let val = YValue::from(item.clone());
-                    let val = val.0.borrow().clone();
+                    let val = *val.0.borrow();
                     arr.push(val).expect("cannot push item event to array");
                 }
                 YValue::from(arr)
