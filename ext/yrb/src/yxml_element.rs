@@ -116,7 +116,7 @@ impl YXmlElement {
                             let values = RArray::new();
                             for value in v.iter() {
                                 let value = YValue::from(value.clone());
-                                let value = value.0.borrow().clone();
+                                let value = *value.0.borrow();
                                 values.push(value).expect("cannot push value to array");
                             }
 

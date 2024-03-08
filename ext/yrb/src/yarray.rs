@@ -174,7 +174,7 @@ impl YArray {
         let r_arr = RArray::new();
         for item in arr.iter(tx) {
             let r_val = YValue::from(item);
-            let r_val = r_val.0.borrow().clone();
+            let r_val = *r_val.0.borrow();
             r_arr.push(r_val).expect("cannot push item event to array");
         }
         r_arr

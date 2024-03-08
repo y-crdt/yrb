@@ -533,7 +533,7 @@ dependencies = [
 
 [[package]]
 name = "yrb"
-version = "0.5.4"
+version = "0.5.5"
 dependencies = [
  "magnus",
  "rb-sys",

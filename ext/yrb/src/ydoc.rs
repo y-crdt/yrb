@@ -89,7 +89,7 @@ impl YDoc {
         YXmlText::from(xml_text_ref)
     }
 
-    pub(crate) fn ydoc_transact<'doc>(&self) -> YTransaction {
+    pub(crate) fn ydoc_transact(&self) -> YTransaction {
         let doc = self.0.borrow();
         let transaction = doc.transact_mut();
         YTransaction::from(transaction)
