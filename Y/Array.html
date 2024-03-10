@@ -325,7 +325,7 @@ instead.</p>
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#each-instance_method" title="#each (instance method)">#<strong>each</strong>(&amp;block)  &#x21d2; void </a>
+      <a href="#each-instance_method" title="#each (instance method)">#<strong>each</strong>  &#x21d2; void </a>
     
 
     
@@ -1135,7 +1135,7 @@ instead.</p>
       <div class="method_details ">
   <h3 class="signature " id="each-instance_method">
   
-    #<strong>each</strong>(&amp;block)  &#x21d2; <tt>void</tt> 
+    #<strong>each</strong>  &#x21d2; <tt>void</tt> 
   
 
   
@@ -1163,8 +1163,8 @@ instead.</p>
     <td>
       <pre class="code"><span class="info file"># File 'lib/y/array.rb', line 118</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_each'>each</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_document'>document</span><span class='period'>.</span><span class='id identifier rubyid_current_transaction'>current_transaction</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_tx'>tx</span><span class='op'>|</span> <span class='id identifier rubyid_yarray_each'>yarray_each</span><span class='lparen'>(</span><span class='id identifier rubyid_tx'>tx</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_each'>each</span><span class='lparen'>(</span><span class='op'>...</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_document'>document</span><span class='period'>.</span><span class='id identifier rubyid_current_transaction'>current_transaction</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_tx'>tx</span><span class='op'>|</span> <span class='id identifier rubyid_yarray_each'>yarray_each</span><span class='lparen'>(</span><span class='id identifier rubyid_tx'>tx</span><span class='comma'>,</span> <span class='op'>...</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1835,7 +1835,7 @@ is not desirable in most situations.</p>
 </div>
 
       <div id="footer">
-  Generated on Fri Mar  8 09:19:03 2024 by
+  Generated on Sun Mar 10 11:29:15 2024 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.36 (ruby-3.2.3).
 </div>

@@ -247,6 +247,29 @@ instead.</p>
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#diff-instance_method" title="#diff (instance method)">#<strong>diff</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Diff.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#empty%3F-instance_method" title="#empty? (instance method)">#<strong>empty?</strong>  &#x21d2; TrueClass, FalseClass </a>
     
 
@@ -773,6 +796,52 @@ instead.</p>
 </div>
     
       <div class="method_details ">
+  <h3 class="signature " id="diff-instance_method">
+  
+    #<strong>diff</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Diff</p>
+
+<p>@return[Array<YDiff>]</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+86
+87
+88
+89
+90</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/y/text.rb', line 86</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_diff'>diff</span>
+  <span class='id identifier rubyid_document'>document</span><span class='period'>.</span><span class='id identifier rubyid_current_transaction'>current_transaction</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_tx'>tx</span><span class='op'>|</span>
+    <span class='id identifier rubyid_ytext_diff'>ytext_diff</span><span class='lparen'>(</span><span class='id identifier rubyid_tx'>tx</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
   <h3 class="signature " id="empty?-instance_method">
   
     #<strong>empty?</strong>  &#x21d2; <tt>TrueClass</tt>, <tt>FalseClass</tt> 
@@ -824,12 +893,12 @@ instead.</p>
       <pre class="lines">
 
 
-92
-93
-94</pre>
+101
+102
+103</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/text.rb', line 92</span>
+      <pre class="code"><span class="info file"># File 'lib/y/text.rb', line 101</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_empty?'>empty?</span>
   <span class='id identifier rubyid_length'>length</span><span class='period'>.</span><span class='id identifier rubyid_zero?'>zero?</span>
@@ -916,14 +985,14 @@ instead.</p>
       <pre class="lines">
 
 
-160
-161
-162
-163
-164</pre>
+169
+170
+171
+172
+173</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/text.rb', line 160</span>
+      <pre class="code"><span class="info file"># File 'lib/y/text.rb', line 169</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_format'>format</span><span class='lparen'>(</span><span class='id identifier rubyid_index'>index</span><span class='comma'>,</span> <span class='id identifier rubyid_length'>length</span><span class='comma'>,</span> <span class='id identifier rubyid_attrs'>attrs</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_document'>document</span><span class='period'>.</span><span class='id identifier rubyid_current_transaction'>current_transaction</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_tx'>tx</span><span class='op'>|</span>
@@ -1028,15 +1097,6 @@ except for the optional third <code>attrs</code> argument.</p>
       <pre class="lines">
 
 
-122
-123
-124
-125
-126
-127
-128
-129
-130
 131
 132
 133
@@ -1049,10 +1109,19 @@ except for the optional third <code>attrs</code> argument.</p>
 140
 141
 142
-143</pre>
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/text.rb', line 122</span>
+      <pre class="code"><span class="info file"># File 'lib/y/text.rb', line 131</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_insert'>insert</span><span class='lparen'>(</span><span class='id identifier rubyid_index'>index</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='id identifier rubyid_attrs'>attrs</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_document'>document</span><span class='period'>.</span><span class='id identifier rubyid_current_transaction'>current_transaction</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_tx'>tx</span><span class='op'>|</span>
@@ -1127,12 +1196,12 @@ except for the optional third <code>attrs</code> argument.</p>
       <pre class="lines">
 
 
-169
-170
-171</pre>
+178
+179
+180</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/text.rb', line 169</span>
+      <pre class="code"><span class="info file"># File 'lib/y/text.rb', line 178</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_length'>length</span>
   <span class='id identifier rubyid_document'>document</span><span class='period'>.</span><span class='id identifier rubyid_current_transaction'>current_transaction</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_tx'>tx</span><span class='op'>|</span> <span class='id identifier rubyid_ytext_length'>ytext_length</span><span class='lparen'>(</span><span class='id identifier rubyid_tx'>tx</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
@@ -1277,15 +1346,6 @@ is not desirable in most situations.</p>
       <pre class="lines">
 
 
-226
-227
-228
-229
-230
-231
-232
-233
-234
 235
 236
 237
@@ -1309,10 +1369,19 @@ is not desirable in most situations.</p>
 255
 256
 257
-258</pre>
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/text.rb', line 226</span>
+      <pre class="code"><span class="info file"># File 'lib/y/text.rb', line 235</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_slice!'>slice!</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_document'>document</span><span class='period'>.</span><span class='id identifier rubyid_current_transaction'>current_transaction</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_tx'>tx</span><span class='op'>|</span>
@@ -1402,12 +1471,12 @@ is not desirable in most situations.</p>
       <pre class="lines">
 
 
-272
-273
-274</pre>
+281
+282
+283</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/y/text.rb', line 272</span>
+      <pre class="code"><span class="info file"># File 'lib/y/text.rb', line 281</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_s'>to_s</span>
   <span class='id identifier rubyid_document'>document</span><span class='period'>.</span><span class='id identifier rubyid_current_transaction'>current_transaction</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_tx'>tx</span><span class='op'>|</span> <span class='id identifier rubyid_ytext_to_s'>ytext_to_s</span><span class='lparen'>(</span><span class='id identifier rubyid_tx'>tx</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
@@ -1422,7 +1491,7 @@ is not desirable in most situations.</p>
 </div>
 
       <div id="footer">
-  Generated on Fri Mar  8 09:19:03 2024 by
+  Generated on Sun Mar 10 11:29:15 2024 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.36 (ruby-3.2.3).
 </div>
