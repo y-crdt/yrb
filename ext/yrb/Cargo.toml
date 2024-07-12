@@ -9,7 +9,7 @@ repository = "https://github.com/y-crdt/yrb"
 [dependencies]
 magnus = "=0.6.4"
 thiserror = "1.0.62"
-yrs = "=0.17.4"
+yrs = "=0.19.1"
 y-sync = "=0.4.0"
 rb-sys = "0.9.98"
 
