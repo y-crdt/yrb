@@ -489,6 +489,9 @@ fn init() -> Result<(), Error> {
         )
         .expect("cannot define private method: yxml_text_attributes");
     yxml_text
+        .define_private_method("yxml_text_diff", method!(YXmlText::yxml_text_diff, 1))
+        .expect("cannot define private method: yxml_text_diff");
+    yxml_text
         .define_private_method("yxml_text_format", method!(YXmlText::yxml_text_format, 4))
         .expect("cannot define private method: yxml_text_format");
     yxml_text
