@@ -526,6 +526,15 @@ module Y
       yxml_text_unobserve(subscription_id)
     end
 
+    # Diff
+    #
+    # @return[Array<YDiff>]
+    def diff
+      document.current_transaction do |tx|
+        yxml_text_diff(tx)
+      end
+    end
+
     # Format text
     #
     # @param index [Integer]
@@ -790,6 +799,12 @@ module Y
     # @!method yxml_text_attributes
     #
     # @return [Hash]
+
+    # @!method yxml_text_diff(tx)
+    #   Returns text changes as list of diffs
+    #
+    # @param transaction [Y::Transaction]
+    # @return [Array<YDiff>]
 
     # @!method yxml_text_format(tx, index, length, attrs)
     #
