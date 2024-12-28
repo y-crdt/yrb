@@ -16,7 +16,7 @@ Gem::Specification.new do |spec|
   spec.description = "Ruby bindings for yrs. Yrs \"wires\" is a Rust port of the Yjs framework."
   spec.homepage = "https://github.com/y-crdt/yrb"
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 3.0.0"
+  spec.required_ruby_version = ">= 3.1.0"
   # https://github.com/rubygems/rubygems/pull/5852#issuecomment-1231118509
   spec.required_rubygems_version = ">= 3.3.22"
 

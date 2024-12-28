@@ -6,12 +6,13 @@ require "rake/testtask"
 require "rake/extensiontask"
 require "rb_sys"
 
-cross_rubies = %w[3.3.0 3.2.0 3.1.0 3.0.0]
+cross_rubies = %w[3.4.0 3.3.5 3.2.0 3.1.0]
 cross_platforms = %w[
-  aarch64-linux
+  aarch64-linux-gnu
+  aarch64-linux-musl
   arm64-darwin
   x86_64-darwin
-  x86_64-linux
+  x86_64-linux-gnu
   x86_64-linux-musl
   x64-mingw32
   x64-mingw-ucrt
@@ -42,7 +43,9 @@ namespace "gem" do
     task plat => "prepare" do
       require "rake_compiler_dock"
 
-      ENV["RCD_IMAGE"] = "rbsys/#{plat}:#{RbSys::VERSION}"
+      # rbsys doesn't ship an alias -gnu image yet
+      rcd_plat = plat.gsub(/-gnu$/, '')
+      ENV["RCD_IMAGE"] = "rbsys/#{rcd_plat}:#{RbSys::VERSION}"
 
       RakeCompilerDock.sh <<~SH, platform: plat
         bundle && \

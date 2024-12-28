@@ -15,10 +15,11 @@ jobs:
     strategy:
       matrix:
         platform:
-          - "aarch64-linux"
+          - "aarch64-linux-gnu"
+          - "aarch64-linux-musl"
           - "arm64-darwin"
           - "x86_64-darwin"
-          - "x86_64-linux"
+          - "x86_64-linux-gnu"
           - "x86_64-linux-musl"
           - "x64-mingw32"
           - "x64-mingw-ucrt"
@@ -39,7 +40,7 @@ jobs:
           platform: ${{ matrix.platform }}
           version: 'latest'
           env: |
-            RUBY_CC_VERSION=3.3.0:3.2.0:3.1.0:3.0.0
+            RUBY_CC_VERSION=3.4.0:3.3.0:3.2.0:3.1.0
 
       - uses: actions/download-artifact@v3
         with:
