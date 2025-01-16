@@ -35,9 +35,13 @@ jobs:
           cargo-cache: true
           cargo-vendor: true
 
+      - name: Transform platform name
+        id: transform_platform
+        run: echo "cross_gem_platform=$(echo '${{ matrix.platform }}' | sed 's/-gnu$//')" >> $GITHUB_ENV
+
       - uses: oxidize-rb/cross-gem-action@main
         with:
-          platform: ${{ matrix.platform }}
+          platform: ${{ env.cross_gem_action_platform }}
           version: 'latest'
           env: |
             RUBY_CC_VERSION=3.4.0:3.3.5:3.2.0:3.1.0
