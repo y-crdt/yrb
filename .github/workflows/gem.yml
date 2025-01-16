@@ -1,12 +1,11 @@
 name: Build and release gem
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
-    tags:
-      - 'v*'
+
+  pull_request:
 
 jobs:
   native_gem:
