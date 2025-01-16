@@ -1,12 +1,11 @@
 name: Build and release gem
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
-    tags:
-      - 'v*'
+
+  pull_request:
 
 jobs:
   native_gem:
@@ -15,11 +14,11 @@ jobs:
     strategy:
       matrix:
         platform:
-          - "aarch64-linux-gnu"
+          - "aarch64-linux"
           - "aarch64-linux-musl"
           - "arm64-darwin"
           - "x86_64-darwin"
-          - "x86_64-linux-gnu"
+          - "x86_64-linux"
           - "x86_64-linux-musl"
           - "x64-mingw32"
           - "x64-mingw-ucrt"
@@ -35,29 +34,19 @@ jobs:
           cargo-cache: true
           cargo-vendor: true
 
-      - name: Transform platform name
-        id: transform_platform
-        run: echo "cross_gem_platform=$(echo '${{ matrix.platform }}' | sed 's/-gnu$//')" >> $GITHUB_ENV
-
-      - uses: oxidize-rb/cross-gem-action@main
+      - uses: oxidize-rb/actions/cross-gem@v1
+        id: cross-gem
         with:
-          platform: ${{ env.cross_gem_action_platform }}
-          version: 'latest'
-          env: |
-            RUBY_CC_VERSION=3.4.0:3.3.5:3.2.0:3.1.0
-
-      - uses: actions/download-artifact@v3
-        with:
-          name: cross-gem
-          path: pkg/
+          platform: ${{ matrix.platform }}
+          ruby-versions: '3.1,3.2,3.3,3.4'
 
       - name: Display structure of built gems
         run: ls -R
-        working-directory: pkg/
+        working-directory: ${{ steps.cross-gem.outputs.gem-path }}
 
       - name: Release gem
         if: startsWith(github.ref, 'refs/tags/v')
-        working-directory: pkg/
+        working-directory: ${{ steps.cross-gem.outputs.gem-path }}
         env:
           RUBYGEMS_API_KEY: ${{secrets.RUBYGEMS_API_KEY}}
         run: |
