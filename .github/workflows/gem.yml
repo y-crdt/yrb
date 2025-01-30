@@ -20,7 +20,6 @@ jobs:
           - "x86_64-darwin"
           - "x86_64-linux-gnu"
           - "x86_64-linux-musl"
-          - "x64-mingw32"
           - "x64-mingw-ucrt"
     environment: "yrb-deploy"
     steps:
