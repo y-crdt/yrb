@@ -14,11 +14,11 @@ jobs:
     strategy:
       matrix:
         platform:
-          - "aarch64-linux"
+          - "aarch64-linux-gnu"
           - "aarch64-linux-musl"
           - "arm64-darwin"
           - "x86_64-darwin"
-          - "x86_64-linux"
+          - "x86_64-linux-gnu"
           - "x86_64-linux-musl"
           - "x64-mingw32"
           - "x64-mingw-ucrt"
