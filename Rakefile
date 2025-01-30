@@ -2,11 +2,12 @@
 
 require "bundler/gem_tasks"
 require "rubygems/package_task"
+require "rake_compiler_dock"
 require "rake/testtask"
 require "rake/extensiontask"
 require "rb_sys"
 
-cross_rubies = %w[3.4.0 3.3.5 3.2.0 3.1.0]
+ruby_cc_version = RakeCompilerDock.ruby_cc_version(">= 3.1")
 cross_platforms = %w[
   aarch64-linux-gnu
   aarch64-linux-musl
@@ -41,15 +42,11 @@ namespace "gem" do
   cross_platforms.each do |plat|
     desc "Build the native gem for #{plat}"
     task plat => "prepare" do
-      require "rake_compiler_dock"
-
-      # rbsys doesn't ship an alias -gnu image yet
-      rcd_plat = plat.gsub(/-gnu$/, '')
-      ENV["RCD_IMAGE"] = "rbsys/#{rcd_plat}:#{RbSys::VERSION}"
+      ENV["RCD_IMAGE"] = "rbsys/#{plat}:#{RbSys::VERSION}"
 
       RakeCompilerDock.sh <<~SH, platform: plat
         bundle && \
-        RUBY_CC_VERSION="#{cross_rubies.join(":")}" \
+        RUBY_CC_VERSION="#{ruby_cc_version}"
         rake native:#{plat} pkg/#{spec.full_name}-#{plat}.gem
       SH
     end
