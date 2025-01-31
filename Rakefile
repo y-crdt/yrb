@@ -42,7 +42,7 @@ namespace "gem" do
   cross_platforms.each do |plat|
     desc "Build the native gem for #{plat}"
     task plat => "prepare" do
-      ENV["RCD_IMAGE"] = "rbsys/#{plat}:#{RbSys::VERSION}"
+      ENV["RCD_IMAGE"] = "rbsys/#{plat}:main"
 
       RakeCompilerDock.sh <<~SH, platform: plat
         bundle && \
