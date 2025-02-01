@@ -37,7 +37,7 @@ Gem::Specification.new do |spec|
   spec.metadata["rubygems_mfa_required"] = "true"
 
   spec.add_dependency "rake", "~> 13.2"
-  spec.add_dependency "rb_sys", "~> 0.9.109"
+  spec.add_dependency "rb_sys", "~> 0.9.110"
 
   spec.add_development_dependency "base64"
   spec.add_development_dependency "rake-compiler", "~> 1.2.1"
