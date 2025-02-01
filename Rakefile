@@ -7,7 +7,7 @@ require "rake/testtask"
 require "rake/extensiontask"
 require "rb_sys"
 
-ruby_cc_version = RakeCompilerDock.ruby_cc_version(">= 3.1")
+ruby_cc_version = RakeCompilerDock.ruby_cc_version([">= 3.1", "< 3.5"])
 cross_platforms = %w[
   aarch64-linux-gnu
   aarch64-linux-musl
