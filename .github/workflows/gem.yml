@@ -41,11 +41,11 @@ jobs:
 
       - name: Display structure of built gems
         run: ls -R
-        working-directory: ${{ steps.cross-gem.outputs.gem-path }}
+        working-directory: pkg/
 
       - name: Release gem
         if: startsWith(github.ref, 'refs/tags/v')
-        working-directory: ${{ steps.cross-gem.outputs.gem-path }}
+        working-directory: pkg/
         env:
           RUBYGEMS_API_KEY: ${{secrets.RUBYGEMS_API_KEY}}
         run: |
