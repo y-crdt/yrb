@@ -1,6 +1,6 @@
 [package]
 name = "yrb"
-version = "0.5.6"
+version = "0.6.0"
 authors = ["Hannes Moser <box@hannesmoser.at>"]
 edition = "2021"
 homepage = "https://github.com/y-crdt/yrb"
