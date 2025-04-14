@@ -40,7 +40,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "rb_sys", "~> 0.9.110"
 
   spec.add_development_dependency "base64"
-  spec.add_development_dependency "rake-compiler", "~> 1.2.1"
+  spec.add_development_dependency "rake-compiler", "~> 1.3.0"
 
   spec.extensions = ["ext/yrb/extconf.rb"]
 end
