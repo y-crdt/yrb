@@ -7,14 +7,14 @@ homepage = "https://github.com/y-crdt/yrb"
 repository = "https://github.com/y-crdt/yrb"
 
 [dependencies]
-magnus = "=0.7.1"
+magnus = "=0.8.2"
 thiserror = "2.0.17"
 yrs = "=0.17.4"
 y-sync = "=0.4.0"
 rb-sys = { version = "0.9", features = ["stable-api-compiled-fallback"] }
 
 [dev-dependencies]
-magnus = { version = "0.7", features = ["embed"] }
+magnus = { version = "0.8", features = ["embed"] }
 
 [lib]
 name = "yrb"
