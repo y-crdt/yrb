@@ -1,9 +1,11 @@
 use crate::utils::map_rhash_to_attrs;
+use crate::ydiff::YDiff;
 use crate::yvalue::YValue;
 use crate::yxml_fragment::YXmlFragment;
 use crate::{YTransaction, YXmlElement};
-use magnus::{Error, IntoValue, RHash, Value};
+use magnus::{Error, IntoValue, RHash, Value, RArray};
 use std::cell::RefCell;
+use yrs::types::text::YChange;
 use yrs::{Any, GetString, Text, Xml, XmlNode, XmlTextRef};
 
 #[magnus::wrap(class = "Y::XMLText")]
@@ -13,6 +15,38 @@ pub(crate) struct YXmlText(pub(crate) RefCell<XmlTextRef>);
 unsafe impl Send for YXmlText {}
 
 impl YXmlText {
+    pub(crate) fn yxml_text_diff(&self, transaction: &YTransaction) -> RArray {
+        let tx = transaction.transaction();
+        let tx = tx.as_ref().unwrap();
+
+        RArray::from_iter(
+            self.0
+                .borrow()
+                .diff(tx, YChange::identity)
+                .iter()
+                .map(move |diff| {
+                    let yvalue = YValue::from(diff.insert.clone());
+                    let insert = yvalue.0.into_inner();
+                    let attributes = diff.attributes.as_ref().map_or_else(
+                        || None,
+                        |boxed_attrs| {
+                            let attributes = RHash::new();
+                            for (key, value) in boxed_attrs.iter() {
+                                let key = key.to_string();
+                                let value = YValue::from(value.clone()).0.into_inner();
+                                attributes.aset(key, value).expect("cannot add value");
+                            }
+                            Some(attributes)
+                        },
+                    );
+                    YDiff {
+                        ydiff_insert: insert,
+                        ydiff_attrs: attributes,
+                    }
+                    .into_value()
+                }),
+        )
+    }
     pub(crate) fn yxml_text_attributes(&self, transaction: &YTransaction) -> RHash {
         let tx = transaction.transaction();
         let tx = tx.as_ref().unwrap();

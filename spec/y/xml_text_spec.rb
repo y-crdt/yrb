@@ -46,6 +46,21 @@ RSpec.describe Y::XMLText do
     expect(xml_text.to_s).to eq("Hello, <format>World!</format>")
   end
 
+  it "get a list of changes" do
+    doc = Y::Doc.new
+    xml_text = doc.get_xml_text("my text")
+
+    xml_text.insert(0, "Hello, World!", { format: "bold" })
+    xml_text.insert(13, " From Hannes.", { format: "italic" })
+
+    expect(xml_text.diff.map(&:to_h)).to eq([
+                                              { insert: "Hello, World!",
+                                                attrs: { "format" => "bold" } },
+                                              { insert: " From Hannes.",
+                                                attrs: { "format" => "italic" } }
+                                            ])
+  end
+
   it "inserts string at position" do
     doc = Y::Doc.new
     xml_text = doc.get_xml_text("my xml text")
