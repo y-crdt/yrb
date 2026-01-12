@@ -24,7 +24,7 @@ jobs:
           - "x64-mingw-ucrt"
     environment: "yrb-deploy"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
 
       - uses: oxidize-rb/actions/setup-ruby-and-rust@main
         with:
