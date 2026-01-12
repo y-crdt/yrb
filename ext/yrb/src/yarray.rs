@@ -3,7 +3,7 @@ use crate::ytransaction::YTransaction;
 use crate::yvalue::YValue;
 use magnus::block::Proc;
 use magnus::value::Qnil;
-use magnus::{Error, IntoValue, RArray, RHash, Symbol, Value};
+use magnus::{Error, IntoValue, RArray, Ruby, Value};
 use std::cell::RefCell;
 use yrs::types::Change;
 use yrs::{Any, Array, ArrayRef, Observable};
@@ -58,9 +58,8 @@ impl YArray {
         let tx = tx.as_mut().unwrap();
 
         let add_values: Vec<Any> = values
-            .each()
             .into_iter()
-            .map(|value| YValue::from(value.unwrap()).into())
+            .map(|value| YValue::from(value).into())
             .collect();
 
         arr.insert_range(tx, index, add_values)
@@ -73,64 +72,66 @@ impl YArray {
         arr.len(tx)
     }
     pub(crate) fn yarray_observe(&self, block: Proc) -> Result<u32, Error> {
-        let change_added = Symbol::new("added").to_static();
-        let change_retain = Symbol::new("retain").to_static();
-        let change_removed = Symbol::new("removed").to_static();
+        let ruby = unsafe { Ruby::get_unchecked() };
+        let change_added = ruby.to_symbol("added").to_static();
+        let change_retain = ruby.to_symbol("retain").to_static();
+        let change_removed = ruby.to_symbol("removed").to_static();
 
         // let mut error: Option<Error> = None;
 
-        let subscription_id = self
-            .0
-            .borrow_mut()
-            .observe(move |transaction, array_event| {
-                let delta = array_event.delta(transaction);
-                // let mut changes = RArray::with_capacity(delta.len());
-                let (changes, errors): (Vec<_>, Vec<_>) = delta
-                    .iter()
-                    .map(|change| {
-                        let payload = RHash::new();
-                        let result = match change {
-                            Change::Added(v) => {
-                                let values = v
-                                    .iter()
-                                    .map(|v| <YValue as Into<Value>>::into(YValue::from(v.clone())))
-                                    .collect::<RArray>();
-                                payload.aset(change_added, values)
-                            }
-                            Change::Retain(position) => {
-                                payload.aset(change_retain, (*position).into_value())
-                            }
-                            Change::Removed(position) => {
-                                payload.aset(change_removed, (*position).into_value())
-                            }
-                        };
+        let subscription_id =
+            self.0
+                .borrow_mut()
+                .observe(move |transaction, array_event| {
+                    let ruby = unsafe { Ruby::get_unchecked() };
+                    let delta = array_event.delta(transaction);
+                    // let mut changes = RArray::with_capacity(delta.len());
+                    let (changes, errors): (Vec<_>, Vec<_>) = delta
+                        .iter()
+                        .map(|change| {
+                            let payload = ruby.hash_new();
+                            let result =
+                                match change {
+                                    Change::Added(v) => {
+                                        let values = ruby.ary_new();
+                                        for val in v.iter() {
+                                            let value: Value = YValue::from(val.clone()).into();
+                                            values.push(value).expect("cannot push value to array");
+                                        }
+                                        payload.aset(change_added, values)
+                                    }
+                                    Change::Retain(position) => payload
+                                        .aset(change_retain, (*position).into_value_with(&ruby)),
+                                    Change::Removed(position) => payload
+                                        .aset(change_removed, (*position).into_value_with(&ruby)),
+                                };
 
-                        match result {
-                            Ok(()) => Ok(payload),
-                            Err(e) => Err(e),
+                            match result {
+                                Ok(()) => Ok(payload),
+                                Err(e) => Err(e),
+                            }
+                        })
+                        .partition(Result::is_ok);
+
+                    if errors.is_empty() {
+                        let args_changes = ruby.ary_new();
+                        for change in changes.iter() {
+                            let c = *change.as_ref().unwrap();
+                            args_changes
+                                .push(c)
+                                .expect("cannot push change event to args");
                         }
-                    })
-                    .partition(Result::is_ok);
 
-                if errors.is_empty() {
-                    let args_changes = RArray::new();
-                    for change in changes.iter() {
-                        let c = *change.as_ref().unwrap();
-                        args_changes
-                            .push(c)
-                            .expect("cannot push change event to args");
+                        let args = (args_changes,);
+                        let _ = block.call::<(RArray,), Qnil>(args);
+                        // todo: make sure we respect the result and bubble up the
+                        //  error so that we can return as part of the Result
                     }
 
-                    let args = (args_changes,);
-                    let _ = block.call::<(RArray,), Qnil>(args);
-                    // todo: make sure we respect the result and bubble up the
-                    //  error so that we can return as part of the Result
-                }
-
-                // todo: make sure we respect errors and let the method fail by
-                //  by returning a Result containing an Error
-            })
-            .into();
+                    // todo: make sure we respect errors and let the method fail by
+                    //  by returning a Result containing an Error
+                })
+                .into();
 
         Ok(subscription_id)
     }
@@ -167,11 +168,12 @@ impl YArray {
         arr.remove_range(tx, index, len)
     }
     pub(crate) fn yarray_to_a(&self, transaction: &YTransaction) -> RArray {
+        let ruby = unsafe { Ruby::get_unchecked() };
         let arr = self.0.borrow();
         let tx = transaction.transaction();
         let tx = tx.as_ref().unwrap();
 
-        let r_arr = RArray::new();
+        let r_arr = ruby.ary_new();
         for item in arr.iter(tx) {
             let r_val = YValue::from(item);
             let r_val = *r_val.0.borrow();

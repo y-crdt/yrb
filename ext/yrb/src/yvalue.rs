@@ -1,7 +1,7 @@
 use crate::{YText, YXmlElement, YXmlText};
 use magnus::r_hash::ForEach::Continue;
 use magnus::value::{Qnil, ReprValue};
-use magnus::{class, value, Float, Integer, IntoValue, RArray, RHash, RString, Symbol, Value};
+use magnus::{Float, Integer, IntoValue, RArray, RHash, RString, Ruby, Symbol, Value};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -21,108 +21,128 @@ impl From<Value> for YValue {
 
 impl From<Qnil> for YValue {
     fn from(value: Qnil) -> Self {
-        YValue(RefCell::from(value.into_value()))
+        let ruby = unsafe { Ruby::get_unchecked() };
+        YValue(RefCell::from(value.into_value_with(&ruby)))
     }
 }
 
 impl From<bool> for YValue {
     fn from(value: bool) -> Self {
-        YValue(RefCell::from(value.into_value()))
+        let ruby = unsafe { Ruby::get_unchecked() };
+        YValue(RefCell::from(value.into_value_with(&ruby)))
     }
 }
 
 impl From<f64> for YValue {
     fn from(value: f64) -> Self {
-        YValue(RefCell::from(value.into_value()))
+        let ruby = unsafe { Ruby::get_unchecked() };
+        YValue(RefCell::from(value.into_value_with(&ruby)))
     }
 }
 
 impl From<i64> for YValue {
     fn from(value: i64) -> Self {
-        YValue(RefCell::from(value.into_value()))
+        let ruby = unsafe { Ruby::get_unchecked() };
+        YValue(RefCell::from(value.into_value_with(&ruby)))
     }
 }
 
 impl From<u32> for YValue {
     fn from(value: u32) -> Self {
-        YValue(RefCell::from(value.into_value()))
+        let ruby = unsafe { Ruby::get_unchecked() };
+        YValue(RefCell::from(value.into_value_with(&ruby)))
     }
 }
 
 impl From<String> for YValue {
     fn from(value: String) -> Self {
-        YValue(RefCell::from(value.into_value()))
+        let ruby = unsafe { Ruby::get_unchecked() };
+        YValue(RefCell::from(value.into_value_with(&ruby)))
     }
 }
 
 impl From<RArray> for YValue {
     fn from(value: RArray) -> Self {
-        YValue(RefCell::from(value.into_value()))
+        let ruby = unsafe { Ruby::get_unchecked() };
+        YValue(RefCell::from(value.into_value_with(&ruby)))
     }
 }
 
 impl From<RHash> for YValue {
     fn from(value: RHash) -> Self {
-        YValue(RefCell::from(value.into_value()))
+        let ruby = unsafe { Ruby::get_unchecked() };
+        YValue(RefCell::from(value.into_value_with(&ruby)))
     }
 }
 
 impl From<Vec<u8>> for YValue {
     fn from(value: Vec<u8>) -> Self {
-        YValue(RefCell::from(value.into_value()))
+        let ruby = unsafe { Ruby::get_unchecked() };
+        YValue(RefCell::from(value.into_value_with(&ruby)))
     }
 }
 
 impl From<YrsText> for YValue {
     fn from(value: YrsText) -> Self {
-        YValue(RefCell::from(YText(RefCell::from(value)).into_value()))
+        let ruby = unsafe { Ruby::get_unchecked() };
+        YValue(RefCell::from(
+            YText(RefCell::from(value)).into_value_with(&ruby),
+        ))
     }
 }
 
 impl From<YrsXmlElement> for YValue {
     fn from(value: YrsXmlElement) -> Self {
+        let ruby = unsafe { Ruby::get_unchecked() };
         YValue(RefCell::from(
-            YXmlElement(RefCell::from(value)).into_value(),
+            YXmlElement(RefCell::from(value)).into_value_with(&ruby),
         ))
     }
 }
 
 impl From<YrsXmlText> for YValue {
     fn from(value: YrsXmlText) -> Self {
-        YValue(RefCell::from(YXmlText(RefCell::from(value)).into_value()))
+        let ruby = unsafe { Ruby::get_unchecked() };
+        YValue(RefCell::from(
+            YXmlText(RefCell::from(value)).into_value_with(&ruby),
+        ))
     }
 }
 
 impl From<YText> for YValue {
     fn from(value: YText) -> Self {
-        YValue(RefCell::from(value.into_value()))
+        let ruby = unsafe { Ruby::get_unchecked() };
+        YValue(RefCell::from(value.into_value_with(&ruby)))
     }
 }
 
 impl From<YXmlElement> for YValue {
     fn from(value: YXmlElement) -> Self {
-        YValue(RefCell::from(value.into_value()))
+        let ruby = unsafe { Ruby::get_unchecked() };
+        YValue(RefCell::from(value.into_value_with(&ruby)))
     }
 }
 
 impl From<YXmlText> for YValue {
     fn from(value: YXmlText) -> Self {
-        YValue(RefCell::from(value.into_value()))
+        let ruby = unsafe { Ruby::get_unchecked() };
+        YValue(RefCell::from(value.into_value_with(&ruby)))
     }
 }
 
 impl From<Any> for YValue {
     fn from(value: Any) -> Self {
+        let ruby = unsafe { Ruby::get_unchecked() };
         match value {
-            Any::Null => YValue::from(value::qnil()),
-            Any::Undefined => YValue::from(value::qnil()),
+            Any::Null => YValue::from(ruby.qnil()),
+            Any::Undefined => YValue::from(ruby.qnil()),
             Any::Bool(v) => YValue::from(v),
             Any::Number(v) => YValue::from(v),
             Any::BigInt(v) => YValue::from(v),
             Any::String(v) => YValue::from(v.to_string()),
             Any::Buffer(v) => YValue::from(v.to_vec()),
             Any::Array(v) => {
-                let arr = RArray::new();
+                let arr = ruby.ary_new();
                 for item in v.iter() {
                     let val = YValue::from(item.clone());
                     let val = *val.0.borrow();
@@ -131,14 +151,14 @@ impl From<Any> for YValue {
                 YValue::from(arr)
             }
             Any::Map(v) => {
-                let map = v
-                    .iter()
-                    .map(|(key, val)| {
-                        let v = val.clone();
-                        (key.to_string(), YValue::from(v).into())
-                    })
-                    .collect::<HashMap<String, Value>>();
-                YValue::from(RHash::from_iter(map))
+                let hash = ruby.hash_new();
+                for (key, val) in v.iter() {
+                    let v = val.clone();
+                    let value: Value = YValue::from(v).into();
+                    hash.aset(key.to_string(), value)
+                        .expect("cannot insert into hash");
+                }
+                YValue::from(hash)
             }
         }
     }
@@ -146,6 +166,7 @@ impl From<Any> for YValue {
 
 impl From<YrsValue> for YValue {
     fn from(value: YrsValue) -> Self {
+        let ruby = unsafe { Ruby::get_unchecked() };
         match value {
             YrsValue::Any(val) => YValue::from(val),
             YrsValue::YText(text) => YValue::from(text),
@@ -153,7 +174,7 @@ impl From<YrsValue> for YValue {
             YrsValue::YXmlText(text) => YValue::from(text),
             YrsValue::YArray(val) => {
                 let tx = val.transact();
-                let arr = RArray::new();
+                let arr = ruby.ary_new();
                 for item in val.iter(&tx) {
                     let val = YValue::from(item.clone());
                     let val = *val.0.borrow();
@@ -163,12 +184,13 @@ impl From<YrsValue> for YValue {
             }
             YrsValue::YMap(val) => {
                 let tx = val.transact();
-                let iter = val.iter(&tx).map(|(key, val)| {
-                    let val = YValue::from(val);
+                let hash = ruby.hash_new();
+                for (key, value) in val.iter(&tx) {
+                    let val = YValue::from(value);
                     let val = val.0.into_inner();
-                    (key, val)
-                });
-                YValue::from(RHash::from_iter(iter))
+                    hash.aset(key, val).expect("cannot insert into hash");
+                }
+                YValue::from(hash)
             }
             v => panic!("cannot map complex yrs values to yvalue: {:?}", v),
         }
@@ -177,36 +199,37 @@ impl From<YrsValue> for YValue {
 
 impl From<YValue> for Any {
     fn from(val: YValue) -> Self {
+        let ruby = unsafe { Ruby::get_unchecked() };
         let value = val.0.into_inner();
         if value.is_nil() {
             Any::Null
-        } else if value.is_kind_of(class::float()) {
+        } else if value.is_kind_of(ruby.class_float()) {
             let f = Float::from_value(value).unwrap();
             Any::Number(f.to_f64())
-        } else if value.is_kind_of(class::integer()) {
+        } else if value.is_kind_of(ruby.class_integer()) {
             let i = Integer::from_value(value).unwrap();
             Any::BigInt(i.to_i64().unwrap())
-        } else if value.is_kind_of(class::symbol()) {
+        } else if value.is_kind_of(ruby.class_symbol()) {
             let s = Symbol::from_value(value).unwrap();
             Any::String(Arc::from(s.name().unwrap()))
-        } else if value.is_kind_of(class::true_class()) {
+        } else if value.is_kind_of(ruby.class_true_class()) {
             Any::Bool(true)
-        } else if value.is_kind_of(class::false_class()) {
+        } else if value.is_kind_of(ruby.class_false_class()) {
             Any::Bool(false)
-        } else if value.is_kind_of(class::string()) {
+        } else if value.is_kind_of(ruby.class_string()) {
             let s = RString::from_value(value).unwrap();
             unsafe { Any::String(Arc::from(s.as_str().unwrap().to_string())) }
-        } else if value.is_kind_of(class::array()) {
+        } else if value.is_kind_of(ruby.class_array()) {
             let arr = RArray::from_value(value).unwrap();
             let items = arr
-                .each()
+                .into_iter()
                 .map(|item| {
-                    let yvalue = YValue::from(item.unwrap());
+                    let yvalue = YValue::from(item);
                     Any::from(yvalue)
                 })
                 .collect::<Vec<Any>>();
             Any::Array(Arc::from(items))
-        } else if value.is_kind_of(class::hash()) {
+        } else if value.is_kind_of(ruby.class_hash()) {
             let map = RHash::from_value(value).unwrap();
             let mut m: HashMap<String, Any> = HashMap::new();
 

@@ -1,4 +1,4 @@
-use magnus::{block::Proc, exception, Error, Value};
+use magnus::{block::Proc, Error, Ruby, Value};
 use std::borrow::Borrow;
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -30,11 +30,15 @@ impl YAwareness {
     }
 
     pub(crate) fn yawareness_apply_update(&self, update: Vec<u8>) -> Result<(), Error> {
+        let ruby = Ruby::get().unwrap();
         AwarenessUpdate::decode_v1(update.as_slice())
-            .map_err(|_error| Error::new(exception::runtime_error(), "cannot decode update"))
+            .map_err(|_error| Error::new(ruby.exception_runtime_error(), "cannot decode update"))
             .and_then(|value| {
                 self.0.borrow_mut().apply_update(value).map_err(|_error| {
-                    Error::new(exception::runtime_error(), "cannot apply awareness update")
+                    Error::new(
+                        ruby.exception_runtime_error(),
+                        "cannot apply awareness update",
+                    )
                 })
             })
     }
@@ -78,13 +82,14 @@ impl YAwareness {
     }
 
     pub(crate) fn yawareness_update(&self) -> Result<Vec<u8>, Error> {
+        let ruby = Ruby::get().unwrap();
         self.0
             .borrow_mut()
             .update()
             .map(|update| update.encode_v1())
             .map_err(|_error| {
                 Error::new(
-                    exception::runtime_error(),
+                    ruby.exception_runtime_error(),
                     "cannot create update for current state",
                 )
             })
@@ -94,13 +99,14 @@ impl YAwareness {
         &self,
         clients: Vec<ClientID>,
     ) -> Result<Vec<u8>, Error> {
+        let ruby = Ruby::get().unwrap();
         self.0
             .borrow_mut()
             .update_with_clients(clients)
             .map(|update| update.encode_v1())
             .map_err(|_error| {
                 Error::new(
-                    exception::runtime_error(),
+                    ruby.exception_runtime_error(),
                     "cannot create update for current state and given clients",
                 )
             })
@@ -137,6 +143,7 @@ impl From<&Event> for YAwarenessEvent {
     }
 }
 
+#[allow(dead_code)]
 #[magnus::wrap(class = "Y::AwarenessEvent")]
 pub(crate) struct YAwarenessSubscription(UpdateSubscription);
 

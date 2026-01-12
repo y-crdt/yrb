@@ -2,7 +2,7 @@ use crate::utils::{convert_yvalue_to_ruby_value, indifferent_hash_key};
 use crate::yvalue::YValue;
 use crate::YTransaction;
 use magnus::block::Proc;
-use magnus::{exception, Error, RArray, RHash, Symbol, Value};
+use magnus::{Error, RArray, RHash, Ruby, Value};
 use std::cell::RefCell;
 use yrs::types::{EntryChange, Value as YrsValue};
 use yrs::{Any, Map, MapRef, Observable};
@@ -56,12 +56,13 @@ impl YMap {
         key: Value,
         value: Value,
     ) -> Result<(), Error> {
+        let ruby = Ruby::get().unwrap();
         let mut tx = transaction.transaction();
         let tx = tx.as_mut().unwrap();
 
         match indifferent_hash_key(key) {
             None => Err(Error::new(
-                exception::runtime_error(),
+                ruby.exception_runtime_error(),
                 "invalid key type, make sure it is either of type Symbol or String",
             )),
             Some(k) => {
@@ -73,23 +74,25 @@ impl YMap {
         }
     }
     pub(crate) fn ymap_observe(&self, block: Proc) -> u32 {
-        let change_inserted = Symbol::new("inserted").as_static();
-        let change_updated = Symbol::new("updated").as_static();
-        let change_removed = Symbol::new("removed").as_static();
+        let ruby = unsafe { Ruby::get_unchecked() };
+        let change_inserted = ruby.to_symbol("inserted").as_static();
+        let change_updated = ruby.to_symbol("updated").as_static();
+        let change_removed = ruby.to_symbol("removed").as_static();
         self.0
             .borrow_mut()
             .observe(move |transaction, map_event| {
+                let ruby = unsafe { Ruby::get_unchecked() };
                 let delta = map_event.keys(transaction);
-                let changes = RArray::with_capacity(delta.len());
+                let changes = ruby.ary_new_capa(delta.len());
 
                 for (key, change) in delta {
                     match change {
                         EntryChange::Inserted(v) => {
-                            let h = RHash::new();
-                            h.aset(Symbol::new(key), *YValue::from(v.clone()).0.borrow())
+                            let h = ruby.hash_new();
+                            h.aset(ruby.to_symbol(key), *YValue::from(v.clone()).0.borrow())
                                 .expect("cannot add change::inserted");
 
-                            let payload = RHash::new();
+                            let payload = ruby.hash_new();
                             payload
                                 .aset(change_inserted, h)
                                 .expect("cannot add change::inserted");
@@ -97,7 +100,7 @@ impl YMap {
                             changes.push(payload).expect("cannot push changes::payload");
                         }
                         EntryChange::Updated(old, new) => {
-                            let values = RArray::with_capacity(2);
+                            let values = ruby.ary_new_capa(2);
                             values
                                 .push(*YValue::from(old.clone()).0.borrow())
                                 .expect("cannot push change::updated");
@@ -105,11 +108,11 @@ impl YMap {
                                 .push(*YValue::from(new.clone()).0.borrow())
                                 .expect("cannot push change::updated");
 
-                            let h = RHash::new();
-                            h.aset(Symbol::new(key), values)
+                            let h = ruby.hash_new();
+                            h.aset(ruby.to_symbol(key), values)
                                 .expect("cannot push change::updated");
 
-                            let payload = RHash::new();
+                            let payload = ruby.hash_new();
                             payload
                                 .aset(change_updated, h)
                                 .expect("cannot push change::updated");
@@ -117,11 +120,11 @@ impl YMap {
                             changes.push(payload).expect("cannot push changes::payload");
                         }
                         EntryChange::Removed(v) => {
-                            let h = RHash::new();
-                            h.aset(Symbol::new(key), *YValue::from(v.clone()).0.borrow())
+                            let h = ruby.hash_new();
+                            h.aset(ruby.to_symbol(key), *YValue::from(v.clone()).0.borrow())
                                 .expect("cannot push change::removed");
 
-                            let payload = RHash::new();
+                            let payload = ruby.hash_new();
                             payload
                                 .aset(change_removed, h)
                                 .expect("cannot push change::removed");
@@ -153,15 +156,17 @@ impl YMap {
         self.0.borrow().len(tx)
     }
     pub(crate) fn ymap_to_h(&self, transaction: &YTransaction) -> RHash {
+        let ruby = unsafe { Ruby::get_unchecked() };
         let tx = transaction.transaction();
         let tx = tx.as_ref().unwrap();
 
-        RHash::from_iter(
-            self.0
-                .borrow()
-                .iter(tx)
-                .map(move |(k, v)| (k.to_string(), *YValue::from(v).0.borrow())),
-        )
+        let hash = ruby.hash_new();
+        for (k, v) in self.0.borrow().iter(tx) {
+            let value = *YValue::from(v).0.borrow();
+            hash.aset(k.to_string(), value)
+                .expect("cannot insert into hash");
+        }
+        hash
     }
     pub(crate) fn ymap_unobserve(&self, subscription_id: u32) {
         self.0.borrow_mut().unobserve(subscription_id);
