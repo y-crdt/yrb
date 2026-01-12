@@ -11,7 +11,7 @@ use crate::yxml_element::YXmlElement;
 use crate::yxml_fragment::YXmlFragment;
 use crate::yxml_text::YXmlText;
 
-use magnus::{class, define_module, function, method, Error, Module, Object};
+use magnus::{function, method, Error, Module, Object, Ruby};
 
 mod utils;
 mod yany;
@@ -29,11 +29,11 @@ mod yxml_fragment;
 mod yxml_text;
 
 #[magnus::init]
-fn init() -> Result<(), Error> {
-    let module = define_module("Y").expect("cannot define ::Y module");
+fn init(ruby: &Ruby) -> Result<(), Error> {
+    let module = ruby.define_module("Y").expect("cannot define ::Y module");
 
     let yarray = module
-        .define_class("Array", class::object())
+        .define_class("Array", ruby.class_object())
         .expect("cannot find class Y::Array");
 
     yarray
@@ -80,7 +80,7 @@ fn init() -> Result<(), Error> {
         .expect("cannot define private method: yarray_unobserve");
 
     let ydoc = module
-        .define_class("Doc", class::object())
+        .define_class("Doc", ruby.class_object())
         .expect("cannot define class Y::Doc");
     ydoc.define_singleton_method("new", function!(YDoc::ydoc_new, -1))
         .expect("cannot define singleton method: ydoc_new");
@@ -125,7 +125,7 @@ fn init() -> Result<(), Error> {
         .expect("cannot define private method: ydoc_observe_update");
 
     let ymap = module
-        .define_class("Map", class::object())
+        .define_class("Map", ruby.class_object())
         .expect("cannot define class Y::Map");
 
     ymap.define_private_method("ymap_clear", method!(YMap::ymap_clear, 1))
@@ -150,7 +150,7 @@ fn init() -> Result<(), Error> {
         .expect("cannot define private method: ymap_unobserve");
 
     let ytransaction = module
-        .define_class("Transaction", class::object())
+        .define_class("Transaction", ruby.class_object())
         .expect("cannot define class Y::Transaction");
 
     ytransaction
@@ -224,7 +224,7 @@ fn init() -> Result<(), Error> {
         .expect("cannot define private method: ytransaction_state_vector_v2");
 
     let ytext = module
-        .define_class("Text", class::object())
+        .define_class("Text", ruby.class_object())
         .expect("cannot define class Y::Text");
 
     ytext
@@ -271,7 +271,7 @@ fn init() -> Result<(), Error> {
         .expect("cannot define private method: ytext_unobserve");
 
     let yxml_element = module
-        .define_class("XMLElement", class::object())
+        .define_class("XMLElement", ruby.class_object())
         .expect("cannot define class Y::XMLElement");
 
     yxml_element
@@ -414,7 +414,7 @@ fn init() -> Result<(), Error> {
         .expect("cannot define private method: yxml_element_unobserve");
 
     let yxml_fragment = module
-        .define_class("XMLFragment", class::object())
+        .define_class("XMLFragment", ruby.class_object())
         .expect("cannot define class: Y::XMLFragment");
 
     yxml_fragment
@@ -479,7 +479,7 @@ fn init() -> Result<(), Error> {
         .expect("cannot define private method: yxml_fragment_to_s");
 
     let yxml_text = module
-        .define_class("XMLText", class::object())
+        .define_class("XMLText", ruby.class_object())
         .expect("cannot define class Y::XMLText");
 
     yxml_text
@@ -556,7 +556,7 @@ fn init() -> Result<(), Error> {
         .expect("cannot define private method: yxml_text_to_s");
 
     let yawareness = module
-        .define_class("Awareness", class::object())
+        .define_class("Awareness", ruby.class_object())
         .expect("cannot define class Y::Awareness");
     yawareness
         .define_singleton_method("new", function!(YAwareness::yawareness_new, 0))
@@ -623,7 +623,7 @@ fn init() -> Result<(), Error> {
         .expect("cannot define private method: yawareness_update_with_clients");
 
     let yawareness_event = module
-        .define_class("AwarenessEvent", class::object())
+        .define_class("AwarenessEvent", ruby.class_object())
         .expect("cannot define class Y::AwarenessEvent");
     yawareness_event
         .define_method("added", method!(YAwarenessEvent::added, 0))
@@ -636,7 +636,7 @@ fn init() -> Result<(), Error> {
         .expect("cannot define private method: removed");
 
     let ydiff = module
-        .define_class("Diff", class::object())
+        .define_class("Diff", ruby.class_object())
         .expect("cannot define class Y::Diff");
     ydiff
         .define_private_method("ydiff_insert", method!(YDiff::ydiff_insert, 0))

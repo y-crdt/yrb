@@ -2,7 +2,7 @@ use crate::utils::map_rhash_to_attrs;
 use crate::yvalue::YValue;
 use crate::yxml_fragment::YXmlFragment;
 use crate::{YTransaction, YXmlElement};
-use magnus::{Error, IntoValue, RHash, Value};
+use magnus::{Error, IntoValue, RHash, Ruby, Value};
 use std::cell::RefCell;
 use yrs::{Any, GetString, Text, Xml, XmlNode, XmlTextRef};
 
@@ -14,10 +14,15 @@ unsafe impl Send for YXmlText {}
 
 impl YXmlText {
     pub(crate) fn yxml_text_attributes(&self, transaction: &YTransaction) -> RHash {
+        let ruby = unsafe { Ruby::get_unchecked() };
         let tx = transaction.transaction();
         let tx = tx.as_ref().unwrap();
 
-        RHash::from_iter(self.0.borrow().attributes(tx))
+        let hash = ruby.hash_new();
+        for (k, v) in self.0.borrow().attributes(tx) {
+            hash.aset(k, v).expect("cannot insert into hash");
+        }
+        hash
     }
     pub(crate) fn yxml_text_format(
         &self,
@@ -115,23 +120,30 @@ impl YXmlText {
         self.0.borrow().len(tx)
     }
     pub(crate) fn yxml_text_next_sibling(&self, transaction: &YTransaction) -> Option<Value> {
+        let ruby = unsafe { Ruby::get_unchecked() };
         let tx = transaction.transaction();
         let tx = tx.as_ref().unwrap();
 
         self.0.borrow().siblings(tx).next().map(|item| match item {
-            XmlNode::Element(el) => YXmlElement(RefCell::from(el)).into_value(),
-            XmlNode::Fragment(fragment) => YXmlFragment(RefCell::from(fragment)).into_value(),
-            XmlNode::Text(text) => YXmlText(RefCell::from(text)).into_value(),
+            XmlNode::Element(el) => YXmlElement(RefCell::from(el)).into_value_with(&ruby),
+            XmlNode::Fragment(fragment) => {
+                YXmlFragment(RefCell::from(fragment)).into_value_with(&ruby)
+            }
+            XmlNode::Text(text) => YXmlText(RefCell::from(text)).into_value_with(&ruby),
         })
     }
     pub(crate) fn yxml_text_parent(&self) -> Option<Value> {
+        let ruby = unsafe { Ruby::get_unchecked() };
         self.0.borrow().parent().map(|item| match item {
-            XmlNode::Element(el) => YXmlElement(RefCell::from(el)).into_value(),
-            XmlNode::Fragment(fragment) => YXmlFragment(RefCell::from(fragment)).into_value(),
-            XmlNode::Text(text) => YXmlText(RefCell::from(text)).into_value(),
+            XmlNode::Element(el) => YXmlElement(RefCell::from(el)).into_value_with(&ruby),
+            XmlNode::Fragment(fragment) => {
+                YXmlFragment(RefCell::from(fragment)).into_value_with(&ruby)
+            }
+            XmlNode::Text(text) => YXmlText(RefCell::from(text)).into_value_with(&ruby),
         })
     }
     pub(crate) fn yxml_text_prev_sibling(&self, transaction: &YTransaction) -> Option<Value> {
+        let ruby = unsafe { Ruby::get_unchecked() };
         let tx = transaction.transaction();
         let tx = tx.as_ref().unwrap();
 
@@ -140,9 +152,11 @@ impl YXmlText {
             .siblings(tx)
             .next_back()
             .map(|item| match item {
-                XmlNode::Element(el) => YXmlElement(RefCell::from(el)).into_value(),
-                XmlNode::Fragment(fragment) => YXmlFragment(RefCell::from(fragment)).into_value(),
-                XmlNode::Text(text) => YXmlText(RefCell::from(text)).into_value(),
+                XmlNode::Element(el) => YXmlElement(RefCell::from(el)).into_value_with(&ruby),
+                XmlNode::Fragment(fragment) => {
+                    YXmlFragment(RefCell::from(fragment)).into_value_with(&ruby)
+                }
+                XmlNode::Text(text) => YXmlText(RefCell::from(text)).into_value_with(&ruby),
             })
     }
     pub(crate) fn yxml_text_push(&self, transaction: &YTransaction, content: String) {

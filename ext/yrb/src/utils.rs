@@ -1,10 +1,11 @@
 use crate::yvalue::YValue;
 use magnus::r_hash::ForEach::Continue;
-use magnus::{exception, Error, RArray, RHash, RString, Symbol, Value};
+use magnus::{Error, RHash, RString, Ruby, Symbol, Value};
 use std::sync::Arc;
 use yrs::types::{Attrs, Value as YrsValue};
 use yrs::{Any, Array, Map, TransactionMut};
 
+#[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub(crate) struct TypeConversionError;
 
@@ -27,8 +28,9 @@ pub(crate) fn map_rhash_to_attrs(hash: RHash) -> Result<Attrs, Error> {
     });
 
     if result.is_err() {
+        let ruby = Ruby::get().unwrap();
         return Err(Error::new(
-            exception::runtime_error(),
+            ruby.exception_runtime_error(),
             "could not map hash to attrs",
         ));
     }
@@ -37,13 +39,14 @@ pub(crate) fn map_rhash_to_attrs(hash: RHash) -> Result<Attrs, Error> {
 }
 
 pub(crate) fn convert_yvalue_to_ruby_value(value: YrsValue, tx: &TransactionMut) -> YValue {
+    let ruby = unsafe { Ruby::get_unchecked() };
     match value {
         YrsValue::Any(val) => YValue::from(val),
         YrsValue::YText(text) => YValue::from(text),
         YrsValue::YXmlElement(el) => YValue::from(el),
         YrsValue::YXmlText(text) => YValue::from(text),
         YrsValue::YArray(val) => {
-            let arr = RArray::new();
+            let arr = ruby.ary_new();
             for item in val.iter(tx) {
                 let val = convert_yvalue_to_ruby_value(item.clone(), tx);
                 let val = *val.0.borrow();
@@ -52,12 +55,13 @@ pub(crate) fn convert_yvalue_to_ruby_value(value: YrsValue, tx: &TransactionMut)
             YValue::from(arr)
         }
         YrsValue::YMap(val) => {
-            let iter = val.iter(tx).map(|(key, val)| {
-                let val = convert_yvalue_to_ruby_value(val.clone(), tx);
+            let hash = ruby.hash_new();
+            for (key, value) in val.iter(tx) {
+                let val = convert_yvalue_to_ruby_value(value.clone(), tx);
                 let val = val.0.into_inner();
-                (key, val)
-            });
-            YValue::from(RHash::from_iter(iter))
+                hash.aset(key, val).expect("cannot insert into hash");
+            }
+            YValue::from(hash)
         }
         v => panic!("cannot map given yrs values to yvalue: {:?}", v),
     }

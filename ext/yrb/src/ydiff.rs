@@ -1,4 +1,4 @@
-use magnus::{IntoValue, RHash, Value};
+use magnus::{IntoValue, RHash, Ruby, Value};
 
 unsafe impl Send for YDiff {}
 
@@ -14,6 +14,9 @@ impl YDiff {
     }
 
     pub(crate) fn ydiff_attrs(&self) -> Option<Value> {
-        self.ydiff_attrs.as_ref().map(|value| value.into_value())
+        let ruby = unsafe { Ruby::get_unchecked() };
+        self.ydiff_attrs
+            .as_ref()
+            .map(|value| value.into_value_with(&ruby))
     }
 }

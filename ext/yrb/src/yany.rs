@@ -1,10 +1,11 @@
 use magnus::r_string::IntoRString;
 use magnus::value::ReprValue;
-use magnus::{value, IntoValue, RArray, RHash, RString, Value};
+use magnus::{IntoValue, Ruby, Value};
 use std::borrow::Borrow;
 use std::ops::{Deref, DerefMut};
 use yrs::Any;
 
+#[allow(dead_code)]
 pub(crate) struct YAny(pub(crate) Any);
 
 impl Deref for YAny {
@@ -25,22 +26,23 @@ impl TryInto<Value> for YAny {
     type Error = ();
 
     fn try_into(self) -> Result<Value, Self::Error> {
-        return match self.0 {
+        let ruby = Ruby::get().unwrap();
+        match self.0 {
             Any::Array(_v) => {
-                let arr = RArray::new();
+                let arr = ruby.ary_new();
                 Ok(arr.as_value())
             }
             Any::Map(_v) => {
-                let hash = RHash::new();
+                let hash = ruby.hash_new();
                 Ok(hash.as_value())
             }
-            Any::Null => Ok(value::qnil().as_value()),
-            Any::Undefined => Ok(value::qnil().as_value()),
-            Any::Bool(v) => Ok(v.into_value()),
-            Any::Number(v) => Ok(v.into_value()),
-            Any::BigInt(v) => Ok(v.into_value()),
-            Any::String(v) => Ok(v.into_r_string().as_value()),
-            Any::Buffer(v) => Ok(RString::from_slice(v.borrow()).as_value()),
-        };
+            Any::Null => Ok(ruby.qnil().as_value()),
+            Any::Undefined => Ok(ruby.qnil().as_value()),
+            Any::Bool(v) => Ok(v.into_value_with(&ruby)),
+            Any::Number(v) => Ok(v.into_value_with(&ruby)),
+            Any::BigInt(v) => Ok(v.into_value_with(&ruby)),
+            Any::String(v) => Ok(v.into_r_string_with(&ruby).as_value()),
+            Any::Buffer(v) => Ok(ruby.str_from_slice(v.borrow()).as_value()),
+        }
     }
 }

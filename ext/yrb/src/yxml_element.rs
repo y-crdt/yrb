@@ -3,7 +3,7 @@ use crate::yxml_fragment::YXmlFragment;
 use crate::yxml_text::YXmlText;
 use crate::YTransaction;
 use magnus::block::Proc;
-use magnus::{Error, IntoValue, RArray, RHash, Symbol, Value};
+use magnus::{Error, IntoValue, RArray, RHash, Ruby, Value};
 use std::cell::RefCell;
 use yrs::types::Change;
 use yrs::{
@@ -19,22 +19,28 @@ unsafe impl Send for YXmlElement {}
 
 impl YXmlElement {
     pub(crate) fn yxml_element_attributes(&self, transaction: &YTransaction) -> RHash {
+        let ruby = unsafe { Ruby::get_unchecked() };
         let tx = transaction.transaction();
         let tx = tx.as_ref().unwrap();
 
-        RHash::from_iter(self.0.borrow().attributes(tx))
+        let hash = ruby.hash_new();
+        for (k, v) in self.0.borrow().attributes(tx) {
+            hash.aset(k, v).expect("cannot insert into hash");
+        }
+        hash
     }
     pub(crate) fn yxml_element_first_child(&self, transaction: &YTransaction) -> Option<Value> {
         self.yxml_element_get(transaction, 0)
     }
     pub(crate) fn yxml_element_get(&self, transaction: &YTransaction, index: u32) -> Option<Value> {
+        let ruby = unsafe { Ruby::get_unchecked() };
         let tx = transaction.transaction();
         let tx = tx.as_ref().unwrap();
 
         self.0.borrow().get(tx, index).map(|node| match node {
-            XmlNode::Element(element) => YXmlElement::from(element).into_value(),
-            XmlNode::Fragment(fragment) => YXmlFragment::from(fragment).into_value(),
-            XmlNode::Text(text) => YXmlText::from(text).into_value(),
+            XmlNode::Element(element) => YXmlElement::from(element).into_value_with(&ruby),
+            XmlNode::Fragment(fragment) => YXmlFragment::from(fragment).into_value_with(&ruby),
+            XmlNode::Text(text) => YXmlText::from(text).into_value_with(&ruby),
         })
     }
     pub(crate) fn yxml_element_get_attribute(
@@ -89,38 +95,41 @@ impl YXmlElement {
         self.0.borrow().len(tx)
     }
     pub(crate) fn yxml_element_next_sibling(&self, transaction: &YTransaction) -> Option<Value> {
+        let ruby = unsafe { Ruby::get_unchecked() };
         let tx = transaction.transaction();
         let tx = tx.as_ref().unwrap();
 
         self.0.borrow().siblings(tx).next().map(|item| match item {
-            XmlNode::Element(el) => YXmlElement::from(el).into_value(),
-            XmlNode::Fragment(fragment) => YXmlFragment::from(fragment).into_value(),
-            XmlNode::Text(text) => YXmlText::from(text).into_value(),
+            XmlNode::Element(el) => YXmlElement::from(el).into_value_with(&ruby),
+            XmlNode::Fragment(fragment) => YXmlFragment::from(fragment).into_value_with(&ruby),
+            XmlNode::Text(text) => YXmlText::from(text).into_value_with(&ruby),
         })
     }
     pub(crate) fn yxml_element_observe(&self, block: Proc) -> Result<u32, Error> {
-        let change_added = Symbol::new("added").to_static();
-        let change_retain = Symbol::new("retain").to_static();
-        let change_removed = Symbol::new("removed").to_static();
+        let ruby = unsafe { Ruby::get_unchecked() };
+        let change_added = ruby.to_symbol("added").to_static();
+        let change_retain = ruby.to_symbol("retain").to_static();
+        let change_removed = ruby.to_symbol("removed").to_static();
 
         let subscription_id = self
             .0
             .borrow_mut()
             .observe(move |transaction, xml_element_event| {
+                let ruby = unsafe { Ruby::get_unchecked() };
                 let delta = xml_element_event.delta(transaction);
-                let changes = RArray::with_capacity(delta.len());
+                let changes = ruby.ary_new_capa(delta.len());
 
                 for change in delta {
                     match change {
                         Change::Added(v) => {
-                            let values = RArray::new();
+                            let values = ruby.ary_new();
                             for value in v.iter() {
                                 let value = YValue::from(value.clone());
                                 let value = *value.0.borrow();
                                 values.push(value).expect("cannot push value to array");
                             }
 
-                            let payload = RHash::new();
+                            let payload = ruby.hash_new();
                             payload
                                 .aset(change_added, values)
                                 .expect("cannot create change::added payload");
@@ -130,7 +139,7 @@ impl YXmlElement {
                                 .expect("cannot push payload to list of changes");
                         }
                         Change::Retain(position) => {
-                            let payload = RHash::new();
+                            let payload = ruby.hash_new();
                             payload
                                 .aset(change_retain, *position)
                                 .expect("cannot create change::retain payload");
@@ -140,7 +149,7 @@ impl YXmlElement {
                                 .expect("cannot push payload to list of changes");
                         }
                         Change::Removed(position) => {
-                            let payload = RHash::new();
+                            let payload = ruby.hash_new();
                             payload
                                 .aset(change_removed, *position)
                                 .expect("cannot create change::removed payload");
@@ -160,13 +169,15 @@ impl YXmlElement {
         Ok(subscription_id.into())
     }
     pub(crate) fn yxml_element_parent(&self) -> Option<Value> {
+        let ruby = unsafe { Ruby::get_unchecked() };
         self.0.borrow().parent().map(|item| match item {
-            XmlNode::Element(el) => YXmlElement::from(el).into_value(),
-            XmlNode::Fragment(fragment) => YXmlFragment::from(fragment).into_value(),
-            XmlNode::Text(text) => YXmlText::from(text).into_value(),
+            XmlNode::Element(el) => YXmlElement::from(el).into_value_with(&ruby),
+            XmlNode::Fragment(fragment) => YXmlFragment::from(fragment).into_value_with(&ruby),
+            XmlNode::Text(text) => YXmlText::from(text).into_value_with(&ruby),
         })
     }
     pub(crate) fn yxml_element_prev_sibling(&self, transaction: &YTransaction) -> Option<Value> {
+        let ruby = unsafe { Ruby::get_unchecked() };
         let tx = transaction.transaction();
         let tx = tx.as_ref().unwrap();
 
@@ -175,9 +186,9 @@ impl YXmlElement {
             .siblings(tx)
             .next_back()
             .map(|item| match item {
-                XmlNode::Element(el) => YXmlElement::from(el).into_value(),
-                XmlNode::Fragment(fragment) => YXmlFragment::from(fragment).into_value(),
-                XmlNode::Text(text) => YXmlText::from(text).into_value(),
+                XmlNode::Element(el) => YXmlElement::from(el).into_value_with(&ruby),
+                XmlNode::Fragment(fragment) => YXmlFragment::from(fragment).into_value_with(&ruby),
+                XmlNode::Text(text) => YXmlText::from(text).into_value_with(&ruby),
             })
     }
     pub(crate) fn yxml_element_push_element_back(
@@ -242,16 +253,20 @@ impl YXmlElement {
         self.0.borrow_mut().remove_range(tx, index, length)
     }
     pub(crate) fn yxml_element_siblings(&self, transaction: &YTransaction) -> RArray {
+        let ruby = unsafe { Ruby::get_unchecked() };
         let tx = transaction.transaction();
         let tx = tx.as_ref().unwrap();
 
-        let siblings = self.0.borrow().siblings(tx).map(|item| match item {
-            XmlNode::Element(el) => YXmlElement::from(el).into_value(),
-            XmlNode::Fragment(fragment) => YXmlFragment::from(fragment).into_value(),
-            XmlNode::Text(text) => YXmlText::from(text).into_value(),
-        });
-
-        RArray::from_iter(siblings)
+        let array = ruby.ary_new();
+        for item in self.0.borrow().siblings(tx) {
+            let value = match item {
+                XmlNode::Element(el) => YXmlElement::from(el).into_value_with(&ruby),
+                XmlNode::Fragment(fragment) => YXmlFragment::from(fragment).into_value_with(&ruby),
+                XmlNode::Text(text) => YXmlText::from(text).into_value_with(&ruby),
+            };
+            array.push(value).expect("cannot push value to array");
+        }
+        array
     }
     pub(crate) fn yxml_element_size(&self, transaction: &YTransaction) -> u32 {
         let tx = transaction.transaction();

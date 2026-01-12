@@ -6,7 +6,7 @@ use crate::yxml_fragment::YXmlFragment;
 use crate::yxml_text::YXmlText;
 use crate::YTransaction;
 use magnus::block::Proc;
-use magnus::{exception::runtime_error, Error, Integer, RArray, Value};
+use magnus::{Error, Integer, RArray, Ruby, Value};
 use std::borrow::Borrow;
 use std::cell::RefCell;
 use yrs::updates::decoder::Decode;
@@ -36,12 +36,13 @@ impl YDoc {
         transaction: &YTransaction,
         state_vector: Vec<u8>,
     ) -> Result<Vec<u8>, Error> {
+        let ruby = Ruby::get().unwrap();
         let mut tx = transaction.transaction();
         let tx = tx.as_mut().unwrap();
 
         StateVector::decode_v1(state_vector.borrow())
             .map(|sv| tx.encode_diff_v1(&sv))
-            .map_err(|_e| Error::new(runtime_error(), "cannot encode diff"))
+            .map_err(|_e| Error::new(ruby.exception_runtime_error(), "cannot encode diff"))
     }
 
     pub(crate) fn ydoc_encode_diff_v2(
@@ -49,6 +50,7 @@ impl YDoc {
         transaction: &YTransaction,
         state_vector: Vec<u8>,
     ) -> Result<Vec<u8>, Error> {
+        let ruby = Ruby::get().unwrap();
         let mut tx = transaction.transaction();
         let tx = tx.as_mut().unwrap();
         let mut encoder = EncoderV2::new();
@@ -56,7 +58,7 @@ impl YDoc {
         StateVector::decode_v2(state_vector.borrow())
             .map(|sv| tx.encode_diff(&sv, &mut encoder))
             .map(|_| encoder.to_vec())
-            .map_err(|_e| Error::new(runtime_error(), "cannot encode diff"))
+            .map_err(|_e| Error::new(ruby.exception_runtime_error(), "cannot encode diff"))
     }
 
     pub(crate) fn ydoc_get_or_insert_array(&self, name: String) -> YArray {
@@ -96,11 +98,13 @@ impl YDoc {
     }
 
     pub(crate) fn ydoc_observe_update(&self, block: Proc) -> Result<SubscriptionId, Error> {
+        let ruby = Ruby::get().unwrap();
         self.0
             .borrow()
             .observe_update_v1(move |_tx, update_event| {
+                let ruby = unsafe { Ruby::get_unchecked() };
                 let update = update_event.update.to_vec();
-                let update = RArray::from_vec(update);
+                let update = ruby.ary_from_vec(update);
 
                 let args: (RArray,) = (update,);
                 block
@@ -108,6 +112,6 @@ impl YDoc {
                     .expect("cannot call update block");
             })
             .map(|v| v.into())
-            .map_err(|err| Error::new(runtime_error(), err.to_string()))
+            .map_err(|err| Error::new(ruby.exception_runtime_error(), err.to_string()))
     }
 }

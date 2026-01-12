@@ -4,7 +4,7 @@ use crate::ytext::YText;
 use crate::yxml_element::YXmlElement;
 use crate::yxml_fragment::YXmlFragment;
 use crate::yxml_text::YXmlText;
-use magnus::{exception, Error};
+use magnus::{Error, Ruby};
 use std::cell::{RefCell, RefMut};
 use yrs::updates::decoder::Decode;
 use yrs::updates::encoder::Encode;
@@ -28,10 +28,11 @@ impl<'doc> From<TransactionMut<'doc>> for YTransaction {
 // API which is eventually publicly exposed
 impl YTransaction {
     pub(crate) fn ytransaction_apply_update(&self, update: Vec<u8>) -> Result<(), Error> {
+        let ruby = Ruby::get().unwrap();
         Update::decode_v1(update.as_slice())
             .map_err(|error| {
                 Error::new(
-                    exception::runtime_error(),
+                    ruby.exception_runtime_error(),
                     format!("cannot decode update: {:?}", error),
                 )
             })
@@ -39,10 +40,11 @@ impl YTransaction {
     }
 
     pub(crate) fn ytransaction_apply_update_v2(&self, update: Vec<u8>) -> Result<(), Error> {
+        let ruby = Ruby::get().unwrap();
         Update::decode_v2(update.as_slice())
             .map_err(|error| {
                 Error::new(
-                    exception::runtime_error(),
+                    ruby.exception_runtime_error(),
                     format!("cannot decode update: {:?}", error),
                 )
             })
